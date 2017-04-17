@@ -174,6 +174,8 @@ BITCOIN_CORE_H = \
   indirectmap.h \
   init.h \
   pos_kernel.h \
+  interface/handler.h \
+  interface/node.h \
   key.h \
   keepass.h \
   keystore.h \
@@ -563,6 +565,8 @@ libcosanta_util_a_SOURCES = \
   compat/glibcxx_sanity.cpp \
   compat/strnlen.cpp \
   fs.cpp \
+  interface/handler.cpp \
+  interface/node.cpp \
   logging.cpp \
   random.cpp \
   rpc/protocol.cpp \
