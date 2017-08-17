@@ -80,7 +80,7 @@ private:
     size_t maxDepth;
 
 public:
-    WorkQueue(size_t _maxDepth) : running(true),
+    explicit WorkQueue(size_t _maxDepth) : running(true),
                                  maxDepth(_maxDepth)
     {
     }
