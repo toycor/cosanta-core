@@ -39,6 +39,7 @@ class CNetAddr
     public:
         CNetAddr();
         explicit CNetAddr(const struct in_addr& ipv4Addr);
+        void Init();
         void SetIP(const CNetAddr& ip);
 
     private:
@@ -150,6 +151,7 @@ class CService : public CNetAddr
         CService(const CNetAddr& ip, unsigned short port);
         CService(const struct in_addr& ipv4Addr, unsigned short port);
         explicit CService(const struct sockaddr_in& addr);
+        void Init();
         void SetPort(unsigned short portIn);
         unsigned short GetPort() const;
         bool GetSockAddr(struct sockaddr* paddr, socklen_t *addrlen) const;
