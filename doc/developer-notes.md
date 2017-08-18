@@ -20,6 +20,7 @@ to clean up the patch automatically before submitting a pull request.
     braces are required, and the then and else clauses must appear
     correctly indented on a new line.
   - `++i` is preferred over `i++`.
+  - `static_assert` is preferred over `assert` where possible. Generally; compile-time checking is preferred over run-time checking.
   - Align pointers and references to the left i.e. use `type& var` and not `type &var`.
 
 Block style example:
