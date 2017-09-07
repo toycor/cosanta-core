@@ -47,7 +47,6 @@
 #include <validationinterface.h>
 #ifdef ENABLE_WALLET
 #include <wallet/init.h>
-#include <wallet/wallet.h>
 #endif
 
 #include <masternode/activemasternode.h>
@@ -240,9 +239,7 @@ void PrepareShutdown()
         privateSendClient.fPrivateSendRunning = false;
         privateSendClient.ResetPool();
     }
-    for (CWalletRef pwallet : vpwallets) {
-        pwallet->Flush(false);
-    }
+    FlushWallets();
 #endif
     MapPort(false);
 
@@ -315,9 +312,7 @@ void PrepareShutdown()
         evoDb.reset();
     }
 #ifdef ENABLE_WALLET
-    for (CWalletRef pwallet : vpwallets) {
-        pwallet->Flush(true);
-    }
+    StopWallets();
 #endif
 
 #if ENABLE_ZMQ
@@ -370,10 +365,7 @@ void Shutdown()
    // Shutdown part 2: Stop TOR thread and delete wallet instance
     StopTorControl();
 #ifdef ENABLE_WALLET
-    for (CWalletRef pwallet : vpwallets) {
-        delete pwallet;
-    }
-    vpwallets.clear();
+    CloseWallets();
 #endif
     globalVerifyHandle.reset();
     ECC_Stop();
@@ -1292,7 +1284,7 @@ bool AppInitParameterInteraction()
 
     RegisterAllCoreRPCCommands(tableRPC);
 #ifdef ENABLE_WALLET
-    RegisterWalletRPCCommands(tableRPC);
+    RegisterWalletRPC(tableRPC);
 #endif
 
     nConnectTimeout = gArgs.GetArg("-timeout", DEFAULT_CONNECT_TIMEOUT);
@@ -1630,7 +1622,7 @@ bool AppInitMain()
     if (!CWallet::InitAutoBackup())
         return false;
 
-    if (!WalletVerify())
+    if (!VerifyWallets())
         return false;
 
     // Initialize KeePass Integration
@@ -2004,7 +1996,7 @@ bool AppInitMain()
 
     // ********************************************************* Step 8: load wallet
 #ifdef ENABLE_WALLET
-    if (!InitLoadWallet())
+    if (!OpenWallets())
         return false;
 #else
     LogPrintf("No wallet support compiled in!\n");
@@ -2292,9 +2284,7 @@ bool AppInitMain()
     uiInterface.InitMessage(_("Done loading"));
 
 #ifdef ENABLE_WALLET
-    for (CWalletRef pwallet : vpwallets) {
-        pwallet->postInitProcess(scheduler);
-    }
+    StartWallets(scheduler);
 #endif
 
     // Final check if the user requested to kill the GUI during one of the last operations. If so, exit.
