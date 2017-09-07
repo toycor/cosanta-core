@@ -3207,9 +3207,6 @@ static const CRPCCommand commands[] =
 
 void RegisterWalletRPCCommands(CRPCTable &t)
 {
-    if (gArgs.GetBoolArg("-disablewallet", false))
-        return;
-
     for (unsigned int vcidx = 0; vcidx < ARRAYLEN(commands); vcidx++)
         t.appendCommand(commands[vcidx].name, &commands[vcidx]);
 }
