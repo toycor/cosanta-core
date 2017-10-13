@@ -187,6 +187,8 @@ static const CRPCConvertParam vRPCConvertParams[] =
     { "echojson", 9, "arg9" },
     { "reservebalance", 0, "reserve" },
     { "reservebalance", 1, "amount" },
+    { "rescanblockchain", 0, "start_height"},
+    { "rescanblockchain", 1, "stop_height"},
     { "stop", 0, "wait" },
 };
 
