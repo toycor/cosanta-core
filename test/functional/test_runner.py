@@ -142,6 +142,7 @@ BASE_SCRIPTS= [
     'p2p-acceptblock.py', # NOTE: needs cosanta_hash to pass
     'feature_shutdown.py',
     'privatesend.py',
+    'uacomment.py',
 ]
 
 EXTENDED_SCRIPTS = [
