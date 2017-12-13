@@ -429,9 +429,9 @@ public:
 
         nStakeMinAge = 24 * 60 * 60; // 24 hours
 
-        checkpointData = (CCheckpointData) {
+        checkpointData = {
             {
-                {0, uint256S("0x000006cf010a54f22305095939df01cc5d7a2ecd208e1e353259a75cd99f58b4")},
+                {0, uint256S("0x00000ce07df018e65e003f4d097cf026db99bcd493d6c4d07f0b47edf6534a26")},
             }
         };
 
@@ -594,9 +594,9 @@ public:
 
         nStakeMinAge = 24 * 60 * 60; // 24 hours
 
-        checkpointData = (CCheckpointData) {
+        checkpointData = {
             {
-                {0, uint256S("0x00000d08a9828c9e2c4c95996e1a3895e24de49d0b62ef595486a428d727cede")},
+                {0, uint256S("0x0000030f02c1f2473c1b3d7988b7d83a5e2cde4b2b69fe1612befdcbcb8eb70f")},
             }
         };
 
@@ -758,7 +758,7 @@ public:
 
         nStakeMinAge = 24 * 60 * 60; // 24 hours
 
-        checkpointData = (CCheckpointData) {
+        checkpointData = {
             {
                 { 1, devnetGenesis.GetHash() },
             }
@@ -879,9 +879,9 @@ public:
 
         nStakeMinAge = 24 * 60 * 60; // 24 hours
 
-        checkpointData = (CCheckpointData) {
+        checkpointData = {
             {
-                {0, uint256S("0x00000d204dc7f3c855835549afbf59d8002502ae2b56bc46826ca41b7bfc5651")},
+                {0, uint256S("0x02fc1e7262651eb1027ef489dae355c0ca063bc4832ca4b6d41d18216268835c")},
             }
         };
 
