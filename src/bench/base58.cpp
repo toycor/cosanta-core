@@ -23,7 +23,7 @@ static void Base58Encode(benchmark::State& state)
         }
     };
     while (state.KeepRunning()) {
-        EncodeBase58(buff.begin(), buff.end());
+        EncodeBase58(buff.data(), buff.data() + buff.size());
     }
 }
 

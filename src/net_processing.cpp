@@ -66,7 +66,7 @@ bool g_enable_bip61 = DEFAULT_ENABLE_BIP61;
 struct IteratorComparator
 {
     template<typename I>
-    bool operator()(const I& a, const I& b)
+    bool operator()(const I& a, const I& b) const
     {
         return &(*a) < &(*b);
     }
