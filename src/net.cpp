@@ -1974,13 +1974,20 @@ void CConnman::ThreadOpenConnections()
             }
         }
 
+        addrman.ResolveCollisions();
+
         auto mnList = deterministicMNManager->GetListAtChainTip();
 
         int64_t nANow = GetAdjustedTime();
         int nTries = 0;
         while (!interruptNet)
         {
-            CAddrInfo addr = addrman.Select(fFeeler);
+            CAddrInfo addr = addrman.SelectTriedCollision();
+
+            // SelectTriedCollision returns an invalid address if it is empty.
+            if (!fFeeler || !addr.IsValid()) {
+                addr = addrman.Select(fFeeler);
+            }
 
             auto dmn = mnList.GetMNByService(addr);
             bool isMasternode = dmn != nullptr;
