@@ -26,7 +26,6 @@ class EditAddressDialog : public QDialog
 
 public:
     enum Mode {
-        NewReceivingAddress,
         NewSendingAddress,
         EditReceivingAddress,
         EditSendingAddress
