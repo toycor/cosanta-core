@@ -27,6 +27,7 @@
 #include <atomic>
 #include <exception>
 #include <map>
+#include <memory>
 #include <stdint.h>
 #include <string>
 #include <unordered_map>

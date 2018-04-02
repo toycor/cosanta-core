@@ -7,6 +7,8 @@
 
 #include <test/test_cosanta.h>
 
+#include <memory>
+
 /** Testing setup and teardown for wallet.
  */
 struct WalletTestingSetup: public TestingSetup {
