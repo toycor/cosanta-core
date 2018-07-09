@@ -58,16 +58,20 @@ public:
 
     void InitializeNode(CNode* pnode) override;
     void FinalizeNode(NodeId nodeid, bool& fUpdateConnectionTime) override;
-    /** Process protocol messages received from a given node */
+    /**
+    * Process protocol messages received from a given node
+    *
+    * @param[in]   pfrom           The node which we have received messages from.
+    * @param[in]   interrupt       Interrupt condition for processing threads
+    */
     bool ProcessMessages(CNode* pfrom, std::atomic<bool>& interrupt) override;
     /**
     * Send queued protocol messages to be sent to a give node.
     *
     * @param[in]   pto             The node which we are sending messages to.
-    * @param[in]   interrupt       Interrupt condition for processing threads
     * @return                      True if there is more work to be done
     */
-    bool SendMessages(CNode* pto, std::atomic<bool>& interrupt) override EXCLUSIVE_LOCKS_REQUIRED(pto->cs_sendProcessing);
+    bool SendMessages(CNode* pto) override EXCLUSIVE_LOCKS_REQUIRED(pto->cs_sendProcessing);
 
     void ConsiderEviction(CNode *pto, int64_t time_in_seconds);
     void CheckForStaleTipAndEvictPeers(const Consensus::Params &consensusParams);

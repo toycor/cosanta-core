@@ -1130,7 +1130,7 @@ static void RelayAddress(const CAddress& addr, bool fReachable, CConnman* connma
     connman->ForEachNodeThen(std::move(sortfunc), std::move(pushfunc));
 }
 
-void static ProcessGetBlockData(CNode* pfrom, const CChainParams& chainparams, const CInv& inv, CConnman* connman, const std::atomic<bool>& interruptMsgProc)
+void static ProcessGetBlockData(CNode* pfrom, const CChainParams& chainparams, const CInv& inv, CConnman* connman)
 {
     bool send = false;
     std::shared_ptr<const CBlock> a_recent_block;
@@ -1437,7 +1437,7 @@ void static ProcessGetData(CNode* pfrom, const CChainParams& chainparams, CConnm
         const CInv &inv = *it;
         if (inv.type == MSG_BLOCK || inv.type == MSG_FILTERED_BLOCK || inv.type == MSG_CMPCT_BLOCK) {
             it++;
-            ProcessGetBlockData(pfrom, chainparams, inv, connman, interruptMsgProc);
+            ProcessGetBlockData(pfrom, chainparams, inv, connman);
         }
     }
 
@@ -3532,7 +3532,7 @@ public:
     }
 };
 
-bool PeerLogicValidation::SendMessages(CNode* pto, std::atomic<bool>& interruptMsgProc)
+bool PeerLogicValidation::SendMessages(CNode* pto)
 {
     const Consensus::Params& consensusParams = Params().GetConsensus();
     {
