@@ -457,6 +457,12 @@ public:
     void WakeMessageHandler();
     void WakeSelect();
 
+    /** Attempts to obfuscate tx time through exponentially distributed emitting.
+        Works assuming that a single interval is used.
+        Variable intervals will result in privacy decrease.
+    */
+    int64_t PoissonNextSendInbound(int64_t now, int average_interval_seconds);
+
 private:
     struct ListenSocket {
         SOCKET socket;
@@ -601,6 +607,8 @@ private:
      *  in excess of nMaxOutbound
      *  This takes the place of a feeler connection */
     std::atomic_bool m_try_another_outbound_peer;
+
+    std::atomic<int64_t> m_next_send_inv_to_incoming;
 
     friend struct CConnmanTest;
 };
@@ -1068,6 +1076,6 @@ public:
 
 
 /** Return a timestamp in the future (in microseconds) for exponentially distributed events. */
-int64_t PoissonNextSend(int64_t nNow, int average_interval_seconds);
+int64_t PoissonNextSend(int64_t now, int average_interval_seconds);
 
 #endif // BITCOIN_NET_H
