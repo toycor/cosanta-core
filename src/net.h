@@ -464,6 +464,7 @@ private:
     void ThreadOpenConnections();
     void ThreadMessageHandler();
     void AcceptConnection(const ListenSocket& hListenSocket);
+    void DisconnectNodes();
     void NotifyNumConnectionsChanged();
     void ThreadSocketHandler();
     void ThreadDNSAddressSeed();
