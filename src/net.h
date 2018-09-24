@@ -466,6 +466,7 @@ private:
     void ThreadOpenConnections();
     void ThreadMessageHandler();
     void AcceptConnection(const ListenSocket& hListenSocket);
+    void NotifyNumConnectionsChanged();
     void ThreadSocketHandler();
     void ThreadDNSAddressSeed();
     void ThreadOpenMasternodeConnections();
@@ -541,6 +542,7 @@ private:
     std::list<CNode*> vNodesDisconnected;
     mutable CCriticalSection cs_vNodes;
     std::atomic<NodeId> nLastNodeId;
+    unsigned int nPrevNodeCount;
 
     /** Services this instance offers */
     ServiceFlags nLocalServices;
