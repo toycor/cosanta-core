@@ -303,7 +303,7 @@ AC_DEFUN([_BITCOIN_QT_CHECK_QT5],[
       #endif
     ]],
     [[
-      #if QT_VERSION < 0x050501 || QT_VERSION_MAJOR < 5
+      #if QT_VERSION < 0x050200 || QT_VERSION_MAJOR < 5
       choke
       #endif
     ]])],
