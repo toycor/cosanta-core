@@ -96,8 +96,8 @@ bool fDiscover = true;
 bool fListen = true;
 bool fRelayTxes = true;
 CCriticalSection cs_mapLocalHost;
-std::map<CNetAddr, LocalServiceInfo> mapLocalHost;
-static bool vfLimited[NET_MAX] = {};
+std::map<CNetAddr, LocalServiceInfo> mapLocalHost GUARDED_BY(cs_mapLocalHost);
+static bool vfLimited[NET_MAX] GUARDED_BY(cs_mapLocalHost) = {};
 std::string strSubVersion;
 
 unordered_limitedmap<uint256, int64_t, StaticSaltedHasher> mapAlreadyAskedFor(MAX_INV_SZ, MAX_INV_SZ * 2);
@@ -879,16 +879,7 @@ const uint256& CNetMessage::GetMessageHash() const
     return data_hash;
 }
 
-
-
-
-
-
-
-
-
-// requires LOCK(cs_vSend)
-size_t CConnman::SocketSendData(CNode *pnode) const
+size_t CConnman::SocketSendData(CNode *pnode) const EXCLUSIVE_LOCKS_REQUIRED(pnode->cs_vSend)
 {
     auto it = pnode->vSendMsg.begin();
     size_t nSentSize = 0;
