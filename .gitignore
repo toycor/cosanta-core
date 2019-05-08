@@ -62,8 +62,6 @@ libconftest.dylib*
 *.pyc
 *.o
 *.o-*
-*.patch
-!depends/patches/*/*.patch
 *.a
 *.pb.cc
 *.pb.h
@@ -74,6 +72,10 @@ libconftest.dylib*
 
 *.json.h
 *.raw.h
+
+# Only ignore unexpected patches
+*.patch
+!depends/patches/*.patch
 
 #libtool object files
 *.lo
