@@ -49,7 +49,6 @@ public:
         std::string s(val_);
         setStr(s);
     }
-    ~UniValue() {}
 
     void clear();
 
