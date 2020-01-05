@@ -36,7 +36,7 @@ private:
 
 public:
     CMasternodeMetaInfo() {}
-    CMasternodeMetaInfo(const uint256& _proTxHash) : proTxHash(_proTxHash) {}
+    explicit CMasternodeMetaInfo(const uint256& _proTxHash) : proTxHash(_proTxHash) {}
     CMasternodeMetaInfo(const CMasternodeMetaInfo& ref) :
         proTxHash(ref.proTxHash),
         nLastDsq(ref.nLastDsq),
