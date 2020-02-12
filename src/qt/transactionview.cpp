@@ -166,6 +166,7 @@ TransactionView::TransactionView(const PlatformStyle *platformStyle, QWidget *pa
     view->installEventFilter(this);
 
     transactionView = view;
+    transactionView->setObjectName("transactionView");
 
     // Actions
     abandonAction = new QAction(tr("Abandon transaction"), this);
@@ -180,6 +181,7 @@ TransactionView::TransactionView(const PlatformStyle *platformStyle, QWidget *pa
     QAction *showAddressQRCodeAction = new QAction(tr("Show address QR code"), this);
 
     contextMenu = new QMenu(this);
+    contextMenu->setObjectName("contextMenu");
     contextMenu->addAction(copyAddressAction);
     contextMenu->addAction(copyLabelAction);
     contextMenu->addAction(copyAmountAction);
@@ -451,7 +453,7 @@ void TransactionView::contextualMenu(const QPoint &point)
 
     if(index.isValid())
     {
-        contextMenu->exec(QCursor::pos());
+        contextMenu->popup(transactionView->viewport()->mapToGlobal(point));
     }
 }
 
