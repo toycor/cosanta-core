@@ -58,7 +58,7 @@ std::set<uint256> CLLMQUtils::GetQuorumConnections(Consensus::LLMQType llmqType,
             // Each member needs a connection to all other members, so we have each member paired. The below check
             // will be true on one side and false on the other side of the pairing, so we avoid having both members
             // initiating the connection.
-            if (dmn->proTxHash < forMember) {
+            if (!onlyOutbound || dmn->proTxHash < forMember) {
                 result.emplace(dmn->proTxHash);
             }
         }
@@ -93,10 +93,14 @@ std::set<uint256> CLLMQUtils::GetQuorumConnections(Consensus::LLMQType llmqType,
         if (dmn->proTxHash == forMember) {
             auto r = calcOutbound(i, dmn->proTxHash);
             result.insert(r.begin(), r.end());
-            // there can be no two members with the same proTxHash, so return early
-            break;
+        } else if (!onlyOutbound) {
+            auto r = calcOutbound(i, dmn->proTxHash);
+            if (r.count(forMember)) {
+                result.emplace(dmn->proTxHash);
+            }
         }
     }
+
     return result;
 }
 
