@@ -1279,7 +1279,6 @@ void CConnman::ThreadSocketHandler()
 
                     // release outbound grant (if any)
                     pnode->grantOutbound.Release();
-                    pnode->grantMasternodeOutbound.Release();
 
                     // close socket and cleanup
                     pnode->CloseSocketDisconnect();
@@ -2157,7 +2156,6 @@ void CConnman::ThreadOpenMasternodeConnections()
 
         auto mnList = deterministicMNManager->GetListAtChainTip();
 
-        CSemaphoreGrant grant(*semMasternodeOutbound);
         if (interruptNet)
             return;
 
@@ -2211,7 +2209,6 @@ void CConnman::ThreadOpenMasternodeConnections()
             if (pnode->fDisconnect) {
                 return false;
             }
-            grant.MoveTo(pnode->grantMasternodeOutbound);
             return true;
         });
     }
@@ -2580,11 +2577,6 @@ bool CConnman::Start(CScheduler& scheduler, const Options& connOptions)
         semAddnode = MakeUnique<CSemaphore>(nMaxAddnode);
     }
 
-    if (semMasternodeOutbound == nullptr) {
-        // initialize semaphore
-        semMasternodeOutbound = MakeUnique<CSemaphore>(fMasternodeMode ? MAX_OUTBOUND_MASTERNODE_CONNECTIONS_ON_MN : MAX_OUTBOUND_MASTERNODE_CONNECTIONS);
-    }
-
     //
     // Start threads
     //
@@ -2696,13 +2688,6 @@ void CConnman::Interrupt()
             semAddnode->post();
         }
     }
-
-    if (semMasternodeOutbound) {
-        int nMaxMasternodeOutbound = fMasternodeMode ? MAX_OUTBOUND_MASTERNODE_CONNECTIONS_ON_MN : MAX_OUTBOUND_MASTERNODE_CONNECTIONS;
-        for (int i = 0; i < nMaxMasternodeOutbound; i++) {
-            semMasternodeOutbound->post();
-        }
-    }
 }
 
 void CConnman::Stop()
@@ -2749,7 +2734,6 @@ void CConnman::Stop()
     vhListenSocket.clear();
     semOutbound.reset();
     semAddnode.reset();
-    semMasternodeOutbound.reset();
 
 #ifndef WIN32
     if (wakeupPipe[0] != -1) close(wakeupPipe[0]);
