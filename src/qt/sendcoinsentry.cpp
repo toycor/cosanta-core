@@ -79,7 +79,14 @@ void SendCoinsEntry::on_addressBookButton_clicked()
 
 void SendCoinsEntry::on_payTo_textChanged(const QString &address)
 {
-    updateLabel(address);
+    SendCoinsRecipient rcp;
+    if (GUIUtil::parseBitcoinURI(address, &rcp)) {
+        ui->payTo->blockSignals(true);
+        setValue(rcp);
+        ui->payTo->blockSignals(false);
+    } else {
+        updateLabel(rcp.address);
+    }
 }
 
 void SendCoinsEntry::setModel(WalletModel *_model)
@@ -217,12 +224,12 @@ void SendCoinsEntry::setValue(const SendCoinsRecipient &value)
         ui->messageTextLabel->setVisible(!recipient.message.isEmpty());
         ui->messageLabel->setVisible(!recipient.message.isEmpty());
 
-        ui->addAsLabel->clear();
-        ui->payTo->setText(recipient.address); // this may set a label from addressbook
-        if (!recipient.label.isEmpty()) // if a label had been set from the addressbook, don't overwrite with an empty label
-            ui->addAsLabel->setText(recipient.label);
+        ui->payTo->setText(recipient.address);
+        ui->addAsLabel->setText(recipient.label);
         ui->payAmount->setValue(recipient.amount);
     }
+
+    updateLabel(recipient.address);
 }
 
 void SendCoinsEntry::setAddress(const QString &address)
