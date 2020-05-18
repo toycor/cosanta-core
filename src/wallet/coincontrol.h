@@ -1,5 +1,4 @@
 // Copyright (c) 2011-2015 The Bitcoin Core developers
-// Copyright (c) 2020-2022 The Cosanta Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -17,8 +16,11 @@ enum class CoinType
     ALL_COINS,
     ONLY_DENOMINATED,
     ONLY_NONDENOMINATED,
-    ONLY_10000, // find masternode outputs including locked ones (use with caution)
+    ONLY_MASTERNODE_COLLATERAL, // find masternode outputs including locked ones (use with caution)
     ONLY_PRIVATESEND_COLLATERAL,
+    // Attributes
+    MIN_COIN_TYPE = ALL_COINS,
+    MAX_COIN_TYPE = ONLY_PRIVATESEND_COLLATERAL,
 };
 
 /** Coin Control Features. */
