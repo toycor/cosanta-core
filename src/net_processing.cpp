@@ -12,7 +12,6 @@
 #include <consensus/validation.h>
 #include <hash.h>
 #include <init.h>
-#include <validation.h>
 #include <merkleblock.h>
 #include <net.h>
 #include <netmessagemaker.h>

@@ -8,14 +8,12 @@
 #include <llmq/quorums_commitment.h>
 #include <llmq/quorums_debug.h>
 #include <llmq/quorums_dkgsessionmgr.h>
-#include <llmq/quorums_utils.h>
 
 #include <evo/specialtx.h>
 
 #include <masternode/activemasternode.h>
 #include <chainparams.h>
 #include <init.h>
-#include <net.h>
 #include <netmessagemaker.h>
 #include <spork.h>
 #include <univalue.h>
