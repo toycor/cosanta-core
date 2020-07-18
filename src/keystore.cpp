@@ -142,6 +142,7 @@ bool CBasicKeyStore::HaveWatchOnly() const
 
 bool CBasicKeyStore::GetHDChain(CHDChain& hdChainRet) const
 {
+    LOCK(cs_KeyStore);
     hdChainRet = hdChain;
     return !hdChain.IsNull();
 }
