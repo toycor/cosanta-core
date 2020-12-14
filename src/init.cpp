@@ -2036,8 +2036,7 @@ bool AppInitMain(boost::thread_group& threadGroup, CScheduler& scheduler)
     std::string strMasterNodeBLSPrivKey = gArgs.GetArg("-masternodeblsprivkey", "");
     if (!strMasterNodeBLSPrivKey.empty()) {
         auto binKey = ParseHex(strMasterNodeBLSPrivKey);
-        CBLSSecretKey keyOperator;
-        keyOperator.SetBuf(binKey);
+        CBLSSecretKey keyOperator(binKey);
         if (!keyOperator.IsValid()) {
             return InitError(_("Invalid masternodeblsprivkey. Please see documentation."));
         }
