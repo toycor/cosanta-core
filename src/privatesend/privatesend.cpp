@@ -5,10 +5,8 @@
 
 #include <privatesend/privatesend.h>
 
-#include <masternode/activemasternode.h>
+#include <core_io.h>
 #include <consensus/validation.h>
-#include <masternode/masternode-payments.h>
-#include <masternode/masternode-sync.h>
 #include <messagesigner.h>
 #include <netmessagemaker.h>
 #include <script/sign.h>
@@ -16,6 +14,9 @@
 #include <util.h>
 #include <utilmoneystr.h>
 #include <validation.h>
+
+#include <masternode/activemasternode.h>
+#include <masternode/masternode-sync.h>
 
 #include <llmq/quorums_instantsend.h>
 #include <llmq/quorums_chainlocks.h>
