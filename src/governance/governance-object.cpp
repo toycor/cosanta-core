@@ -307,7 +307,7 @@ bool CGovernanceObject::Sign(const CBLSSecretKey& key)
     if (!key.IsValid()) {
         return false;
     }
-    sig.GetBuf(vchSig);
+    vchSig = sig.ToByteVector();
     return true;
 }
 
