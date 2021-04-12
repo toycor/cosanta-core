@@ -4,19 +4,19 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #if defined(HAVE_CONFIG_H)
-#include <config/dash-config.h>
+#include "config/cosanta-config.h"
 #endif
 
-#include <chainparams.h>
-#include <qt/test/rpcnestedtests.h>
-#include <util.h>
-#include <qt/test/uritests.h>
-#include <qt/test/compattests.h>
-#include <qt/test/trafficgraphdatatests.h>
+#include "chainparams.h"
+#include "rpcnestedtests.h"
+#include "util.h"
+#include "uritests.h"
+#include "compattests.h"
+#include "trafficgraphdatatests.h"
 
 #ifdef ENABLE_WALLET
-#include <qt/test/paymentservertests.h>
-#include <qt/test/wallettests.h>
+#include "paymentservertests.h"
+#include "wallettests.h"
 #endif
 
 #include <QApplication>
@@ -56,14 +56,14 @@ int main(int argc, char *argv[])
     SelectParams(CBaseChainParams::MAIN);
     noui_connect();
     ClearDatadirCache();
-    fs::path pathTemp = fs::temp_directory_path() / strprintf("test_dash-qt_%lu_%i", (unsigned long)GetTime(), (int)GetRand(100000));
+    fs::path pathTemp = fs::temp_directory_path() / strprintf("test_cosanta-qt_%lu_%i", (unsigned long)GetTime(), (int)GetRand(100000));
     fs::create_directories(pathTemp);
     gArgs.ForceSetArg("-datadir", pathTemp.string());
 
     bool fInvalid = false;
 
     // Prefer the "minimal" platform for the test instead of the normal default
-    // platform ("xcb", "windows", or "cocoa") so tests can't unintentionally
+    // platform ("xcb", "windows", or "cocoa") so tests can't unintentially
     // interfere with any background GUIs and don't require extra resources.
     #if defined(WIN32)
         _putenv_s("QT_QPA_PLATFORM", "minimal");
@@ -74,7 +74,7 @@ int main(int argc, char *argv[])
     // Don't remove this, it's needed to access
     // QApplication:: and QCoreApplication:: in the tests
     QApplication app(argc, argv);
-    app.setApplicationName("Dash-Qt-test");
+    app.setApplicationName("Cosanta-Qt-test");
 
     SSL_library_init();
 

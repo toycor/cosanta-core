@@ -10,7 +10,7 @@
 #include <vector>
 
 /**
- * CBaseChainParams defines the base parameters (shared between dash-cli and dashd)
+ * CBaseChainParams defines the base parameters (shared between cosanta-cli and cosantad)
  * of a given instance of the Dash system.
  */
 class CBaseChainParams
@@ -53,5 +53,13 @@ const CBaseChainParams& BaseParams();
 
 /** Sets the params returned by Params() to those for the given network. */
 void SelectBaseParams(const std::string& chain);
+
+/**
+ * Looks for -regtest, -testnet and returns the appropriate BIP70 chain name.
+ * @return CBaseChainParams::MAX_NETWORK_TYPES if an invalid combination is given. CBaseChainParams::MAIN by default.
+ */
+std::string ChainNameFromCommandLine();
+
+std::string GetDevNetName();
 
 #endif // BITCOIN_CHAINPARAMSBASE_H

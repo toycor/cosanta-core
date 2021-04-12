@@ -5,7 +5,7 @@
 #ifndef BITCOIN_CONSENSUS_VERSIONBITS
 #define BITCOIN_CONSENSUS_VERSIONBITS
 
-#include <chain.h>
+#include "chain.h"
 #include <map>
 
 /** What block version to use for new blocks (pre versionbits) */
@@ -14,8 +14,10 @@ static const int32_t VERSIONBITS_LAST_OLD_BLOCK_VERSION = 4;
 static const int32_t VERSIONBITS_TOP_BITS = 0x20000000UL;
 /** What bitmask determines whether versionbits is in use */
 static const int32_t VERSIONBITS_TOP_MASK = 0xE0000000UL;
+/** What bits to set for Proof-of-Stake blocks */
+static const int32_t VERSIONBITS_POS_BIT  = CBlockHeader::POS_BIT;
 /** Total bits available for versionbits */
-static const int32_t VERSIONBITS_NUM_BITS = 29;
+static const int32_t VERSIONBITS_NUM_BITS = 28;
 
 enum ThresholdState {
     THRESHOLD_DEFINED,
@@ -58,10 +60,10 @@ protected:
     virtual int64_t BeginTime(const Consensus::Params& params) const =0;
     virtual int64_t EndTime(const Consensus::Params& params) const =0;
     virtual int Period(const Consensus::Params& params) const =0;
-    virtual int Threshold(const Consensus::Params& params, int nAttempt) const =0;
+    virtual int Threshold(const Consensus::Params& params) const =0;
 
 public:
-    BIP9Stats GetStateStatisticsFor(const CBlockIndex* pindex, const Consensus::Params& params, ThresholdConditionCache& cache) const;
+    BIP9Stats GetStateStatisticsFor(const CBlockIndex* pindex, const Consensus::Params& params) const;
     // Note that the functions below take a pindexPrev as input: they compute information for block B based on its parent.
     ThresholdState GetStateFor(const CBlockIndex* pindexPrev, const Consensus::Params& params, ThresholdConditionCache& cache) const;
     int GetStateSinceHeightFor(const CBlockIndex* pindexPrev, const Consensus::Params& params, ThresholdConditionCache& cache) const;
@@ -75,7 +77,7 @@ struct VersionBitsCache
 };
 
 ThresholdState VersionBitsState(const CBlockIndex* pindexPrev, const Consensus::Params& params, Consensus::DeploymentPos pos, VersionBitsCache& cache);
-BIP9Stats VersionBitsStatistics(const CBlockIndex* pindexPrev, const Consensus::Params& params, Consensus::DeploymentPos pos, VersionBitsCache& cache);
+BIP9Stats VersionBitsStatistics(const CBlockIndex* pindexPrev, const Consensus::Params& params, Consensus::DeploymentPos pos);
 int VersionBitsStateSinceHeight(const CBlockIndex* pindexPrev, const Consensus::Params& params, Consensus::DeploymentPos pos, VersionBitsCache& cache);
 uint32_t VersionBitsMask(const Consensus::Params& params, Consensus::DeploymentPos pos);
 

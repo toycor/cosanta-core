@@ -7,7 +7,7 @@
     ZMQ example using python3's asyncio
 
     Dash should be started with the command line arguments:
-        dashd -testnet -daemon \
+        cosantad -testnet -daemon \
                 -zmqpubrawtx=tcp://127.0.0.1:28332 \
                 -zmqpubrawblock=tcp://127.0.0.1:28332 \
                 -zmqpubhashtx=tcp://127.0.0.1:28332 \
@@ -32,7 +32,7 @@ import sys
 
 if not (sys.version_info.major >= 3 and sys.version_info.minor >= 5):
     print("This example only works with Python 3.5 and greater")
-    sys.exit(1)
+    exit(1)
 
 port = 28332
 

@@ -1,11 +1,12 @@
 #ifndef MASTERNODELIST_H
 #define MASTERNODELIST_H
 
-#include <primitives/transaction.h>
-#include <sync.h>
-#include <util.h>
+#include "platformstyle.h"
+#include "primitives/transaction.h"
+#include "sync.h"
+#include "util.h"
 
-#include <evo/deterministicmns.h>
+#include "evo/deterministicmns.h"
 
 #include <QMenu>
 #include <QTimer>
@@ -32,7 +33,7 @@ class MasternodeList : public QWidget
     Q_OBJECT
 
 public:
-    explicit MasternodeList(QWidget* parent = 0);
+    explicit MasternodeList(const PlatformStyle* platformStyle, QWidget* parent = 0);
     ~MasternodeList();
 
     void setClientModel(ClientModel* clientModel);

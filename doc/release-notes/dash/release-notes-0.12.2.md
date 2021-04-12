@@ -19,8 +19,8 @@ How to Upgrade
 
 If you are running an older version, shut it down. Wait until it has completely
 shut down (which might take a few minutes for older versions), then run the
-installer (on Windows) or just copy over /Applications/Dash-Qt (on Mac) or
-dashd/dash-qt (on Linux).
+installer (on Windows) or just copy over /Applications/Cosanta-Qt (on Mac) or
+cosantad/cosanta-qt (on Linux).
 
 Downgrade warning
 -----------------
@@ -78,7 +78,7 @@ New: `assumevalid`, `blocksonly`, `reindex-chainstate`
 
 Experimental: `usehd`, `mnemonic`, `mnemonicpassphrase`, `hdseed`
 
-See `Help -> Command-line options` in Qt wallet or `dashd --help` for more info.
+See `Help -> Command-line options` in Qt wallet or `cosantad --help` for more info.
 
 PrivateSend improvements
 ------------------------
@@ -106,7 +106,7 @@ Detailed [change log](https://github.com/dashpay/dash/compare/v0.12.1.x...dashpa
 
 ### Backports:
 - [`ff30aed68`](https://github.com/dashpay/dash/commit/ff30aed68) Align with btc 0.12 (#1409)
-- [`9901cf433`](https://github.com/dashpay/dash/commit/9901cf433) Fix for dash-qt issue with startup and multiple monitors. (#1461)
+- [`9901cf433`](https://github.com/dashpay/dash/commit/9901cf433) Fix for cosanta-qt issue with startup and multiple monitors. (#1461)
 - [`39750439b`](https://github.com/dashpay/dash/commit/39750439b) Force to use C++11 mode for compilation (#1463)
 - [`e30faab6f`](https://github.com/dashpay/dash/commit/e30faab6f) Make strWalletFile const (#1459)
 - [`c4fe22900`](https://github.com/dashpay/dash/commit/c4fe22900) Access WorkQueue::running only within the cs lock. (#1460)
@@ -318,7 +318,7 @@ Detailed [change log](https://github.com/dashpay/dash/compare/v0.12.1.x...dashpa
 - [`7a5943c3a`](https://github.com/dashpay/dash/commit/7a5943c3a) Merge pull request #1431 from dashpay/v0.12.2.x-merge_upstream
 - [`8bbcf6200`](https://github.com/dashpay/dash/commit/8bbcf6200) Fixed pow (test and algo) (#1415)
 - [`f3b92a95d`](https://github.com/dashpay/dash/commit/f3b92a95d) c++11: don't throw from the reverselock destructor (#1421)
-- [`b40f8f333`](https://github.com/dashpay/dash/commit/b40f8f333) Rename bitcoinconsensus library to dashconsensus. (#1432)
+- [`b40f8f333`](https://github.com/dashpay/dash/commit/b40f8f333) Rename bitcoinconsensus library to cosantaconsensus. (#1432)
 - [`28a1d0ecc`](https://github.com/dashpay/dash/commit/28a1d0ecc) Fix the same header included twice. (#1474)
 - [`adf97e12a`](https://github.com/dashpay/dash/commit/adf97e12a) fix travis ci mac build (#1483)
 - [`a28fa724c`](https://github.com/dashpay/dash/commit/a28fa724c) fix BIP34 starting blocks for mainnet/testnet (#1476)

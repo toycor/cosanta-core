@@ -3,13 +3,13 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#include <qt/addresstablemodel.h>
+#include "addresstablemodel.h"
 
-#include <qt/guiutil.h>
-#include <qt/walletmodel.h>
+#include "guiutil.h"
+#include "walletmodel.h"
 
-#include <base58.h>
-#include <wallet/wallet.h>
+#include "base58.h"
+#include "wallet/wallet.h"
 
 
 #include <QFont>
@@ -83,14 +83,14 @@ public:
             LOCK(wallet->cs_wallet);
             for (const std::pair<CTxDestination, CAddressBookData>& item : wallet->mapAddressBook)
             {
-                const CTxDestination& address = item.first;
-                bool fMine = IsMine(*wallet, address);
+                const CBitcoinAddress& address = item.first;
+                bool fMine = IsMine(*wallet, address.Get());
                 AddressTableEntry::Type addressType = translateTransactionType(
                         QString::fromStdString(item.second.purpose), fMine);
                 const std::string& strName = item.second.name;
                 cachedAddressTable.append(AddressTableEntry(addressType,
                                   QString::fromStdString(strName),
-                                  QString::fromStdString(EncodeDestination(address))));
+                                  QString::fromStdString(address.ToString())));
             }
         }
         // qLowerBound() and qUpperBound() require our cachedAddressTable list to be sorted in asc order
@@ -218,7 +218,7 @@ QVariant AddressTableModel::data(const QModelIndex &index, int role) const
         QFont font;
         if(index.column() == Address)
         {
-            font = GUIUtil::getFontNormal();
+            font = GUIUtil::fixedPitchFont();
         }
         return font;
     }
@@ -247,7 +247,7 @@ bool AddressTableModel::setData(const QModelIndex &index, const QVariant &value,
     if(role == Qt::EditRole)
     {
         LOCK(wallet->cs_wallet); /* For SetAddressBook / DelAddressBook */
-        CTxDestination curAddress = DecodeDestination(rec->address.toStdString());
+        CTxDestination curAddress = CBitcoinAddress(rec->address.toStdString()).Get();
         if(index.column() == Label)
         {
             // Do nothing, if old label == new label
@@ -258,7 +258,7 @@ bool AddressTableModel::setData(const QModelIndex &index, const QVariant &value,
             }
             wallet->SetAddressBook(curAddress, value.toString().toStdString(), strPurpose);
         } else if(index.column() == Address) {
-            CTxDestination newAddress = DecodeDestination(value.toString().toStdString());
+            CTxDestination newAddress = CBitcoinAddress(value.toString().toStdString()).Get();
             // Refuse to set invalid address, set error status and return false
             if(boost::get<CNoDestination>(&newAddress))
             {
@@ -359,7 +359,7 @@ QString AddressTableModel::addRow(const QString &type, const QString &label, con
         // Check for duplicate addresses
         {
             LOCK(wallet->cs_wallet);
-            if(wallet->mapAddressBook.count(DecodeDestination(strAddress)))
+            if(wallet->mapAddressBook.count(CBitcoinAddress(strAddress).Get()))
             {
                 editStatus = DUPLICATE_ADDRESS;
                 return QString();
@@ -385,7 +385,7 @@ QString AddressTableModel::addRow(const QString &type, const QString &label, con
                 return QString();
             }
         }
-        strAddress = EncodeDestination(newKey.GetID());
+        strAddress = CBitcoinAddress(newKey.GetID()).ToString();
     }
     else
     {
@@ -395,7 +395,7 @@ QString AddressTableModel::addRow(const QString &type, const QString &label, con
     // Add entry
     {
         LOCK(wallet->cs_wallet);
-        wallet->SetAddressBook(DecodeDestination(strAddress), strLabel,
+        wallet->SetAddressBook(CBitcoinAddress(strAddress).Get(), strLabel,
                                (type == Send ? "send" : "receive"));
     }
     return QString::fromStdString(strAddress);
@@ -413,7 +413,7 @@ bool AddressTableModel::removeRows(int row, int count, const QModelIndex &parent
     }
     {
         LOCK(wallet->cs_wallet);
-        wallet->DelAddressBook(DecodeDestination(rec->address.toStdString()));
+        wallet->DelAddressBook(CBitcoinAddress(rec->address.toStdString()).Get());
     }
     return true;
 }
@@ -422,10 +422,14 @@ bool AddressTableModel::removeRows(int row, int count, const QModelIndex &parent
  */
 QString AddressTableModel::labelForAddress(const QString &address) const
 {
-    CTxDestination dest = DecodeDestination(address.toStdString());
-    return labelForDestination(dest);
+    CBitcoinAddress address_parsed(address.toStdString());
+    return labelForAddress(address_parsed);
 }
 
+QString AddressTableModel::labelForAddress(const CBitcoinAddress &address) const
+{
+    return labelForDestination(address.Get());
+}
 
 QString AddressTableModel::labelForDestination(const CTxDestination &dest) const
 {

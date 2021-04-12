@@ -77,7 +77,7 @@ class TxnMallTest(BitcoinTestFramework):
         # Have node0 mine a block, if requested:
         if (self.options.mine_block):
             self.nodes[0].generate(1)
-            self.sync_blocks(self.nodes[0:2])
+            sync_blocks(self.nodes[0:2])
 
         tx1 = self.nodes[0].gettransaction(txid1)
         tx2 = self.nodes[0].gettransaction(txid2)
@@ -114,7 +114,7 @@ class TxnMallTest(BitcoinTestFramework):
         self.nodes[2].sendrawtransaction(fund_bar_tx["hex"])
         self.nodes[2].sendrawtransaction(tx2["hex"])
         self.nodes[2].generate(1)  # Mine another block to make sure we sync
-        self.sync_blocks()
+        sync_blocks(self.nodes)
 
         # Re-fetch transaction info:
         tx1 = self.nodes[0].gettransaction(txid1)

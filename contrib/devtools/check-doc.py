@@ -12,7 +12,6 @@ Author: @MarcoFalke
 
 from subprocess import check_output
 import re
-import sys
 
 FOLDER_GREP = 'src'
 FOLDER_TEST = 'src/test/'
@@ -40,7 +39,7 @@ def main():
   print("Args unknown     : {}".format(len(args_unknown)))
   print(args_unknown)
 
-  sys.exit(len(args_need_doc))
+  exit(len(args_need_doc))
 
 if __name__ == "__main__":
     main()

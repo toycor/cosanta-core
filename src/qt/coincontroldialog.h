@@ -5,7 +5,7 @@
 #ifndef BITCOIN_QT_COINCONTROLDIALOG_H
 #define BITCOIN_QT_COINCONTROLDIALOG_H
 
-#include <amount.h>
+#include "amount.h"
 
 #include <QAbstractButton>
 #include <QAction>
@@ -16,6 +16,7 @@
 #include <QString>
 #include <QTreeWidgetItem>
 
+class PlatformStyle;
 class WalletModel;
 
 class CCoinControl;
@@ -29,9 +30,9 @@ namespace Ui {
 class CCoinControlWidgetItem : public QTreeWidgetItem
 {
 public:
-    explicit CCoinControlWidgetItem(QTreeWidget *parent, int type = Type) : QTreeWidgetItem(parent, type) {}
-    explicit CCoinControlWidgetItem(int type = Type) : QTreeWidgetItem(type) {}
-    explicit CCoinControlWidgetItem(QTreeWidgetItem *parent, int type = Type) : QTreeWidgetItem(parent, type) {}
+    CCoinControlWidgetItem(QTreeWidget *parent, int type = Type) : QTreeWidgetItem(parent, type) {}
+    CCoinControlWidgetItem(int type = Type) : QTreeWidgetItem(type) {}
+    CCoinControlWidgetItem(QTreeWidgetItem *parent, int type = Type) : QTreeWidgetItem(parent, type) {}
 
     bool operator<(const QTreeWidgetItem &other) const;
 };
@@ -42,7 +43,7 @@ class CoinControlDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit CoinControlDialog(QWidget* parent = 0);
+    explicit CoinControlDialog(const PlatformStyle *platformStyle, QWidget *parent = 0);
     ~CoinControlDialog();
 
     void setModel(WalletModel *model);
@@ -51,9 +52,8 @@ public:
     static void updateLabels(WalletModel*, QDialog*);
 
     static QList<CAmount> payAmounts;
-    static CCoinControl *coinControl();
+    static CCoinControl* coinControl;
     static bool fSubtractFeeFromAmount;
-    static void usePrivateSend(bool fUsePrivateSend);
 
 private:
     Ui::CoinControlDialog *ui;
@@ -67,7 +67,7 @@ private:
     QAction *lockAction;
     QAction *unlockAction;
 
-    bool fHideAdditional{true};
+    const PlatformStyle *platformStyle;
 
     void sortView(int, Qt::SortOrder);
     void updateView();
@@ -81,22 +81,10 @@ private:
         COLUMN_PRIVATESEND_ROUNDS,
         COLUMN_DATE,
         COLUMN_CONFIRMATIONS,
+        COLUMN_TXHASH,
+        COLUMN_VOUT_INDEX,
     };
-
-    enum
-    {
-        TxHashRole = Qt::UserRole,
-        VOutRole
-    };
-
     friend class CCoinControlWidgetItem;
-
-    enum class Mode {
-        NORMAL,
-        PRIVATESEND,
-    };
-
-    static CoinControlDialog::Mode mode;
 
 private Q_SLOTS:
     void showMenu(const QPoint &);
@@ -121,7 +109,6 @@ private Q_SLOTS:
     void buttonSelectAllClicked();
     void buttonToggleLockClicked();
     void updateLabelLocked();
-    void on_hideButton_clicked();
 };
 
 #endif // BITCOIN_QT_COINCONTROLDIALOG_H

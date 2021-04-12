@@ -1,7 +1,7 @@
-Contributing to Dash Core
+Contributing to Cosanta Core
 ============================
 
-The Dash Core project operates an open contributor model where anyone is
+The Cosanta Core project operates an open contributor model where anyone is
 welcome to contribute towards development in the form of peer review, testing
 and patches. This document explains the practical process and guidelines for
 contributing.
@@ -24,9 +24,9 @@ facilitates social contribution, easy testing and peer review.
 
 To contribute a patch, the workflow is as follows:
 
-  1. Fork repository
-  1. Create topic branch
-  1. Commit patches
+  - Fork repository
+  - Create topic branch
+  - Commit patches
 
 The project coding conventions in the [developer notes](doc/developer-notes.md)
 must be adhered to.
@@ -42,8 +42,8 @@ in init.cpp") in which case a single title line is sufficient. Commit messages s
 helpful to people reading your code in the future, so explain the reasoning for
 your decisions. Further explanation [here](http://chris.beams.io/posts/git-commit/).
 
-If a particular commit references another issue, please add the reference. For
-example: `refs #1234` or `fixes #4321`. Using the `fixes` or `closes` keywords
+If a particular commit references another issue, please add the reference, for
+example `refs #1234`, or `fixes #4321`. Using the `fixes` or `closes` keywords
 will cause the corresponding issue to be closed when the pull request is merged.
 
 Please refer to the [Git manual](https://git-scm.com/doc) for more information
@@ -57,12 +57,12 @@ the pull request affects. Valid areas as:
 
   - *Consensus* for changes to consensus critical code
   - *Docs* for changes to the documentation
-  - *Qt* for changes to dash-qt
+  - *Qt* for changes to bitcoin-qt
   - *Mining* for changes to the mining code
   - *Net* or *P2P* for changes to the peer-to-peer network code
   - *RPC/REST/ZMQ* for changes to the RPC, REST or ZMQ APIs
   - *Scripts and tools* for changes to the scripts and tools
-  - *Tests* for changes to the unit tests or QA tests
+  - *Tests* for changes to the bitcoin unit tests or QA tests
   - *Trivial* should **only** be used for PRs that do not change generated
     executable code. Notably, refactors (change of function arguments and code
     reorganization) and changes in behavior should **not** be marked as trivial.
@@ -81,11 +81,7 @@ Examples:
     Qt: Add feed bump button
     Trivial: Fix typo in init.cpp
 
-Note that translations should not be submitted as pull requests, please see
-[Translation Process](https://github.com/dashpay/dash/blob/master/doc/translation_process.md) 
-for more information on helping with translations.
-
-If a pull request is not to be considered for merging (yet), please
+If a pull request is specifically not to be considered for merging (yet) please
 prefix the title with [WIP] or use [Tasks Lists](https://help.github.com/articles/basic-writing-and-formatting-syntax/#task-lists)
 in the body of the pull request to indicate tasks are pending.
 
@@ -161,11 +157,11 @@ where possible keep them short, uncomplex and easy to verify.
 "Decision Making" Process
 -------------------------
 
-The following applies to code changes to the Dash Core project (and related
-projects such as libsecp256k1), and is not to be confused with overall Dash
+The following applies to code changes to the Cosanta Core project (and related
+projects such as libsecp256k1), and is not to be confused with overall Cosanta
 Network Protocol consensus changes.
 
-Whether a pull request is merged into Dash Core rests with the project merge
+Whether a pull request is merged into Cosanta Core rests with the project merge
 maintainers and ultimately the project lead.
 
 Maintainers will take into consideration if a patch is in line with the general
@@ -178,12 +174,12 @@ In general, all pull requests must:
     the project (for example refactoring for modularisation);
   - Be well peer reviewed;
   - Have unit tests and functional tests where appropriate;
-  - Follow code style guidelines ([C++](doc/developer-notes.md), [functional tests](test/functional/README.md));
+  - Follow [code style guidelines](/doc/developer-notes.md);
   - Not break the existing test suite;
   - Where bugs are fixed, where possible, there should be unit tests
     demonstrating the bug and also proving the fix. This helps prevent regression.
 
-Patches that change Dash consensus rules are considerably more involved than
+Patches that change Cosanta consensus rules are considerably more involved than
 normal because they affect the entire ecosystem and so must be preceded by
 extensive mailing list discussions and have a numbered BIP. While each case will
 be different, one should be prepared to expend more time and effort than for
@@ -224,33 +220,14 @@ higher in terms of discussion and peer review requirements, keeping in mind that
 mistakes could be very costly to the wider community. This includes refactoring
 of consensus critical code.
 
-Where a patch set proposes to change the Dash consensus, it must have been
+Where a patch set proposes to change the Cosanta consensus, it must have been
 discussed extensively on the mailing list and IRC, be accompanied by a widely
 discussed BIP and have a generally widely perceived technical consensus of being
 a worthwhile change based on the judgement of the maintainers.
 
-#### Verifying a Rebase
-
-When someone rebases their PR, it can often be very difficult to ensure that
-extra changes were not included in that force push. This changes could be anything
-from merge conflicts to someone attempting to sneak something into the PR. To check
-that a PR is the same before and after force push, you can use the following function.
-Place this function in your `~/.bashrc`. In order for this function to work, both the
-before and after commits must be present locally.
-
-```
-function gfd() {
-        local fp1=$(git merge-base --fork-point develop $1)
-        local fp2=$(git merge-base --fork-point develop $2)
-        echo fp1=$fp1
-        echo fp2=$fp2
-        diff --color=always -u -I'^[^-+]' <(git diff $fp1..$1) <(git diff $fp2..$2)
-}
-```
-
 ### Finding Reviewers
 
-The review process is normally fairly responsive on the Dash Core repository, however
+The review process is normally fairly responsive on the Cosana Core repository, however
 this might not always be the case. If you find that you've been waiting
 for a pull request to be given attention for several months, there may be a number
 of reasons for this, some of which you can do something about:
@@ -282,7 +259,7 @@ of reasons for this, some of which you can do something about:
 Release Policy
 --------------
 
-The project leader is the release manager for each Dash Core release.
+The project leader is the release manager for each Cosanta Core release.
 
 Copyright
 ---------

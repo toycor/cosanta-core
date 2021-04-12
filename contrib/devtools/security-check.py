@@ -211,5 +211,5 @@ if __name__ == '__main__':
         except IOError:
             print('%s: cannot open' % filename)
             retval = 1
-    sys.exit(retval)
+    exit(retval)
 

@@ -3,13 +3,13 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#include <pow.h>
+#include "pow.h"
 
-#include <arith_uint256.h>
-#include <chain.h>
-#include <chainparams.h>
-#include <primitives/block.h>
-#include <uint256.h>
+#include "arith_uint256.h"
+#include "chain.h"
+#include "chainparams.h"
+#include "primitives/block.h"
+#include "uint256.h"
 
 #include <math.h>
 
@@ -80,12 +80,25 @@ unsigned int static KimotoGravityWell(const CBlockIndex* pindexLast, const Conse
 }
 
 unsigned int static DarkGravityWave(const CBlockIndex* pindexLast, const Consensus::Params& params) {
+    // Workaround
+    CBlockHeader *pblock;
     /* current difficulty formula, dash - DarkGravity v3, written by Evan Duffield - evan@dash.org */
-    const arith_uint256 bnPowLimit = UintToArith256(params.powLimit);
+    const arith_uint256 bnPowLimit = pblock->IsProofOfStake()
+            ? UintToArith256(params.posLimit)
+            : UintToArith256(params.powLimit);
+
     int64_t nPastBlocks = 24;
+    int64_t nTargetSpacing = params.nPowTargetSpacing;
+    // NOTE: is this accurate? nActualTimespan counts it for (nPastBlocks - 1) blocks only...
+    int64_t nTargetTimespan = nPastBlocks * nTargetSpacing;
 
     // make sure we have at least (nPastBlocks + 1) blocks, otherwise just return powLimit
     if (!pindexLast || pindexLast->nHeight < nPastBlocks) {
+        return bnPowLimit.GetCompact();
+    }
+
+    // Reset on transition
+    if (pblock->IsProofOfStake() && !pindexLast->IsProofOfStake()) {
         return bnPowLimit.GetCompact();
     }
 
@@ -110,8 +123,6 @@ unsigned int static DarkGravityWave(const CBlockIndex* pindexLast, const Consens
     arith_uint256 bnNew(bnPastTargetAvg);
 
     int64_t nActualTimespan = pindexLast->GetBlockTime() - pindex->GetBlockTime();
-    // NOTE: is this accurate? nActualTimespan counts it for (nPastBlocks - 1) blocks only...
-    int64_t nTargetTimespan = nPastBlocks * params.nPowTargetSpacing;
 
     if (nActualTimespan < nTargetTimespan/3)
         nActualTimespan = nTargetTimespan/3;

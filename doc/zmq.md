@@ -45,7 +45,7 @@ operation.
 
 By default, the ZeroMQ feature is automatically compiled in if the
 necessary prerequisites are found.  To disable, use --disable-zmq
-during the *configure* step of building dashd:
+during the *configure* step of building bitcoind:
 
     $ ./configure --disable-zmq (other options)
 
@@ -78,16 +78,16 @@ address. The same address can be used in more than one notification.
 
 For instance:
 
-    $ dashd -zmqpubhashtx=tcp://127.0.0.1:28332 \
-               -zmqpubrawtx=ipc:///tmp/dashd.tx.raw
+    $ cosantad -zmqpubhashtx=tcp://127.0.0.1:28332 \
+               -zmqpubrawtx=ipc:///tmp/cosantad.tx.raw
 
 Each PUB notification has a topic and body, where the header
 corresponds to the notification type. For instance, for the
 notification `-zmqpubhashtx` the topic is `hashtx` (no null
-terminator) and the body is the transaction hash (32
+terminator) and the body is the hexadecimal transaction hash (32
 bytes).
 
-These options can also be provided in dash.conf.
+These options can also be provided in cosanta.conf.
 
 ZeroMQ endpoint specifiers for TCP (and others) are documented in the
 [ZeroMQ API](http://api.zeromq.org/4-0:_start).
@@ -99,9 +99,9 @@ arriving. Please see `contrib/zmq/zmq_sub.py` for a working example.
 
 ## Remarks
 
-From the perspective of dashd, the ZeroMQ socket is write-only; PUB
+From the perspective of cosantad, the ZeroMQ socket is write-only; PUB
 sockets don't even have a read function. Thus, there is no state
-introduced into dashd directly. Furthermore, no information is
+introduced into cosantad directly. Furthermore, no information is
 broadcast that wasn't already received from the public P2P network.
 
 No authentication or authorization is done on connecting clients; it

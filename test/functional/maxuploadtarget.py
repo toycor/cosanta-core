@@ -17,15 +17,15 @@ from test_framework.mininode import *
 from test_framework.test_framework import BitcoinTestFramework
 from test_framework.util import *
 
-class TestNode(P2PInterface):
+class TestNode(NodeConnCB):
     def __init__(self):
         super().__init__()
         self.block_receive_map = defaultdict(int)
 
-    def on_inv(self, message):
+    def on_inv(self, conn, message):
         pass
 
-    def on_block(self, message):
+    def on_block(self, conn, message):
         message.block.calc_sha256()
         self.block_receive_map[message.block.sha256] += 1
 

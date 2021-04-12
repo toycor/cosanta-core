@@ -21,8 +21,8 @@ How to Upgrade
 
 If you are running an older version, shut it down. Wait until it has completely
 shut down (which might take a few minutes for older versions), then run the
-installer (on Windows) or just copy over /Applications/Dash-Qt (on Mac) or
-dashd/dash-qt (on Linux).
+installer (on Windows) or just copy over /Applications/Cosanta-Qt (on Mac) or
+cosantad/cosanta-qt (on Linux).
 
 Downgrade warning
 -----------------
@@ -152,7 +152,7 @@ New cmd-line options:
 - backported from Bitcoin Core 0.13/0.14: `blockreconstructionextratxn`, `maxtimeadjustment`, `maxtipage`,
 `incrementalrelayfee`, `dustrelayfee`, `blockmintxfee`.
 
-See `Help -> Command-line options` in Qt wallet or `dashd --help` for more info.
+See `Help -> Command-line options` in Qt wallet or `cosantad --help` for more info.
 
 New Masternode Information Dialog
 ---------------------------------
@@ -427,10 +427,10 @@ See detailed [change log](https://github.com/dashpay/dash/compare/v0.12.2.3...da
 - [`9cee4193b`](https://github.com/dashpay/dash/commit/9cee4193b) Separate .h generation from .json/.raw for different modules (#1870)
 - [`83957f2d3`](https://github.com/dashpay/dash/commit/83957f2d3) Fix alertTests.raw.h (again) (#1869)
 - [`c13afaad8`](https://github.com/dashpay/dash/commit/c13afaad8) Fix alertTests.raw.h generation (#1868)
-- [`a46bf120b`](https://github.com/dashpay/dash/commit/a46bf120b) Don't directly call "wine test_dash.exe" and let "make check" handle it (#1841)
-- [`e805f790e`](https://github.com/dashpay/dash/commit/e805f790e) Automatically build and push docker image to docker.io/dashpay/dashd-develop (#1809)
-- [`d9058aa04`](https://github.com/dashpay/dash/commit/d9058aa04) Increase travis timeout for "wine src/test/test_dash.exe" call (#1820)
-- [`10786fe8e`](https://github.com/dashpay/dash/commit/10786fe8e) Use travis_wait for "wine test_dash.exe" call to fix timeouts (#1812)
+- [`a46bf120b`](https://github.com/dashpay/dash/commit/a46bf120b) Don't directly call "wine test_cosanta.exe" and let "make check" handle it (#1841)
+- [`e805f790e`](https://github.com/dashpay/dash/commit/e805f790e) Automatically build and push docker image to docker.io/dashpay/cosantad-develop (#1809)
+- [`d9058aa04`](https://github.com/dashpay/dash/commit/d9058aa04) Increase travis timeout for "wine src/test/test_cosanta.exe" call (#1820)
+- [`10786fe8e`](https://github.com/dashpay/dash/commit/10786fe8e) Use travis_wait for "wine test_cosanta.exe" call to fix timeouts (#1812)
 - [`4bce3bf8b`](https://github.com/dashpay/dash/commit/4bce3bf8b) Fix crash on exit when -createwalletbackups=0 (#1810)
 - [`cd9c6994c`](https://github.com/dashpay/dash/commit/cd9c6994c) Implement named devnets (#1791)
 - [`ebbd26a05`](https://github.com/dashpay/dash/commit/ebbd26a05) Drop IsInputAssociatedWithPubkey and optimize CheckOutpoint (#1783)

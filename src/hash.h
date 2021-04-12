@@ -7,24 +7,31 @@
 #ifndef BITCOIN_HASH_H
 #define BITCOIN_HASH_H
 
-#include <crypto/ripemd160.h>
-#include <crypto/sha256.h>
-#include <prevector.h>
-#include <serialize.h>
-#include <uint256.h>
-#include <version.h>
+#include "crypto/ripemd160.h"
+#include "crypto/sha256.h"
+#include "prevector.h"
+#include "serialize.h"
+#include "uint256.h"
+#include "version.h"
 
-#include <crypto/sph_blake.h>
-#include <crypto/sph_bmw.h>
-#include <crypto/sph_groestl.h>
-#include <crypto/sph_jh.h>
-#include <crypto/sph_keccak.h>
-#include <crypto/sph_skein.h>
-#include <crypto/sph_luffa.h>
-#include <crypto/sph_cubehash.h>
-#include <crypto/sph_shavite.h>
-#include <crypto/sph_simd.h>
-#include <crypto/sph_echo.h>
+#include "crypto/sph_blake.h"
+#include "crypto/sph_bmw.h"
+#include "crypto/sph_groestl.h"
+#include "crypto/sph_jh.h"
+#include "crypto/sph_keccak.h"
+#include "crypto/sph_skein.h"
+#include "crypto/sph_luffa.h"
+#include "crypto/sph_cubehash.h"
+#include "crypto/sph_shavite.h"
+#include "crypto/sph_simd.h"
+#include "crypto/sph_echo.h"
+#include "crypto/sph_hamsi.h"
+#include "crypto/sph_fugue.h"
+#include "crypto/sph_shabal.h"
+#include "crypto/sph_whirlpool.h"
+#include "crypto/sph_sha2.h"
+#include "crypto/sph_haval.h"
+#include "crypto/scrypt.h"
 
 #include <vector>
 
@@ -98,6 +105,20 @@ inline uint256 Hash(const T1 p1begin, const T1 p1end,
     uint256 result;
     CHash256().Write(p1begin == p1end ? pblank : (const unsigned char*)&p1begin[0], (p1end - p1begin) * sizeof(p1begin[0]))
               .Write(p2begin == p2end ? pblank : (const unsigned char*)&p2begin[0], (p2end - p2begin) * sizeof(p2begin[0]))
+              .Finalize((unsigned char*)&result);
+    return result;
+}
+
+/** Compute the 256-bit hash of the concatenation of three objects. */
+template<typename T1, typename T2, typename T3>
+inline uint256 Hash(const T1 p1begin, const T1 p1end,
+                    const T2 p2begin, const T2 p2end,
+                    const T3 p3begin, const T3 p3end) {
+    static const unsigned char pblank[1] = {};
+    uint256 result;
+    CHash256().Write(p1begin == p1end ? pblank : (const unsigned char*)&p1begin[0], (p1end - p1begin) * sizeof(p1begin[0]))
+              .Write(p2begin == p2end ? pblank : (const unsigned char*)&p2begin[0], (p2end - p2begin) * sizeof(p2begin[0]))
+              .Write(p3begin == p3end ? pblank : (const unsigned char*)&p3begin[0], (p3end - p3begin) * sizeof(p3begin[0]))
               .Finalize((unsigned char*)&result);
     return result;
 }
@@ -222,7 +243,7 @@ private:
     Source* source;
 
 public:
-    explicit CHashVerifier(Source* source_) : CHashWriter(source_->GetType(), source_->GetVersion()), source(source_) {}
+    CHashVerifier(Source* source_) : CHashWriter(source_->GetType(), source_->GetVersion()), source(source_) {}
 
     void read(char* pch, size_t nSize)
     {
@@ -313,9 +334,19 @@ inline uint256 HashX11(const T1 pbegin, const T1 pend)
     sph_shavite512_context   ctx_shavite;
     sph_simd512_context      ctx_simd;
     sph_echo512_context      ctx_echo;
+    sph_hamsi512_context     ctx_hamsi;
+    sph_fugue512_context     ctx_fugue;
+    sph_shabal512_context    ctx_shabal;
+    sph_whirlpool_context    ctx_whirlpool;
+    sph_sha512_context       ctx_sha2;
+    sph_haval256_5_context   ctx_haval;
+    sph_bmw512_context       ctx_bmw_n;
+    sph_sha512_context       ctx_sha2_n;
+    sph_keccak512_context    ctx_keccak_n;
+    sph_haval256_5_context   ctx_haval_n;
     static unsigned char pblank[1];
 
-    uint512 hash[11];
+    uint512 hash[21];
 
     sph_blake512_init(&ctx_blake);
     sph_blake512 (&ctx_blake, (pbegin == pend ? pblank : static_cast<const void*>(&pbegin[0])), (pend - pbegin) * sizeof(pbegin[0]));
@@ -361,7 +392,47 @@ inline uint256 HashX11(const T1 pbegin, const T1 pend)
     sph_echo512 (&ctx_echo, static_cast<const void*>(&hash[9]), 64);
     sph_echo512_close(&ctx_echo, static_cast<void*>(&hash[10]));
 
-    return hash[10].trim256();
+    sph_hamsi512_init(&ctx_hamsi);
+    sph_hamsi512 (&ctx_hamsi, static_cast<const void*>(&hash[10]), 64);
+    sph_hamsi512_close(&ctx_hamsi, static_cast<void*>(&hash[11]));
+
+    sph_fugue512_init(&ctx_fugue);
+    sph_fugue512 (&ctx_fugue, static_cast<const void*>(&hash[11]), 64);
+    sph_fugue512_close(&ctx_fugue, static_cast<void*>(&hash[12]));
+
+    sph_shabal512_init(&ctx_shabal);
+    sph_shabal512 (&ctx_shabal, static_cast<const void*>(&hash[12]), 64);
+    sph_shabal512_close(&ctx_shabal, static_cast<void*>(&hash[13]));
+
+    sph_whirlpool_init(&ctx_whirlpool);
+    sph_whirlpool (&ctx_whirlpool, static_cast<const void*>(&hash[13]), 64);
+    sph_whirlpool_close(&ctx_whirlpool, static_cast<void*>(&hash[14]));
+
+    sph_sha512_init(&ctx_sha2);
+    sph_sha512 (&ctx_sha2, static_cast<const void*>(&hash[14]), 64);
+    sph_sha512_close(&ctx_sha2, static_cast<void*>(&hash[15]));
+
+    sph_haval256_5_init(&ctx_haval);
+    sph_haval256_5 (&ctx_haval, static_cast<const void*>(&hash[15]), 64);
+    sph_haval256_5_close(&ctx_haval, static_cast<void*>(&hash[16]));
+
+    sph_bmw512_init(&ctx_bmw_n);
+    sph_bmw512 (&ctx_bmw_n, static_cast<const void*>(&hash[16]), 64);
+    sph_bmw512_close(&ctx_bmw_n, static_cast<void*>(&hash[17]));
+
+    sph_sha512_init(&ctx_sha2_n);
+    sph_sha512 (&ctx_sha2_n, static_cast<const void*>(&hash[17]), 64);
+    sph_sha512_close(&ctx_sha2_n, static_cast<void*>(&hash[18]));
+
+    sph_keccak512_init(&ctx_keccak_n);
+    sph_keccak512 (&ctx_keccak_n, static_cast<const void*>(&hash[18]), 64);
+    sph_keccak512_close(&ctx_keccak_n, static_cast<void*>(&hash[19]));
+
+    sph_haval256_5_init(&ctx_haval_n);
+    sph_haval256_5 (&ctx_haval_n, static_cast<const void*>(&hash[19]), 64);
+    sph_haval256_5_close(&ctx_haval_n, static_cast<void*>(&hash[20]));
+
+    return hash[20].trim256();
 }
 
 #endif // BITCOIN_HASH_H

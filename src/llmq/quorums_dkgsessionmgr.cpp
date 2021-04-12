@@ -2,16 +2,16 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#include <llmq/quorums_dkgsessionmgr.h>
-#include <llmq/quorums_blockprocessor.h>
-#include <llmq/quorums_debug.h>
-#include <llmq/quorums_init.h>
-#include <llmq/quorums_utils.h>
+#include "quorums_dkgsessionmgr.h"
+#include "quorums_blockprocessor.h"
+#include "quorums_debug.h"
+#include "quorums_init.h"
+#include "quorums_utils.h"
 
-#include <chainparams.h>
-#include <net_processing.h>
-#include <spork.h>
-#include <validation.h>
+#include "chainparams.h"
+#include "net_processing.h"
+#include "spork.h"
+#include "validation.h"
 
 namespace llmq
 {
@@ -25,29 +25,27 @@ CDKGSessionManager::CDKGSessionManager(CDBWrapper& _llmqDb, CBLSWorker& _blsWork
     llmqDb(_llmqDb),
     blsWorker(_blsWorker)
 {
-    for (const auto& qt : Params().GetConsensus().llmqs) {
-        dkgSessionHandlers.emplace(std::piecewise_construct,
-                std::forward_as_tuple(qt.first),
-                std::forward_as_tuple(qt.second, blsWorker, *this));
-    }
 }
 
 CDKGSessionManager::~CDKGSessionManager()
 {
 }
 
-void CDKGSessionManager::StartThreads()
+void CDKGSessionManager::StartMessageHandlerPool()
 {
-    for (auto& it : dkgSessionHandlers) {
-        it.second.StartThread();
+    for (const auto& qt : Params().GetConsensus().llmqs) {
+        dkgSessionHandlers.emplace(std::piecewise_construct,
+                std::forward_as_tuple(qt.first),
+                std::forward_as_tuple(qt.second, messageHandlerPool, blsWorker, *this));
     }
+
+    messageHandlerPool.resize(2);
+    RenameThreadPool(messageHandlerPool, "dash-q-msg");
 }
 
-void CDKGSessionManager::StopThreads()
+void CDKGSessionManager::StopMessageHandlerPool()
 {
-    for (auto& it : dkgSessionHandlers) {
-        it.second.StopThread();
-    }
+    messageHandlerPool.stop(true);
 }
 
 void CDKGSessionManager::UpdatedBlockTip(const CBlockIndex* pindexNew, bool fInitialDownload)

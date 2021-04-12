@@ -9,7 +9,7 @@
 #include <list>
 #include <cstddef>
 
-#include <serialize.h>
+#include "serialize.h"
 
 /**
  * Serializable structure for key/value items
@@ -70,7 +70,7 @@ private:
     map_t mapIndex;
 
 public:
-    explicit CacheMap(size_type nMaxSizeIn = 0)
+    CacheMap(size_type nMaxSizeIn = 0)
         : nMaxSize(nMaxSizeIn),
           listItems(),
           mapIndex()

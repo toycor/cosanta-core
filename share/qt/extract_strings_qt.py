@@ -11,7 +11,7 @@ import operator
 import os
 import sys
 
-OUT_CPP="qt/dashstrings.cpp"
+OUT_CPP="qt/cosantastrings.cpp"
 EMPTY=['""']
 
 def parse_po(text):
@@ -57,7 +57,7 @@ XGETTEXT=os.getenv('XGETTEXT', 'xgettext')
 if not XGETTEXT:
     print('Cannot extract strings: xgettext utility is not installed or not configured.',file=sys.stderr)
     print('Please install package "gettext" and re-run \'./configure\'.',file=sys.stderr)
-    sys.exit(1)
+    exit(1)
 child = Popen([XGETTEXT,'--output=-','-n','--keyword=_'] + files, stdout=PIPE)
 (out, err) = child.communicate()
 

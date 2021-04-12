@@ -5,14 +5,14 @@
 #ifndef DASH_PROVIDERTX_H
 #define DASH_PROVIDERTX_H
 
-#include <bls/bls.h>
-#include <consensus/validation.h>
-#include <primitives/transaction.h>
+#include "bls/bls.h"
+#include "consensus/validation.h"
+#include "primitives/transaction.h"
 
-#include <base58.h>
-#include <netaddress.h>
-#include <pubkey.h>
-#include <univalue.h>
+#include "base58.h"
+#include "netaddress.h"
+#include "pubkey.h"
+#include "univalue.h"
 
 class CBlockIndex;
 
@@ -71,12 +71,13 @@ public:
         obj.push_back(Pair("collateralHash", collateralOutpoint.hash.ToString()));
         obj.push_back(Pair("collateralIndex", (int)collateralOutpoint.n));
         obj.push_back(Pair("service", addr.ToString(false)));
-        obj.push_back(Pair("ownerAddress", EncodeDestination(keyIDOwner)));
-        obj.push_back(Pair("votingAddress", EncodeDestination(keyIDVoting)));
+        obj.push_back(Pair("ownerAddress", CBitcoinAddress(keyIDOwner).ToString()));
+        obj.push_back(Pair("votingAddress", CBitcoinAddress(keyIDVoting).ToString()));
 
         CTxDestination dest;
         if (ExtractDestination(scriptPayout, dest)) {
-            obj.push_back(Pair("payoutAddress", EncodeDestination(dest)));
+            CBitcoinAddress bitcoinAddress(dest);
+            obj.push_back(Pair("payoutAddress", bitcoinAddress.ToString()));
         }
         obj.push_back(Pair("pubKeyOperator", pubKeyOperator.ToString()));
         obj.push_back(Pair("operatorReward", (double)nOperatorReward / 100));
@@ -126,7 +127,8 @@ public:
         obj.push_back(Pair("service", addr.ToString(false)));
         CTxDestination dest;
         if (ExtractDestination(scriptOperatorPayout, dest)) {
-            obj.push_back(Pair("operatorPayoutAddress", EncodeDestination(dest)));
+            CBitcoinAddress bitcoinAddress(dest);
+            obj.push_back(Pair("operatorPayoutAddress", bitcoinAddress.ToString()));
         }
         obj.push_back(Pair("inputsHash", inputsHash.ToString()));
     }
@@ -174,10 +176,11 @@ public:
         obj.setObject();
         obj.push_back(Pair("version", nVersion));
         obj.push_back(Pair("proTxHash", proTxHash.ToString()));
-        obj.push_back(Pair("votingAddress", EncodeDestination(keyIDVoting)));
+        obj.push_back(Pair("votingAddress", CBitcoinAddress(keyIDVoting).ToString()));
         CTxDestination dest;
         if (ExtractDestination(scriptPayout, dest)) {
-            obj.push_back(Pair("payoutAddress", EncodeDestination(dest)));
+            CBitcoinAddress bitcoinAddress(dest);
+            obj.push_back(Pair("payoutAddress", bitcoinAddress.ToString()));
         }
         obj.push_back(Pair("pubKeyOperator", pubKeyOperator.ToString()));
         obj.push_back(Pair("inputsHash", inputsHash.ToString()));

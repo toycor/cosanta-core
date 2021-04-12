@@ -2,14 +2,14 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#include <masternode/activemasternode.h>
-#include <evo/deterministicmns.h>
-#include <init.h>
-#include <masternode/masternode-sync.h>
-#include <netbase.h>
-#include <protocol.h>
-#include <validation.h>
-#include <warnings.h>
+#include "activemasternode.h"
+#include "evo/deterministicmns.h"
+#include "init.h"
+#include "masternode/masternode-sync.h"
+#include "netbase.h"
+#include "protocol.h"
+#include "validation.h"
+#include "warnings.h"
 
 // Keep track of the active Masternode
 CActiveMasternodeInfo activeMasternodeInfo;
@@ -59,20 +59,20 @@ std::string CActiveMasternodeManager::GetStatus() const
     }
 }
 
-void CActiveMasternodeManager::Init(const CBlockIndex* pindex)
+void CActiveMasternodeManager::Init()
 {
     LOCK(cs_main);
 
     if (!fMasternodeMode) return;
 
-    if (!deterministicMNManager->IsDIP3Enforced(pindex->nHeight)) return;
+    if (!deterministicMNManager->IsDIP3Enforced()) return;
 
     // Check that our local network configuration is correct
-    if (!fListen && Params().RequireRoutableExternalIP()) {
-        // listen option is probably overwritten by something else, no good
+    if (!fListen) {
+        // listen option is probably overwritten by smth else, no good
         state = MASTERNODE_ERROR;
         strError = "Masternode must accept connections from outside. Make sure listen configuration option is not overwritten by some another parameter.";
-        LogPrintf("CActiveMasternodeManager::Init -- ERROR: %s\n", strError);
+        LogPrintf("CActiveDeterministicMasternodeManager::Init -- ERROR: %s\n", strError);
         return;
     }
 
@@ -81,7 +81,7 @@ void CActiveMasternodeManager::Init(const CBlockIndex* pindex)
         return;
     }
 
-    CDeterministicMNList mnList = deterministicMNManager->GetListForBlock(pindex);
+    CDeterministicMNList mnList = deterministicMNManager->GetListAtChainTip();
 
     CDeterministicMNCPtr dmn = mnList.GetMNByOperatorKey(*activeMasternodeInfo.blsPubKeyOperator);
     if (!dmn) {
@@ -107,23 +107,19 @@ void CActiveMasternodeManager::Init(const CBlockIndex* pindex)
         return;
     }
 
-    // Check socket connectivity
-    LogPrintf("CActiveMasternodeManager::Init -- Checking inbound connection to '%s'\n", activeMasternodeInfo.service.ToString());
-    SOCKET hSocket = CreateSocket(activeMasternodeInfo.service);
-    if (hSocket == INVALID_SOCKET) {
-        state = MASTERNODE_ERROR;
-        strError = "Could not create socket to connect to " + activeMasternodeInfo.service.ToString();
-        LogPrintf("CActiveMasternodeManager::Init -- ERROR: %s\n", strError);
-        return;
-    }
-    bool fConnected = ConnectSocketDirectly(activeMasternodeInfo.service, hSocket, nConnectTimeout) && IsSelectableSocket(hSocket);
-    CloseSocket(hSocket);
+    if (Params().NetworkIDString() != CBaseChainParams::REGTEST) {
+        // Check socket connectivity
+        LogPrintf("CActiveDeterministicMasternodeManager::Init -- Checking inbound connection to '%s'\n", activeMasternodeInfo.service.ToString());
+        SOCKET hSocket;
+        bool fConnected = ConnectSocket(activeMasternodeInfo.service, hSocket, nConnectTimeout) && IsSelectableSocket(hSocket);
+        CloseSocket(hSocket);
 
-    if (!fConnected && Params().RequireRoutableExternalIP()) {
-        state = MASTERNODE_ERROR;
-        strError = "Could not connect to " + activeMasternodeInfo.service.ToString();
-        LogPrintf("CActiveMasternodeManager::Init -- ERROR: %s\n", strError);
-        return;
+        if (!fConnected) {
+            state = MASTERNODE_ERROR;
+            strError = "Could not connect to " + activeMasternodeInfo.service.ToString();
+            LogPrintf("CActiveDeterministicMasternodeManager::Init -- ERROR: %s\n", strError);
+            return;
+        }
     }
 
     activeMasternodeInfo.proTxHash = dmn->proTxHash;
@@ -148,7 +144,7 @@ void CActiveMasternodeManager::UpdatedBlockTip(const CBlockIndex* pindexNew, con
             activeMasternodeInfo.proTxHash = uint256();
             activeMasternodeInfo.outpoint.SetNull();
             // MN might have reappeared in same block with a new ProTx
-            Init(pindexNew);
+            Init();
             return;
         }
 
@@ -160,7 +156,7 @@ void CActiveMasternodeManager::UpdatedBlockTip(const CBlockIndex* pindexNew, con
             activeMasternodeInfo.proTxHash = uint256();
             activeMasternodeInfo.outpoint.SetNull();
             // MN might have reappeared in same block with a new ProTx
-            Init(pindexNew);
+            Init();
             return;
         }
 
@@ -169,13 +165,13 @@ void CActiveMasternodeManager::UpdatedBlockTip(const CBlockIndex* pindexNew, con
             state = MASTERNODE_PROTX_IP_CHANGED;
             activeMasternodeInfo.proTxHash = uint256();
             activeMasternodeInfo.outpoint.SetNull();
-            Init(pindexNew);
+            Init();
             return;
         }
     } else {
         // MN might have (re)appeared with a new ProTx or we've found some peers
         // and figured out our local address
-        Init(pindexNew);
+        Init();
     }
 }
 
@@ -190,7 +186,7 @@ bool CActiveMasternodeManager::GetLocalAddress(CService& addrRet)
     if (LookupHost("8.8.8.8", addrDummyPeer, false)) {
         fFoundLocal = GetLocal(addrRet, &addrDummyPeer) && IsValidNetAddr(addrRet);
     }
-    if (!fFoundLocal && !Params().RequireRoutableExternalIP()) {
+    if (!fFoundLocal && Params().NetworkIDString() == CBaseChainParams::REGTEST) {
         if (Lookup("127.0.0.1", addrRet, GetListenPort(), false)) {
             fFoundLocal = true;
         }
@@ -218,6 +214,6 @@ bool CActiveMasternodeManager::IsValidNetAddr(CService addrIn)
 {
     // TODO: regtest is fine with any addresses for now,
     // should probably be a bit smarter if one day we start to implement tests for this
-    return !Params().RequireRoutableExternalIP() ||
+    return Params().NetworkIDString() == CBaseChainParams::REGTEST ||
            (addrIn.IsIPv4() && IsReachable(addrIn) && addrIn.IsRoutable());
 }

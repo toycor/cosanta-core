@@ -5,10 +5,10 @@
 #ifndef SPORK_H
 #define SPORK_H
 
-#include <hash.h>
-#include <net.h>
-#include <utilstrencodings.h>
-#include <key.h>
+#include "hash.h"
+#include "net.h"
+#include "utilstrencodings.h"
+#include "key.h"
 
 #include <unordered_map>
 #include <unordered_set>
@@ -23,11 +23,14 @@ class CSporkManager;
 enum SporkId : int32_t {
     SPORK_2_INSTANTSEND_ENABLED                            = 10001,
     SPORK_3_INSTANTSEND_BLOCK_FILTERING                    = 10002,
+    SPORK_6_NEW_SIGS                                       = 10005,
     SPORK_9_SUPERBLOCKS_ENABLED                            = 10008,
+    SPORK_15_FIRST_POS_BLOCK                               = 60001,
+    SPORK_15_DETERMINISTIC_MNS_ENABLED                     = 10014,
+    SPORK_16_INSTANTSEND_AUTOLOCKS                         = 10015,
     SPORK_17_QUORUM_DKG_ENABLED                            = 10016,
     SPORK_19_CHAINLOCKS_ENABLED                            = 10018,
-    SPORK_21_QUORUM_ALL_CONNECTED                          = 10020,
-    SPORK_22_PS_MORE_PARTICIPANTS                          = 10021,
+    SPORK_20_INSTANTSEND_LLMQ_BASED                        = 10019,
 
     SPORK_INVALID                                          = -1,
 };
@@ -120,13 +123,13 @@ public:
     /**
      * Sign will sign the spork message with the given key.
      */
-    bool Sign(const CKey& key);
+    bool Sign(const CKey& key, bool fSporkSixActive);
 
     /**
      * CheckSignature will ensure the spork signature matches the provided public
      * key hash.
      */
-    bool CheckSignature(const CKeyID& pubKeyId) const;
+    bool CheckSignature(const CKeyID& pubKeyId, bool fSporkSixActive) const;
 
     /**
      * GetSignerKeyID is used to recover the spork address of the key used to
@@ -135,7 +138,7 @@ public:
      * This method was introduced along with the multi-signer sporks feature,
      * in order to identify which spork key signed this message.
      */
-    bool GetSignerKeyID(CKeyID& retKeyidSporkSigner);
+    bool GetSignerKeyID(CKeyID& retKeyidSporkSigner, bool fSporkSixActive);
 
     /**
      * Relay is used to send this spork message to other peers.
@@ -190,7 +193,7 @@ public:
         }
         // we don't serialize pubkey ids because pubkeys should be
         // hardcoded or be setted with cmdline or options, should
-        // not reuse pubkeys from previous dashd run
+        // not reuse pubkeys from previous cosantad run
         READWRITE(mapSporksByHash);
         READWRITE(mapSporksActive);
         // we don't serialize private key to prevent its leakage

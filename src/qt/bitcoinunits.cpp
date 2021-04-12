@@ -3,9 +3,9 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#include <qt/bitcoinunits.h>
-#include <chainparams.h>
-#include <primitives/transaction.h>
+#include "bitcoinunits.h"
+#include "chainparams.h"
+#include "primitives/transaction.h"
 
 #include <QSettings>
 #include <QStringList>
@@ -46,9 +46,9 @@ QString BitcoinUnits::name(int unit)
     {
         switch(unit)
         {
-            case DASH: return QString("DASH");
-            case mDASH: return QString("mDASH");
-            case uDASH: return QString::fromUtf8("μDASH");
+            case DASH: return QString("COSA");
+            case mDASH: return QString("mCOSA");
+            case uDASH: return QString::fromUtf8("μCOSA");
             case duffs: return QString("duffs");
             default: return QString("???");
         }
@@ -57,9 +57,9 @@ QString BitcoinUnits::name(int unit)
     {
         switch(unit)
         {
-            case DASH: return QString("tDASH");
-            case mDASH: return QString("mtDASH");
-            case uDASH: return QString::fromUtf8("μtDASH");
+            case DASH: return QString("tCOSA");
+            case mDASH: return QString("mtCOSA");
+            case uDASH: return QString::fromUtf8("μtCOSA");
             case duffs: return QString("tduffs");
             default: return QString("???");
         }
@@ -246,11 +246,7 @@ int BitcoinUnits::rowCount(const QModelIndex &parent) const
 
 QVariant BitcoinUnits::data(const QModelIndex &index, int role) const
 {
-    return data(index.row(), role);
-}
-
-QVariant BitcoinUnits::data(const int &row, int role) const
-{
+    int row = index.row();
     if(row >= 0 && row < unitlist.size())
     {
         Unit unit = unitlist.at(row);

@@ -4,12 +4,14 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#include <rpc/client.h>
-#include <rpc/protocol.h>
-#include <util.h>
+#include "rpc/client.h"
+#include "rpc/protocol.h"
+#include "util.h"
 
 #include <set>
 #include <stdint.h>
+
+#include <univalue.h>
 
 class CRPCConvertParam
 {
@@ -41,6 +43,8 @@ static const CRPCConvertParam vRPCConvertParams[] =
     { "sendtoaddress", 5, "use_is" },
     { "sendtoaddress", 6, "use_ps" },
     { "sendtoaddress", 7, "conf_target" },
+    { "instantsendtoaddress", 1, "address" },
+    { "instantsendtoaddress", 4, "comment_to" },
     { "settxfee", 0, "amount" },
     { "getreceivedbyaddress", 1, "minconf" },
     { "getreceivedbyaddress", 2, "addlocked" },
@@ -178,8 +182,8 @@ static const CRPCConvertParam vRPCConvertParams[] =
     { "echojson", 7, "arg7" },
     { "echojson", 8, "arg8" },
     { "echojson", 9, "arg9" },
-    { "rescanblockchain", 0, "start_height"},
-    { "rescanblockchain", 1, "stop_height"},
+    { "reservebalance", 0, "reserve" },
+    { "reservebalance", 1, "amount" },
     { "stop", 0, "wait" },
 };
 
@@ -251,7 +255,7 @@ UniValue RPCConvertNamedValues(const std::string &strMethod, const std::vector<s
     UniValue params(UniValue::VOBJ);
 
     for (const std::string &s: strParams) {
-        size_t pos = s.find('=');
+        size_t pos = s.find("=");
         if (pos == std::string::npos) {
             throw(std::runtime_error("No '=' in named argument '"+s+"', this needs to be present for every argument (even if it is empty)"));
         }

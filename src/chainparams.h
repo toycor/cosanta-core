@@ -6,13 +6,19 @@
 #ifndef BITCOIN_CHAINPARAMS_H
 #define BITCOIN_CHAINPARAMS_H
 
-#include <chainparamsbase.h>
-#include <consensus/params.h>
-#include <primitives/block.h>
-#include <protocol.h>
+#include "chainparamsbase.h"
+#include "consensus/params.h"
+#include "primitives/block.h"
+#include "protocol.h"
 
 #include <memory>
 #include <vector>
+
+struct CDNSSeedData {
+    std::string host;
+    bool supportsServiceBitsFiltering;
+    CDNSSeedData(const std::string &strHost, bool supportsServiceBitsFilteringIn) : host(strHost), supportsServiceBitsFiltering(supportsServiceBitsFilteringIn) {}
+};
 
 struct SeedSpec6 {
     uint8_t addr[16];
@@ -70,32 +76,26 @@ public:
     bool AllowMultipleAddressesFromGroup() const { return fAllowMultipleAddressesFromGroup; }
     /** Allow nodes with the same address and multiple ports */
     bool AllowMultiplePorts() const { return fAllowMultiplePorts; }
-    /** How long to wait until we allow retrying of a LLMQ connection  */
-    int LLMQConnectionRetryTimeout() const { return nLLMQConnectionRetryTimeout; }
     /** Return the BIP70 network string (main, test or regtest) */
     std::string NetworkIDString() const { return strNetworkID; }
-    /** Return the list of hostnames to look up for DNS seeds */
-    const std::vector<std::string>& DNSSeeds() const { return vSeeds; }
+    const std::vector<CDNSSeedData>& DNSSeeds() const { return vSeeds; }
     const std::vector<unsigned char>& Base58Prefix(Base58Type type) const { return base58Prefixes[type]; }
     int ExtCoinType() const { return nExtCoinType; }
     const std::vector<SeedSpec6>& FixedSeeds() const { return vFixedSeeds; }
     const CCheckpointData& Checkpoints() const { return checkpointData; }
     const ChainTxData& TxData() const { return chainTxData; }
-    void UpdateVersionBitsParameters(Consensus::DeploymentPos d, int64_t nStartTime, int64_t nTimeout, int64_t nWindowSize, int64_t nThresholdStart, int64_t nThresholdMin, int64_t nFalloffCoeff);
+    void UpdateVersionBitsParameters(Consensus::DeploymentPos d, int64_t nStartTime, int64_t nTimeout, int64_t nWindowSize, int64_t nThreshold);
     void UpdateDIP3Parameters(int nActivationHeight, int nEnforcementHeight);
     void UpdateBudgetParameters(int nMasternodePaymentsStartBlock, int nBudgetPaymentsStartBlock, int nSuperblockStartBlock);
     void UpdateSubsidyAndDiffParams(int nMinimumDifficultyBlocks, int nHighSubsidyBlocks, int nHighSubsidyFactor);
     void UpdateLLMQChainLocks(Consensus::LLMQType llmqType);
-    void UpdateLLMQTestParams(int size, int threshold);
-    void UpdateLLMQDevnetParams(int size, int threshold);
     int PoolMinParticipants() const { return nPoolMinParticipants; }
-    int PoolNewMinParticipants() const { return nPoolNewMinParticipants; }
     int PoolMaxParticipants() const { return nPoolMaxParticipants; }
-    int PoolNewMaxParticipants() const { return nPoolNewMaxParticipants; }
     int FulfilledRequestExpireTime() const { return nFulfilledRequestExpireTime; }
     const std::vector<std::string>& SporkAddresses() const { return vSporkAddresses; }
     int MinSporkKeys() const { return nMinSporkKeys; }
     bool BIP9CheckMasternodesUpgraded() const { return fBIP9CheckMasternodesUpgraded; }
+    int64_t MinStakeAge() const { return nStakeMinAge; }
 protected:
     CChainParams() {}
 
@@ -103,7 +103,7 @@ protected:
     CMessageHeader::MessageStartChars pchMessageStart;
     int nDefaultPort;
     uint64_t nPruneAfterHeight;
-    std::vector<std::string> vSeeds;
+    std::vector<CDNSSeedData> vSeeds;
     std::vector<unsigned char> base58Prefixes[MAX_BASE58_TYPES];
     int nExtCoinType;
     std::string strNetworkID;
@@ -116,17 +116,15 @@ protected:
     bool fMineBlocksOnDemand;
     bool fAllowMultipleAddressesFromGroup;
     bool fAllowMultiplePorts;
-    int nLLMQConnectionRetryTimeout;
     CCheckpointData checkpointData;
     ChainTxData chainTxData;
     int nPoolMinParticipants;
-    int nPoolNewMinParticipants;
     int nPoolMaxParticipants;
-    int nPoolNewMaxParticipants;
     int nFulfilledRequestExpireTime;
     std::vector<std::string> vSporkAddresses;
     int nMinSporkKeys;
     bool fBIP9CheckMasternodesUpgraded;
+    int64_t nStakeMinAge;
 };
 
 /**
@@ -151,7 +149,7 @@ void SelectParams(const std::string& chain);
 /**
  * Allows modifying the Version Bits regtest parameters.
  */
-void UpdateVersionBitsParameters(Consensus::DeploymentPos d, int64_t nStartTime, int64_t nTimeout, int64_t nWindowSize, int64_t nThresholdStart, int64_t nThresholdMin, int64_t nFalloffCoeff);
+void UpdateVersionBitsParameters(Consensus::DeploymentPos d, int64_t nStartTime, int64_t nTimeout, int64_t nWindowSize, int64_t nThreshold);
 
 /**
  * Allows modifying the DIP3 activation and enforcement height
@@ -172,15 +170,5 @@ void UpdateDevnetSubsidyAndDiffParams(int nMinimumDifficultyBlocks, int nHighSub
  * Allows modifying the LLMQ type for ChainLocks.
  */
 void UpdateDevnetLLMQChainLocks(Consensus::LLMQType llmqType);
-
-/**
- * Allows modifying parameters of the test LLMQ
- */
-void UpdateLLMQTestParams(int size, int threshold);
-
-/**
- * Allows modifying parameters of the devnet LLMQ
- */
-void UpdateLLMQDevnetParams(int size, int threshold);
 
 #endif // BITCOIN_CHAINPARAMS_H

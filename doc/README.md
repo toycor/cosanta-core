@@ -11,16 +11,16 @@ The following are some helpful notes on how to run Dash on your native platform.
 
 Unpack the files into a directory and run:
 
-- `bin/dash-qt` (GUI) or
-- `bin/dashd` (headless)
+- `bin/cosanta-qt` (GUI) or
+- `bin/cosantad` (headless)
 
 ### Windows
 
-Unpack the files into a directory, and then run dash-qt.exe.
+Unpack the files into a directory, and then run cosanta-qt.exe.
 
 ### OS X
 
-Drag Dash-Qt to your applications folder, and then run Dash-Qt.
+Drag Cosanta-Qt to your applications folder, and then run Cosanta-Qt.
 
 ### Need Help?
 

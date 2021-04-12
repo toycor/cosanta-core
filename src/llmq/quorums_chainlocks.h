@@ -5,16 +5,14 @@
 #ifndef DASH_QUORUMS_CHAINLOCKS_H
 #define DASH_QUORUMS_CHAINLOCKS_H
 
-#include <llmq/quorums.h>
-#include <llmq/quorums_signing.h>
+#include "llmq/quorums.h"
+#include "llmq/quorums_signing.h"
 
-#include <net.h>
-#include <chainparams.h>
+#include "net.h"
+#include "chainparams.h"
 
 #include <atomic>
 #include <unordered_set>
-
-#include <boost/thread.hpp>
 
 class CBlockIndex;
 class CScheduler;
@@ -54,7 +52,6 @@ class CChainLocksHandler : public CRecoveredSigsListener
 
 private:
     CScheduler* scheduler;
-    boost::thread* scheduler_thread;
     CCriticalSection cs;
     bool tryLockChainTipScheduled{false};
     bool isSporkActive{false};
@@ -81,7 +78,7 @@ private:
     int64_t lastCleanupTime{0};
 
 public:
-    explicit CChainLocksHandler();
+    CChainLocksHandler(CScheduler* _scheduler);
     ~CChainLocksHandler();
 
     void Start();
@@ -113,7 +110,7 @@ private:
     bool InternalHasChainLock(int nHeight, const uint256& blockHash);
     bool InternalHasConflictingChainLock(int nHeight, const uint256& blockHash);
 
-    void DoInvalidateBlock(const CBlockIndex* pindex);
+    void DoInvalidateBlock(const CBlockIndex* pindex, bool activateBestChain);
 
     BlockTxs::mapped_type GetBlockTxs(const uint256& blockHash);
 
