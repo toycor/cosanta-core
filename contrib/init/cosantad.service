@@ -1,15 +1,15 @@
 [Unit]
-Description=Dash's distributed currency daemon
+Description=Cosanta's distributed currency daemon
 After=network.target
 
 [Service]
-User=dashcore
-Group=dashcore
+User=cosantacore
+Group=cosantacore
 
 Type=forking
 PIDFile=/var/lib/cosantad/cosantad.pid
 ExecStart=/usr/bin/cosantad -daemon -pid=/var/lib/cosantad/cosantad.pid \
--conf=/etc/dashcore/cosanta.conf -datadir=/var/lib/cosantad -disablewallet
+-conf=/etc/cosantacore/cosanta.conf -datadir=/var/lib/cosantad -disablewallet
 
 Restart=always
 PrivateTmp=true

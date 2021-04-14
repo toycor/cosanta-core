@@ -1,9 +1,9 @@
-// Copyright (c) 2017-2019 The Dash Core developers
+// Copyright (c) 2017-2019 The Cosanta Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef DASH_CBTX_H
-#define DASH_CBTX_H
+#ifndef COSANTA_CBTX_H
+#define COSANTA_CBTX_H
 
 #include "consensus/validation.h"
 #include "primitives/transaction.h"
@@ -60,4 +60,4 @@ bool CheckCbTxMerkleRoots(const CBlock& block, const CBlockIndex* pindex, CValid
 bool CalcCbTxMerkleRootMNList(const CBlock& block, const CBlockIndex* pindexPrev, uint256& merkleRootRet, CValidationState& state);
 bool CalcCbTxMerkleRootQuorums(const CBlock& block, const CBlockIndex* pindexPrev, uint256& merkleRootRet, CValidationState& state);
 
-#endif //DASH_CBTX_H
+#endif //COSANTA_CBTX_H

@@ -1,6 +1,6 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
 // Copyright (c) 2009-2015 The Bitcoin Core developers
-// Copyright (c) 2014-2019 The Dash Core developers
+// Copyright (c) 2014-2019 The Cosanta Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -31,6 +31,7 @@
 #include "crypto/sph_whirlpool.h"
 #include "crypto/sph_sha2.h"
 #include "crypto/sph_haval.h"
+#include "crypto/sph_streebog.h"
 #include "crypto/scrypt.h"
 
 #include <vector>
@@ -318,7 +319,7 @@ public:
 uint64_t SipHashUint256(uint64_t k0, uint64_t k1, const uint256& val);
 uint64_t SipHashUint256Extra(uint64_t k0, uint64_t k1, const uint256& val, uint32_t extra);
 
-/* ----------- Dash Hash ------------------------------------------------ */
+/* ----------- Cosanta Hash ------------------------------------------------ */
 template<typename T1>
 inline uint256 HashX11(const T1 pbegin, const T1 pend)
 
@@ -340,13 +341,15 @@ inline uint256 HashX11(const T1 pbegin, const T1 pend)
     sph_whirlpool_context    ctx_whirlpool;
     sph_sha512_context       ctx_sha2;
     sph_haval256_5_context   ctx_haval;
+    sph_gost512_context      ctx_gost;
+
     sph_bmw512_context       ctx_bmw_n;
     sph_sha512_context       ctx_sha2_n;
     sph_keccak512_context    ctx_keccak_n;
     sph_haval256_5_context   ctx_haval_n;
     static unsigned char pblank[1];
 
-    uint512 hash[21];
+    uint512 hash[22];
 
     sph_blake512_init(&ctx_blake);
     sph_blake512 (&ctx_blake, (pbegin == pend ? pblank : static_cast<const void*>(&pbegin[0])), (pend - pbegin) * sizeof(pbegin[0]));
@@ -416,13 +419,13 @@ inline uint256 HashX11(const T1 pbegin, const T1 pend)
     sph_haval256_5 (&ctx_haval, static_cast<const void*>(&hash[15]), 64);
     sph_haval256_5_close(&ctx_haval, static_cast<void*>(&hash[16]));
 
-    sph_bmw512_init(&ctx_bmw_n);
-    sph_bmw512 (&ctx_bmw_n, static_cast<const void*>(&hash[16]), 64);
-    sph_bmw512_close(&ctx_bmw_n, static_cast<void*>(&hash[17]));
+    sph_gost512_init(&ctx_gost);
+    sph_gost512 (&ctx_gost, static_cast<const void*>(&hash[16]), 64);
+    sph_gost512_close(&ctx_gost, static_cast<void*>(&hash[17]));
 
-    sph_sha512_init(&ctx_sha2_n);
-    sph_sha512 (&ctx_sha2_n, static_cast<const void*>(&hash[17]), 64);
-    sph_sha512_close(&ctx_sha2_n, static_cast<void*>(&hash[18]));
+    sph_bmw512_init(&ctx_bmw_n);
+    sph_bmw512 (&ctx_bmw_n, static_cast<const void*>(&hash[17]), 64);
+    sph_bmw512_close(&ctx_bmw_n, static_cast<void*>(&hash[18]));
 
     sph_keccak512_init(&ctx_keccak_n);
     sph_keccak512 (&ctx_keccak_n, static_cast<const void*>(&hash[18]), 64);
@@ -432,7 +435,11 @@ inline uint256 HashX11(const T1 pbegin, const T1 pend)
     sph_haval256_5 (&ctx_haval_n, static_cast<const void*>(&hash[19]), 64);
     sph_haval256_5_close(&ctx_haval_n, static_cast<void*>(&hash[20]));
 
-    return hash[20].trim256();
+    sph_sha512_init(&ctx_sha2_n);
+    sph_sha512 (&ctx_sha2_n, static_cast<const void*>(&hash[20]), 64);
+    sph_sha512_close(&ctx_sha2_n, static_cast<void*>(&hash[21]));
+
+    return hash[21].trim256();
 }
 
 #endif // BITCOIN_HASH_H

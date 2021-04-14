@@ -1,5 +1,5 @@
 # Copyright (c) 2013-2016 The Bitcoin Core developers
-# Copyright (c) 2014-2018 The Dash Core developers
+# Copyright (c) 2014-2018 The Cosanta Core developers
 # Distributed under the MIT software license, see the accompanying
 # file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -155,12 +155,12 @@ CLEAN_BITCOIN_TEST = test/*.gcda test/*.gcno $(GENERATED_TEST_FILES)
 
 CLEANFILES += $(CLEAN_BITCOIN_TEST)
 
-dash_test: $(TEST_BINARY)
+cosanta_test: $(TEST_BINARY)
 
-dash_test_check: $(TEST_BINARY) FORCE
+cosanta_test_check: $(TEST_BINARY) FORCE
 	$(MAKE) check-TESTS TESTS=$^
 
-dash_test_clean : FORCE
+cosanta_test_clean : FORCE
 	rm -f $(CLEAN_BITCOIN_TEST) $(test_test_cosanta_OBJECTS) $(TEST_BINARY)
 
 check-local:

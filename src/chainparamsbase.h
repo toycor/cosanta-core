@@ -11,7 +11,7 @@
 
 /**
  * CBaseChainParams defines the base parameters (shared between cosanta-cli and cosantad)
- * of a given instance of the Dash system.
+ * of a given instance of the Cosanta system.
  */
 class CBaseChainParams
 {

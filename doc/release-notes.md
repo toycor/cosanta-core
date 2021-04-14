@@ -1,4 +1,4 @@
-Dash Core version 0.15
+Cosanta Core version 0.15
 ======================
 
 Release is now available from:
@@ -27,7 +27,7 @@ or -reindex) to make sure your wallet has all the new data synced. Upgrading fro
 version 0.13 should not require any additional actions.
 
 When upgrading from a version prior to 0.14.0.3, the
-first startup of Dash Core will run a migration process which can take a few minutes
+first startup of Cosanta Core will run a migration process which can take a few minutes
 to finish. After the migration, a downgrade to an older version is only possible with
 a reindex (or reindex-chainstate).
 
@@ -157,7 +157,7 @@ There are a few changes in existing RPC interfaces in this release:
 - no more `instantsend` field in various RPC commands
 - `use-IS`, `use_is` and `instantsend` options are deprecated in various RPC commands and have no effect anymore
 - added new `merkleRootQuorums` field in `getblock` RPC results
-- individual Dash-specific fields which were used to display soft-fork progress in `getblockchaininfo` are replaced
+- individual Cosanta-specific fields which were used to display soft-fork progress in `getblockchaininfo` are replaced
  with the backported `statistics` object
 - `privatesend_balance` field is shown in all related RPC results regardless of the Lite Mode or PrivateSend state
 - added `pubKeyOperator` field for each masternode in `quorum info` RPC response
@@ -213,7 +213,7 @@ option (default is `no`). When using this option on macOS make sure to build bin
 Backports from Bitcoin Core 0.15
 --------------------------------
 
-Most of the changes between Bitcoin Core 0.14 and Bitcoin Core 0.15 have been backported into Dash Core 0.15.
+Most of the changes between Bitcoin Core 0.14 and Bitcoin Core 0.15 have been backported into Cosanta Core 0.15.
 We only excluded backports which do not align with Dash, like SegWit or RBF related changes.
 
 You can read about changes brought by backporting from Bitcoin Core 0.15 in following docs:
@@ -225,7 +225,7 @@ and additional fixes in https://github.com/dashpay/dash/blob/master/doc/release-
 
 Miscellaneous
 -------------
-A lot of refactoring, backports, code cleanups and other small fixes were done in this release. Dash-specific
+A lot of refactoring, backports, code cleanups and other small fixes were done in this release. Cosanta-specific
 modules were reorganized in separate folders to make navigation through code a bit easier.
 
 0.15 Change log
@@ -248,7 +248,7 @@ See detailed [set of changes](https://github.com/dashpay/dash/compare/v0.14.0.5.
 - [`8d5fc6e0a`](https://github.com/dashpay/dash/commit/8d5fc6e0a) Merge #13162: [net] Don't incorrectly log that REJECT messages are unknown.
 - [`9e711befd`](https://github.com/dashpay/dash/commit/9e711befd) More of 13946
 - [`e5e3572e9`](https://github.com/dashpay/dash/commit/e5e3572e9) Merge #13946: p2p: Clarify control flow in ProcessMessage
-- [`dbbc51121`](https://github.com/dashpay/dash/commit/dbbc51121) Add `automake` package to dash-win-signer's packages list (#3307)
+- [`dbbc51121`](https://github.com/dashpay/dash/commit/dbbc51121) Add `automake` package to cosanta-win-signer's packages list (#3307)
 - [`fd0f24335`](https://github.com/dashpay/dash/commit/fd0f24335) [Trivial] Release note update (#3308)
 - [`058872d4f`](https://github.com/dashpay/dash/commit/058872d4f) Update release-notes.md
 - [`546e69f1a`](https://github.com/dashpay/dash/commit/546e69f1a) Fix CActiveMasternodeManager::GetLocalAddress to prefer IPv4 if multiple local addresses are known (#3304)
@@ -352,10 +352,10 @@ See detailed [set of changes](https://github.com/dashpay/dash/compare/v0.14.0.5.
 - [`152c10bc4`](https://github.com/dashpay/dash/commit/152c10bc4) Various fixes for mixing queues (#3138)
 - [`e0c56246f`](https://github.com/dashpay/dash/commit/e0c56246f) Fixes and refactorings related to using mnsync in tests (#3136)
 - [`f8e238c5b`](https://github.com/dashpay/dash/commit/f8e238c5b) [Trivial] RPC help updates (#3134)
-- [`d49ee618f`](https://github.com/dashpay/dash/commit/d49ee618f) Add more logging to DashTestFramework (#3130)
+- [`d49ee618f`](https://github.com/dashpay/dash/commit/d49ee618f) Add more logging to CosantaTestFramework (#3130)
 - [`cd6c5b4b4`](https://github.com/dashpay/dash/commit/cd6c5b4b4) Multiple fixes for ChainLock tests (#3129)
 - [`e06c116d2`](https://github.com/dashpay/dash/commit/e06c116d2) Actually pass extra_args to nodes in assumevalid.py (#3131)
-- [`737ac967f`](https://github.com/dashpay/dash/commit/737ac967f) Refactor some Dash-specific `wait_for*` functions in tests (#3122)
+- [`737ac967f`](https://github.com/dashpay/dash/commit/737ac967f) Refactor some Cosanta-specific `wait_for*` functions in tests (#3122)
 - [`b4aefb513`](https://github.com/dashpay/dash/commit/b4aefb513) Also consider txindex for transactions in AlreadyHave() (#3126)
 - [`d9e98e31e`](https://github.com/dashpay/dash/commit/d9e98e31e) Fix scripted diff check condition (#3128)
 - [`bad3243b8`](https://github.com/dashpay/dash/commit/bad3243b8) Bump mocktime before generating new blocks and generate a few blocks at the end of `test_mempool_doublespend` in `p2p-instantsend.py` (#3125)
@@ -385,7 +385,7 @@ See detailed [set of changes](https://github.com/dashpay/dash/compare/v0.14.0.5.
 - [`6b5b70fab`](https://github.com/dashpay/dash/commit/6b5b70fab) Remove liquidity provider privatesend (#3082)
 - [`0b2221ed6`](https://github.com/dashpay/dash/commit/0b2221ed6) Clarify default max peer connections (#3081)
 - [`c22169d57`](https://github.com/dashpay/dash/commit/c22169d57) Reduce non-debug PS log output (#3076)
-- [`41ae1c7e2`](https://github.com/dashpay/dash/commit/41ae1c7e2) Add LDFLAGS_WRAP_EXCEPTIONS to dash_fuzzy linking (#3075)
+- [`41ae1c7e2`](https://github.com/dashpay/dash/commit/41ae1c7e2) Add LDFLAGS_WRAP_EXCEPTIONS to cosanta_fuzzy linking (#3075)
 - [`77b88558e`](https://github.com/dashpay/dash/commit/77b88558e) Update/modernize macOS plist (#3074)
 - [`f1ff14818`](https://github.com/dashpay/dash/commit/f1ff14818) Fix bip69 vs change position issue (#3063)
 - [`9abc39383`](https://github.com/dashpay/dash/commit/9abc39383) Refactor few things here and there (#3066)
@@ -410,7 +410,7 @@ See detailed [set of changes](https://github.com/dashpay/dash/compare/v0.14.0.5.
 - [`02f6188e8`](https://github.com/dashpay/dash/commit/02f6188e8) Do not count 0-fee txes for fee estimation (#3037)
 - [`f0c73f5ce`](https://github.com/dashpay/dash/commit/f0c73f5ce) Revert "Skip mempool.dat when wallet is starting in "zap" mode (#2782)"
 - [`be3bc48c9`](https://github.com/dashpay/dash/commit/be3bc48c9) Fix broken link in PrivateSend info dialog (#3031)
-- [`acab8c552`](https://github.com/dashpay/dash/commit/acab8c552) Add Dash Core Group codesign certificate (#3027)
+- [`acab8c552`](https://github.com/dashpay/dash/commit/acab8c552) Add Cosanta Core Group codesign certificate (#3027)
 - [`a1c4321e9`](https://github.com/dashpay/dash/commit/a1c4321e9) Fix osslsigncode compile issue in gitian-build (#3026)
 - [`2f21e5551`](https://github.com/dashpay/dash/commit/2f21e5551) Remove legacy InstantSend code (#3020)
 - [`7a440d626`](https://github.com/dashpay/dash/commit/7a440d626) Optimize on-disk deterministic masternode storage to reduce size of evodb (#3017)
@@ -498,12 +498,12 @@ the 0.8.x tree and was first released on Mar/13/2014.
 Darkcoin tree 0.10.x used to be the closed source implementation of Darksend
 which was released open source on Sep/25/2014.
 
-Dash Core tree 0.11.x was a fork of Bitcoin Core tree 0.9,
+Cosanta Core tree 0.11.x was a fork of Bitcoin Core tree 0.9,
 Darkcoin was rebranded to Dash.
 
-Dash Core tree 0.12.0.x was a fork of Bitcoin Core tree 0.10.
+Cosanta Core tree 0.12.0.x was a fork of Bitcoin Core tree 0.10.
 
-Dash Core tree 0.12.1.x was a fork of Bitcoin Core tree 0.12.
+Cosanta Core tree 0.12.1.x was a fork of Bitcoin Core tree 0.12.
 
 These release are considered obsolete. Old release notes can be found here:
 

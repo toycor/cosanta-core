@@ -43,10 +43,10 @@
       <key>CFBundleTypeRole</key>
       <string>Editor</string>
       <key>CFBundleURLName</key>
-      <string>org.cosanta.DashPayment</string>
+      <string>net.cosanta</string>
       <key>CFBundleURLSchemes</key>
       <array>
-        <string>dash</string>
+        <string>cosanta</string>
       </array>
     </dict>
   </array>
@@ -55,9 +55,9 @@
   <array>
     <dict>
       <key>UTTypeIdentifier</key>
-      <string>org.cosanta.paymentrequest</string>
+      <string>net.cosanta</string>
       <key>UTTypeDescription</key>
-      <string>Dash payment request</string>
+      <string>Cosanta</string>
       <key>UTTypeConformsTo</key>
       <array>
         <string>public.data</string>
@@ -65,10 +65,10 @@
       <key>UTTypeTagSpecification</key>
       <dict>
         <key>public.mime-type</key>
-        <string>application/x-dash-payment-request</string>
+        <string>application/x-cosanta</string>
         <key>public.filename-extension</key>
         <array>
-          <string>dashpaymentrequest</string>
+          <string>cosanta</string>
         </array>
       </dict>
     </dict>
@@ -81,7 +81,7 @@
       <string>Editor</string>
       <key>LSItemContentTypes</key>
       <array>
-        <string>org.cosanta.paymentrequest</string>
+        <string>net.cosanta</string>
       </array>
       <key>LSHandlerRank</key>
       <string>Owner</string>

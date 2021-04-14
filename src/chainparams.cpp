@@ -1,6 +1,6 @@
 // Copyright (c) 2010 Satoshi Nakamoto
 // Copyright (c) 2009-2014 The Bitcoin Core developers
-// Copyright (c) 2014-2021 The Dash Core developers
+// Copyright (c) 2014-2021 The Cosanta Core developers
 // Copyright (c) 2020-2021 The PirateCash Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
@@ -18,7 +18,7 @@
 
 #include "chainparamsseeds.h"
 
-//#define COSANTA_MINE_NEW_GENESIS_BLOCK
+#define COSANTA_MINE_NEW_GENESIS_BLOCK
 #ifdef COSANTA_MINE_NEW_GENESIS_BLOCK
 
 #include "validation.h"
@@ -307,8 +307,8 @@ public:
         consensus.DIP0003EnforcementHash = uint256S("000000000000002d1734087b4c5afc3133e4e1c3e1a89218f62bcd9bb3d17f81");
         consensus.powLimit = uint256S("00000fffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"); // ~uint256(0) >> 20
         consensus.posLimit = uint256S("000000ffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"); // ~uint256(0) >> 24
-        consensus.nPowTargetTimespan = 24 * 60 * 60; // Dash: 1 day
-        consensus.nPowTargetSpacing = 2.5 * 60; // Dash: 2.5 minutes
+        consensus.nPowTargetTimespan = 24 * 60 * 60; // Cosanta: 1 day
+        consensus.nPowTargetSpacing = 2.5 * 60; // Cosanta: 2.5 minutes
         consensus.fPowAllowMinDifficultyBlocks = false;
         consensus.fPowNoRetargeting = false;
         consensus.nPowKGWHeight = 15200;
@@ -370,11 +370,11 @@ public:
         nDefaultPort = 60606;
         nPruneAfterHeight = 100000;
 
-        genesis = CreateGenesisBlock(1618221600, 3343749, 0x1e0ffff0, 1, 1);
+        genesis = CreateGenesisBlock(1618221600, 4889804, 0x1e0ffff0, 1, 1);
         consensus.hashGenesisBlock = genesis.GetHash();
 
-        uint256 expectedGenesisHash = uint256S("0x000006cf010a54f22305095939df01cc5d7a2ecd208e1e353259a75cd99f58b4");
-        uint256 expectedGenesisMerkleRoot = uint256S("0x14113b62538c25e0dcb71c525bb832465c1ba88350441960169cbcfa79d009f5");
+        uint256 expectedGenesisHash = uint256S("0x00000159acc5941b0b044733dc3998322b717e185a3b6088a40653028e319bec");
+        uint256 expectedGenesisMerkleRoot = uint256S("14113b62538c25e0dcb71c525bb832465c1ba88350441960169cbcfa79d009f5");
 
         #ifdef COSANTA_MINE_NEW_GENESIS_BLOCK
         if (consensus.hashGenesisBlock != expectedGenesisHash)
@@ -473,8 +473,8 @@ public:
         consensus.DIP0003EnforcementHash = uint256S("00000055ebc0e974ba3a3fb785c5ad4365a39637d4df168169ee80d313612f8f");
         consensus.powLimit = uint256S("00000fffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"); // ~uint256(0) >> 20
         consensus.posLimit = uint256S("0fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"); // ~uint256(0) >> 4
-        consensus.nPowTargetTimespan = 24 * 60 * 60; // Dash: 1 day
-        consensus.nPowTargetSpacing = 2.5 * 60; // Dash: 2.5 minutes
+        consensus.nPowTargetTimespan = 24 * 60 * 60; // Cosanta: 1 day
+        consensus.nPowTargetSpacing = 2.5 * 60; // Cosanta: 2.5 minutes
         consensus.fPowAllowMinDifficultyBlocks = true;
         consensus.fPowNoRetargeting = false;
         consensus.nPowKGWHeight = 4002; // nPowKGWHeight >= nPowDGWHeight means "no KGW"
@@ -531,11 +531,11 @@ public:
         nDefaultPort = 60696;
         nPruneAfterHeight = 1000;
 
-        genesis = CreateGenesisBlock(1618221600, 1856174, 0x1e0ffff0, 1, 0 * COIN);
+        genesis = CreateGenesisBlock(1618221600, 2054584, 0x1e0ffff0, 1, 0 * COIN);
         consensus.hashGenesisBlock = genesis.GetHash();
 
-        uint256 expectedGenesisHash = uint256S("0x00000d08a9828c9e2c4c95996e1a3895e24de49d0b62ef595486a428d727cede");
-        uint256 expectedGenesisMerkleRoot = uint256S("0xe16337d6f2cd561e3b9b2c470ec2adc11cf94ba2cda40bddfd2f23deff2499fb");
+        uint256 expectedGenesisHash = uint256S("0x0000030f02c1f2473c1b3d7988b7d83a5e2cde4b2b69fe1612befdcbcb8eb70f");
+        uint256 expectedGenesisMerkleRoot = uint256S("e16337d6f2cd561e3b9b2c470ec2adc11cf94ba2cda40bddfd2f23deff2499fb");
 
         #ifdef COSANTA_MINE_NEW_GENESIS_BLOCK
         if (consensus.hashGenesisBlock != expectedGenesisHash)
@@ -565,7 +565,7 @@ public:
         // Testnet Cosanta BIP32 prvkeys start with 'tprv' (Bitcoin defaults)
         base58Prefixes[EXT_SECRET_KEY] = {0x04, 0x35, 0x83, 0x94};
 
-        // Testnet Dash BIP44 coin type is '1' (All coin's testnet default)
+        // Testnet Cosanta BIP44 coin type is '1' (All coin's testnet default)
         nExtCoinType = 1;
 
         // long living quorum params
@@ -637,8 +637,8 @@ public:
         consensus.DIP0003EnforcementHash = uint256();
         consensus.powLimit = uint256S("7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"); // ~uint256(0) >> 1
         consensus.posLimit = uint256S("0fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"); // ~uint256(0) >> 4
-        consensus.nPowTargetTimespan = 24 * 60 * 60; // Dash: 1 day
-        consensus.nPowTargetSpacing = 2.5 * 60; // Dash: 2.5 minutes
+        consensus.nPowTargetTimespan = 24 * 60 * 60; // Cosanta: 1 day
+        consensus.nPowTargetSpacing = 2.5 * 60; // Cosanta: 2.5 minutes
         consensus.fPowAllowMinDifficultyBlocks = true;
         consensus.fPowNoRetargeting = false;
         consensus.nPowKGWHeight = 4001; // nPowKGWHeight >= nPowDGWHeight means "no KGW"
@@ -698,7 +698,7 @@ public:
         genesis = CreateGenesisBlock(1618221600, 98744, 0x207fffff, 1, 0 * COIN);
         consensus.hashGenesisBlock = genesis.GetHash();
 
-        uint256 expectedGenesisHash = uint256S("0x27e2d2bbf7fef49d4a604f2b272c259582dc4651f313f2106724a58de6e06669");
+        uint256 expectedGenesisHash = uint256S("0x02fc1e7262651eb1027ef489dae355c0ca063bc4832ca4b6d41d18216268835c");
         uint256 expectedGenesisMerkleRoot = uint256S("0xe16337d6f2cd561e3b9b2c470ec2adc11cf94ba2cda40bddfd2f23deff2499fb");
 
         #ifdef COSANTA_MINE_NEW_GENESIS_BLOCK
@@ -800,8 +800,8 @@ public:
         consensus.DIP0003EnforcementHash = uint256();
         consensus.powLimit = uint256S("7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"); // ~uint256(0) >> 1
         consensus.posLimit = uint256S("0fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"); // ~uint256(0) >> 4
-        consensus.nPowTargetTimespan = 24 * 60 * 60; // Dash: 1 day
-        consensus.nPowTargetSpacing = 2.5 * 60; // Dash: 2.5 minutes
+        consensus.nPowTargetTimespan = 24 * 60 * 60; // Cosanta: 1 day
+        consensus.nPowTargetSpacing = 2.5 * 60; // Cosanta: 2.5 minutes
         consensus.fPowAllowMinDifficultyBlocks = true;
         consensus.fPowNoRetargeting = true;
         consensus.nPowKGWHeight = 15200; // same as mainnet
@@ -843,7 +843,7 @@ public:
         genesis = CreateGenesisBlock(1618221600, 98744, 0x207fffff, 1, 0 * COIN);
         consensus.hashGenesisBlock = genesis.GetHash();
 
-        uint256 expectedGenesisHash = uint256S("0x27e2d2bbf7fef49d4a604f2b272c259582dc4651f313f2106724a58de6e06669");
+        uint256 expectedGenesisHash = uint256S("0x02fc1e7262651eb1027ef489dae355c0ca063bc4832ca4b6d41d18216268835c");
         uint256 expectedGenesisMerkleRoot = uint256S("0xe16337d6f2cd561e3b9b2c470ec2adc11cf94ba2cda40bddfd2f23deff2499fb");
 
         #ifdef COSANTA_MINE_NEW_GENESIS_BLOCK
@@ -900,7 +900,7 @@ public:
         // Regtest Cosana BIP32 prvkeys start with 'tprv' (Bitcoin defaults)
         base58Prefixes[EXT_SECRET_KEY] = {0x04, 0x35, 0x83, 0x94};
 
-        // Regtest Dash BIP44 coin type is '1' (All coin's testnet default)
+        // Regtest Cosanta BIP44 coin type is '1' (All coin's testnet default)
         nExtCoinType = 1;
 
         // long living quorum params

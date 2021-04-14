@@ -1,10 +1,10 @@
 // Copyright (c) 2015 The Bitcoin Core developers
-// Copyright (c) 2014-2019 The Dash Core developers
+// Copyright (c) 2014-2019 The Cosanta Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef BITCOIN_TEST_TEST_DASH_H
-#define BITCOIN_TEST_TEST_DASH_H
+#ifndef BITCOIN_TEST_TEST_COSANTA_H
+#define BITCOIN_TEST_TEST_COSANTA_H
 
 #include "chainparamsbase.h"
 #include "fs.h"

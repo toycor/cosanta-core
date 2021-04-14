@@ -1,7 +1,7 @@
 # /etc/conf.d/cosantad: config file for /etc/init.d/cosantad
 
 # Config file location
-#BITCOIND_CONFIGFILE="/etc/dashcore/cosanta.conf"
+#BITCOIND_CONFIGFILE="/etc/cosantacore/cosanta.conf"
 
 # What directory to write pidfile to?  (created and owned by $BITCOIND_USER)
 #BITCOIND_PIDDIR="/var/run/cosantad"
@@ -13,8 +13,8 @@
 #BITCOIND_DATADIR="/var/lib/cosantad"
 
 # User and group to own cosantad process
-#BITCOIND_USER="dashcore"
-#BITCOIND_GROUP="dashcore"
+#BITCOIND_USER="cosantacore"
+#BITCOIND_GROUP="cosantacore"
 
 # Path to cosantad executable
 #BITCOIND_BIN="/usr/bin/cosantad"

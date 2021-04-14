@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-#  cosantad The Dash Core server.
+#  cosantad The Cosanta Core server.
 #
 #
 # chkconfig: 345 80 20

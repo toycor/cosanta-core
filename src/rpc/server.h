@@ -137,7 +137,7 @@ public:
 };
 
 /**
- * Dash RPC command dispatcher.
+ * Cosanta RPC command dispatcher.
  */
 class CRPCTable
 {

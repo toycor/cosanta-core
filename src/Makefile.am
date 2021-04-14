@@ -1,5 +1,5 @@
 # Copyright (c) 2013-2016 The Bitcoin Core developers
-# Copyright (c) 2014-2018 The Dash Core developers
+# Copyright (c) 2014-2018 The Cosanta Core developers
 # Distributed under the MIT software license, see the accompanying
 # file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -109,7 +109,7 @@ if BUILD_BITCOIN_UTILS
 endif
 
 .PHONY: FORCE check-symbols check-security
-# dash core #
+# cosanta core #
 BITCOIN_CORE_H = \
   addrdb.h \
   addressindex.h \
@@ -416,7 +416,8 @@ crypto_libcosanta_crypto_base_a_SOURCES = \
   crypto/haval.c \
   crypto/shabal.c \
   crypto/whirlpool.c \
-  crypto/sph_sha2big.c
+  crypto/sph_sha2big.c \
+  crypto/streebog.c
 
 if USE_ASM
 crypto_libcosanta_crypto_base_a_SOURCES += crypto/sha256_sse4.cpp
@@ -458,7 +459,8 @@ crypto_libcosanta_crypto_base_a_SOURCES += \
   crypto/sph_shavite.h \
   crypto/sph_simd.h \
   crypto/sph_skein.h \
-  crypto/sph_types.h
+  crypto/sph_types.h \
+  crypto/sph_streebog.h
 
 crypto_libcosanta_crypto_shani_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
 crypto_libcosanta_crypto_shani_a_CPPFLAGS = $(AM_CPPFLAGS)

@@ -1,4 +1,4 @@
-Dash Core version 0.12.3.1
+Cosanta Core version 0.12.3.1
 ==========================
 
 Release is now available from:
@@ -64,7 +64,7 @@ If a node connects to the wrong network, it will immediately be disconnected.
 New format of network message signatures
 ----------------------------------------
 
-We introduced a new signature format for Dash-specific network messages,
+We introduced a new signature format for Cosanta-specific network messages,
 read more [here](https://github.com/dashpay/dash/pull/1936) and [here](https://github.com/dashpay/dash/pull/1937).
 We also introduced a new spork `SPORK_6_NEW_SIGS` which is going to be used to activate the new format after the network has finished the upgrade.
 Note that old pre-12.3 nodes won't be able to recognize and verify new signatures after `SPORK_6_NEW_SIGS` activates.
@@ -110,7 +110,7 @@ Support for pruned nodes in Lite Mode
 -------------------------------------
 
 It is now possible to run a pruned node which stores only some recent blocks and not the whole blockchain.
-However this option is only available in so called Lite Mode. In this mode, Dash specific features are disabled, meaning
+However this option is only available in so called Lite Mode. In this mode, Cosanta specific features are disabled, meaning
 that such nodes won't fully validate the blockchain (masternode payments and superblocks).
 PrivateSend and InstantSend functions are also disabled on such nodes. Such nodes are comparable to SPV-like nodes
 in terms of security and validation - it relies a lot on surrounding nodes, so please keep this in mind if you decide to
@@ -148,7 +148,7 @@ Command-line options
 --------------------
 
 New cmd-line options:
-- introduced in Dash Core 0.12.3.1: `allowprivatenet`, `bip9params`, `sporkaddr`, `devnet`;
+- introduced in Cosanta Core 0.12.3.1: `allowprivatenet`, `bip9params`, `sporkaddr`, `devnet`;
 - backported from Bitcoin Core 0.13/0.14: `blockreconstructionextratxn`, `maxtimeadjustment`, `maxtipage`,
 `incrementalrelayfee`, `dustrelayfee`, `blockmintxfee`.
 
@@ -160,7 +160,7 @@ New Masternode Information Dialog
 You can now double-click on your masternode in `My Masternodes` list on `Masternodes` tab to reveal the new
 Masternode Information dialog. It will show you some basic information as well as software versions reported by the
 masternode. There is also a QR code now which encodes corresponding masternode private key (the one you set with
-mnprivkey during MN setup and NOT the one that controls the 1000 DASH collateral) which should make the process of pairing with
+mnprivkey during MN setup and NOT the one that controls the 1000 COSANTA collateral) which should make the process of pairing with
 mobile software allowing you to vote with your masternode a bit easier (this software is still in development).
 
 Testnet fixes
@@ -175,7 +175,7 @@ case of future ASIC uses on testnet.
 Using masternode lists for initial peers discovery
 --------------------------------------------------
 
-We now use a recent masternode list to feed the hardcoded seed nodes list in Dash Core. This list was previously
+We now use a recent masternode list to feed the hardcoded seed nodes list in Cosanta Core. This list was previously
 unmaintained as we fully relied on DNS based discovery on startup. DNS discovery is still used as the main discovery
 method, but the hardcoded seed list should now be able to serve as a proper backup in case DNS fails for some reason.
 
@@ -268,7 +268,7 @@ See detailed [change log](https://github.com/dashpay/dash/compare/v0.12.2.3...da
 - [`a648d6eff`](https://github.com/dashpay/dash/commit/a648d6eff) Drop delayed headers logic and fix duplicate initial headers sync by handling block inv correctly (#2032)
 - [`99085c5b6`](https://github.com/dashpay/dash/commit/99085c5b6) swap devnet magic bytes around (#2028)
 - [`a37dbd6d2`](https://github.com/dashpay/dash/commit/a37dbd6d2) Fix netfulfilledman usage (#2033)
-- [`08033ffe4`](https://github.com/dashpay/dash/commit/08033ffe4) Reject Dash-specific messages from obsolete peers (#1983)
+- [`08033ffe4`](https://github.com/dashpay/dash/commit/08033ffe4) Reject Cosanta-specific messages from obsolete peers (#1983)
 - [`43671a39d`](https://github.com/dashpay/dash/commit/43671a39d) Deprecate nMnCount in mnget (#1942)
 - [`451f7f071`](https://github.com/dashpay/dash/commit/451f7f071) Fix issues with mnp, mnw and dsq signatures via new spork (SPORK_6_NEW_SIGS) (#1936)
 - [`048062641`](https://github.com/dashpay/dash/commit/048062641) Force masternodes to have listen=1 and maxconnections to be at least DEFAULT_MAX_PEER_CONNECTIONS (#1935)
@@ -366,7 +366,7 @@ See detailed [change log](https://github.com/dashpay/dash/compare/v0.12.2.3...da
 - [`836e10471`](https://github.com/dashpay/dash/commit/836e10471) Bump proto to 70210 (#2109)
 - [`23ba94b37`](https://github.com/dashpay/dash/commit/23ba94b37) Bump remaining min protocols (#2097)
 - [`9299a84b1`](https://github.com/dashpay/dash/commit/9299a84b1) Bump few consts (#2096)
-- [`7b43720f0`](https://github.com/dashpay/dash/commit/7b43720f0) Fix copying of final binaries into dashcore-binaries (#2090)
+- [`7b43720f0`](https://github.com/dashpay/dash/commit/7b43720f0) Fix copying of final binaries into cosantacore-binaries (#2090)
 - [`cc593615e`](https://github.com/dashpay/dash/commit/cc593615e) Bump copyright year to 2018 (#2087)
 - [`2129ee4d8`](https://github.com/dashpay/dash/commit/2129ee4d8) Add docker support when doing Gitian builds (#2084)
 - [`6a1456ef4`](https://github.com/dashpay/dash/commit/6a1456ef4) Update gitian key for codablock (#2085)
@@ -478,12 +478,12 @@ the 0.8.x tree and was first released on Mar/13/2014.
 Darkcoin tree 0.10.x used to be the closed source implementation of Darksend
 which was released open source on Sep/25/2014.
 
-Dash Core tree 0.11.x was a fork of Bitcoin Core tree 0.9,
+Cosanta Core tree 0.11.x was a fork of Bitcoin Core tree 0.9,
 Darkcoin was rebranded to Dash.
 
-Dash Core tree 0.12.0.x was a fork of Bitcoin Core tree 0.10.
+Cosanta Core tree 0.12.0.x was a fork of Bitcoin Core tree 0.10.
 
-Dash Core tree 0.12.1.x was a fork of Bitcoin Core tree 0.12.
+Cosanta Core tree 0.12.1.x was a fork of Bitcoin Core tree 0.12.
 
 These release are considered obsolete. Old release notes can be found here:
 

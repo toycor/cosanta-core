@@ -1,4 +1,4 @@
-Dash Core version 0.12.2
+Cosanta Core version 0.12.2
 ========================
 
 Release is now available from:
@@ -39,7 +39,7 @@ Notable changes
 DIP0001
 -------
 
-We outline an initial scaling mechanism for Dash. After deployment and activation, Dash will be able to handle double the transactions it can currently handle. Together with the faster block times, Dash we will be prepared to handle eight times the traffic of Bitcoin.
+We outline an initial scaling mechanism for Cosanta. After deployment and activation, Dash will be able to handle double the transactions it can currently handle. Together with the faster block times, Dash we will be prepared to handle eight times the traffic of Bitcoin.
 
 https://github.com/dashpay/dips/blob/master/dip-0001.md
 
@@ -47,7 +47,7 @@ https://github.com/dashpay/dips/blob/master/dip-0001.md
 Fee reduction
 -------------
 
-All transaction fees are reduced 10x (from 10K per Kb to 1K per Kb), including fees for InstantSend (from 0.001 DASH per input to 0.0001 per input)
+All transaction fees are reduced 10x (from 10K per Kb to 1K per Kb), including fees for InstantSend (from 0.001 COSANTA per input to 0.0001 per input)
 
 InstantSend fix
 ---------------
@@ -128,7 +128,7 @@ Detailed [change log](https://github.com/dashpay/dash/compare/v0.12.1.x...dashpa
 - [`a443d4e2d`](https://github.com/dashpay/dash/commit/a443d4e2d) Backport Bitcoin PRs #6589, #7180 and remaining part of #7181: enable per-command byte counters in `CNode` (#1496)
 - [`f9730cb2e`](https://github.com/dashpay/dash/commit/f9730cb2e) Increase test coverage for addrman and addrinfo (#1497)
 - [`a12491448`](https://github.com/dashpay/dash/commit/a12491448) Eliminate unnecessary call to CheckBlock (#1498)
-- [`b0843c397`](https://github.com/dashpay/dash/commit/b0843c397) Backport Bincoin PR#7348: MOVE ONLY: move rpc* to rpc/ + same for Dash-specific rpc (#1502)
+- [`b0843c397`](https://github.com/dashpay/dash/commit/b0843c397) Backport Bincoin PR#7348: MOVE ONLY: move rpc* to rpc/ + same for Cosanta-specific rpc (#1502)
 - [`f65017cfe`](https://github.com/dashpay/dash/commit/f65017cfe) Backport Bitcoin PR#7349: Build against system UniValue when available (#1503)
 - [`ac6c3c900`](https://github.com/dashpay/dash/commit/ac6c3c900) Backport Bitcoin PR#7350: Banlist updates (#1505)
 - [`d787fe4ab`](https://github.com/dashpay/dash/commit/d787fe4ab) Backport Bitcoin PR#7458: [Net] peers.dat, banlist.dat recreated when missing (#1506)
@@ -239,7 +239,7 @@ Detailed [change log](https://github.com/dashpay/dash/compare/v0.12.1.x...dashpa
 - [`8da26da71`](https://github.com/dashpay/dash/commit/8da26da71) Eliminate g_connman use in spork module. (#1613)
 - [`4956ba7a7`](https://github.com/dashpay/dash/commit/4956ba7a7) Eliminate g_connman use in instantx module. (#1626)
 - [`10eddb52d`](https://github.com/dashpay/dash/commit/10eddb52d) Move some (spamy) CMasternodeSync log messages to new `mnsync` log category (#1630)
-- [`753b1e486`](https://github.com/dashpay/dash/commit/753b1e486) Eliminate remaining uses of g_connman in Dash-specific code. (#1635)
+- [`753b1e486`](https://github.com/dashpay/dash/commit/753b1e486) Eliminate remaining uses of g_connman in Cosanta-specific code. (#1635)
 - [`8949f4345`](https://github.com/dashpay/dash/commit/8949f4345) Wait for full sync in functional tests that use getblocktemplate. (#1642)
 - [`5f0da8aa7`](https://github.com/dashpay/dash/commit/5f0da8aa7) fix sync (#1643)
 - [`7a8910443`](https://github.com/dashpay/dash/commit/7a8910443) Fix unlocked access to vNodes.size() (#1654)
@@ -391,12 +391,12 @@ the 0.8.x tree and was first released on Mar/13/2014.
 Darkcoin tree 0.10.x used to be the closed source implementation of Darksend
 which was released open source on Sep/25/2014.
 
-Dash Core tree 0.11.x was a fork of Bitcoin Core tree 0.9, Darkcoin was rebranded
+Cosanta Core tree 0.11.x was a fork of Bitcoin Core tree 0.9, Darkcoin was rebranded
 to Dash.
 
-Dash Core tree 0.12.0.x was a fork of Bitcoin Core tree 0.10.
+Cosanta Core tree 0.12.0.x was a fork of Bitcoin Core tree 0.10.
 
-Dash Core tree 0.12.1.x was a fork of Bitcoin Core tree 0.12.
+Cosanta Core tree 0.12.1.x was a fork of Bitcoin Core tree 0.12.
 
 These release are considered obsolete. Old changelogs can be found here:
 

@@ -13,7 +13,7 @@ can be found in the contrib/init folder.
 1. Service User
 ---------------------------------
 
-All three Linux startup configurations assume the existence of a "dashcore" user
+All three Linux startup configurations assume the existence of a "cosantacore" user
 and group.  They must be created before attempting to use these scripts.
 The OS X configuration assumes cosantad will be set up for the current user.
 
@@ -54,23 +54,23 @@ see `contrib/debian/examples/cosanta.conf`.
 All three configurations assume several paths that might need to be adjusted.
 
 Binary:              `/usr/bin/cosantad`  
-Configuration file:  `/etc/dashcore/cosanta.conf`  
+Configuration file:  `/etc/cosantacore/cosanta.conf`  
 Data directory:      `/var/lib/cosantad`  
 PID file:            `/var/run/cosantad/cosantad.pid` (OpenRC and Upstart) or `/var/lib/cosantad/cosantad.pid` (systemd)  
 Lock file:           `/var/lock/subsys/cosantad` (CentOS)  
 
 The configuration file, PID directory (if applicable) and data directory
-should all be owned by the dashcore user and group.  It is advised for security
+should all be owned by the cosantacore user and group.  It is advised for security
 reasons to make the configuration file and data directory only readable by the
-dashcore user and group.  Access to cosanta-cli and other cosantad rpc clients
+cosantacore user and group.  Access to cosanta-cli and other cosantad rpc clients
 can then be controlled by group membership.
 
 3b) Mac OS X
 
 Binary:              `/usr/local/bin/cosantad`  
-Configuration file:  `~/Library/Application Support/DashCore/cosanta.conf`  
-Data directory:      `~/Library/Application Support/DashCore`
-Lock file:           `~/Library/Application Support/DashCore/.lock`
+Configuration file:  `~/Library/Application Support/CosantaCore/cosanta.conf`  
+Data directory:      `~/Library/Application Support/CosantaCore`
+Lock file:           `~/Library/Application Support/CosantaCore/.lock`
 
 4. Installing Service Configuration
 -----------------------------------
@@ -104,7 +104,7 @@ use old versions of Upstart and do not supply the start-stop-daemon utility.
 Copy cosantad.init to /etc/init.d/cosantad. Test by running `service cosantad start`.
 
 Using this script, you can adjust the path and flags to the cosantad program by
-setting the DASHD and FLAGS environment variables in the file
+setting the COSANTAD and FLAGS environment variables in the file
 /etc/sysconfig/cosantad. You can also use the DAEMONOPTS environment variable here.
 
 4e) Mac OS X
@@ -116,7 +116,7 @@ This Launch Agent will cause cosantad to start whenever the user logs in.
 
 NOTE: This approach is intended for those wanting to run cosantad as the current user.
 You will need to modify org.cosanta.cosantad.plist if you intend to use it as a
-Launch Daemon with a dedicated dashcore user.
+Launch Daemon with a dedicated cosantacore user.
 
 5. Auto-respawn
 -----------------------------------

@@ -4,7 +4,7 @@ Debian
 This directory contains files used to package cosantad/cosanta-qt
 for Debian-based Linux systems. If you compile cosantad/cosanta-qt yourself, there are some useful files here.
 
-## dash: URI support ##
+## cosanta: URI support ##
 
 
 cosanta-qt.desktop  (Gnome / Open Desktop)

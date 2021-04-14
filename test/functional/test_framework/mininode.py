@@ -4,7 +4,7 @@
 # Copyright (c) 2010-2016 The Bitcoin Core developers
 # Distributed under the MIT software license, see the accompanying
 # file COPYING or http://www.opensource.org/licenses/mit-license.php.
-"""Dash P2P network half-a-node.
+"""Cosanta P2P network half-a-node.
 
 This python code was modified from ArtForz' public domain  half-a-node, as
 found in the mini-node branch of http://github.com/jgarzik/pynode.
@@ -41,7 +41,7 @@ import threading
 from test_framework.siphash import siphash256
 from test_framework.util import hex_str_to_bytes, bytes_to_hex_str, wait_until
 
-import dash_hash
+import cosanta_hash
 
 BIP0031_VERSION = 60000
 MY_VERSION = 70214  # MIN_PEER_PROTO_VERSION
@@ -84,8 +84,8 @@ def sha256(s):
 def hash256(s):
     return sha256(sha256(s))
 
-def dashhash(s):
-    return dash_hash.getPoWHash(s)
+def cosantahash(s):
+    return cosanta_hash.getPoWHash(s)
 
 def ser_compact_size(l):
     r = b""
@@ -528,8 +528,8 @@ class CBlockHeader(object):
             r += struct.pack("<I", self.nTime)
             r += struct.pack("<I", self.nBits)
             r += struct.pack("<I", self.nNonce)
-            self.sha256 = uint256_from_str(dashhash(r))
-            self.hash = encode(dashhash(r)[::-1], 'hex_codec').decode('ascii')
+            self.sha256 = uint256_from_str(cosantahash(r))
+            self.hash = encode(cosantahash(r)[::-1], 'hex_codec').decode('ascii')
 
     def rehash(self):
         self.sha256 = None
@@ -1743,7 +1743,7 @@ class NodeConn(asyncore.dispatcher):
             vt.addrFrom.port = 0
             self.send_message(vt, True)
 
-        logger.debug('Connecting to Dash Node: %s:%d' % (self.dstaddr, self.dstport))
+        logger.debug('Connecting to Cosanta Node: %s:%d' % (self.dstaddr, self.dstport))
 
         try:
             self.connect((dstaddr, dstport))

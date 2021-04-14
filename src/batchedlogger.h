@@ -1,9 +1,9 @@
-// Copyright (c) 2018-2019 The Dash Core developers
+// Copyright (c) 2018-2019 The Cosanta Core developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef DASH_BATCHEDLOGGER_H
-#define DASH_BATCHEDLOGGER_H
+#ifndef COSANTA_BATCHEDLOGGER_H
+#define COSANTA_BATCHEDLOGGER_H
 
 #include "tinyformat.h"
 
@@ -29,4 +29,4 @@ public:
     void Flush();
 };
 
-#endif//DASH_BATCHEDLOGGER_H
+#endif//COSANTA_BATCHEDLOGGER_H
