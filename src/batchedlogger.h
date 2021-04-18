@@ -1,4 +1,5 @@
-// Copyright (c) 2018-2019 The Cosanta Core developers
+// Copyright (c) 2018-2019 The Dash Core developers
+// Copyright (c) 2020-2021 The Cosanta Core developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
