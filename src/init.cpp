@@ -609,6 +609,9 @@ std::string HelpMessage(HelpMessageMode mode)
         strUsage += HelpMessageOpt("-printcoinstake", _("Display verbose coin stake messages in the debug.log file."));
     }
 #endif
+    strUsage += HelpMessageGroup(_("PoW mining:"));
+    strUsage += HelpMessageOpt("-gen", strprintf(_("Generate coins (default: 0)")));
+    strUsage += HelpMessageOpt("-genproclimit", strprintf(_("processors, -1 is unlimited. (default: -1)")));
 
     strUsage += HelpMessageGroup(_("Masternode options:"));
     strUsage += HelpMessageOpt("-masternodeblsprivkey=<hex>", _("Set the masternode BLS private key and enable the client to act as a masternode"));

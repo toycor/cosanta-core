@@ -204,6 +204,45 @@ UniValue generatetoaddress(const JSONRPCRequest& request)
 
     return generateBlocks(coinbaseScript, nGenerate, nMaxTries, false);
 }
+
+UniValue getgenerate(const JSONRPCRequest& request)
+{
+    if (request.fHelp || request.params.size() != 0)
+    {
+        throw std::runtime_error(
+                     "getgenerate\n"
+                     "Returns true or false.");
+    }
+    UniValue obj(UniValue::VOBJ);
+    obj.push_back(Pair("config",gArgs.GetBoolArg("-gen", false)));
+    obj.push_back(Pair("status",isLastPoW));
+    return obj;
+}
+
+UniValue setgenerate(const JSONRPCRequest& request)
+{
+    if (request.fHelp || request.params.size() < 1 || request.params.size() > 2)
+    {
+        throw std::runtime_error(
+                    "setgenerate <generate> [genproclimit]\n"
+                    "<generate> is true or false to turn generation on or off.\n"
+                    "Generation is limited to [genproclimit] processors, -1 is unlimited.");
+    }
+    bool fGenerate = request.params[0].get_bool();
+    if (request.params.size() > 1)
+    {
+        int nGenProcLimit = request.params[1].get_int();
+        gArgs.SoftSetArg("-genproclimit", itostr(nGenProcLimit));
+        if (nGenProcLimit == 0)
+        {
+            fGenerate = false;
+        }
+    }
+    gArgs.SoftSetArg("-gen", (fGenerate ? "1" : "0"));
+    GenerateCosanta(fGenerate, vpwallets[0]);
+
+    return NullUniValue;
+}
 #endif // ENABLE_MINER
 
 UniValue getmininginfo(const JSONRPCRequest& request)
@@ -1052,6 +1091,8 @@ static const CRPCCommand commands[] =
   //  --------------------- ------------------------  -----------------------  ----------
     { "mining",             "getnetworkhashps",       &getnetworkhashps,       true,  {"nblocks","height"} },
     { "mining",             "getmininginfo",          &getmininginfo,          true,  {} },
+    { "mining",             "getgenerate",            &getgenerate,            true,  {} },
+    { "mining",             "setgenerate",            &setgenerate,            true,  {"generate","genproclimit"} },
     { "mining",             "prioritisetransaction",  &prioritisetransaction,  true,  {"txid","fee_delta"} },
     { "mining",             "getblocktemplate",       &getblocktemplate,       true,  {"template_request"} },
     { "mining",             "submitblock",            &submitblock,            true,  {"hexdata","dummy"} },

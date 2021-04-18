@@ -89,6 +89,7 @@ BitcoinGUI::BitcoinGUI(const PlatformStyle *_platformStyle, const NetworkStyle *
     clientModel(0),
     walletFrame(0),
     unitDisplayControl(0),
+    labelPoWIcon(0),
     labelStakingIcon(0),
     labelWalletEncryptionIcon(0),
     labelWalletHDStatusIcon(0),
@@ -210,6 +211,7 @@ BitcoinGUI::BitcoinGUI(const PlatformStyle *_platformStyle, const NetworkStyle *
     frameBlocksLayout->setContentsMargins(3,0,3,0);
     frameBlocksLayout->setSpacing(3);
     unitDisplayControl = new UnitDisplayStatusBarControl(platformStyle);
+    labelPoWIcon = new QLabel();
     labelStakingIcon = new QLabel();
     labelWalletEncryptionIcon = new QLabel();
     labelWalletHDStatusIcon = new QLabel();
@@ -224,6 +226,8 @@ BitcoinGUI::BitcoinGUI(const PlatformStyle *_platformStyle, const NetworkStyle *
         frameBlocksLayout->addWidget(labelWalletEncryptionIcon);
         frameBlocksLayout->addWidget(labelWalletHDStatusIcon);
     }
+    frameBlocksLayout->addStretch();
+    frameBlocksLayout->addWidget(labelPoWIcon);
     frameBlocksLayout->addStretch();
     frameBlocksLayout->addWidget(labelStakingIcon);
     frameBlocksLayout->addStretch();
@@ -293,6 +297,11 @@ BitcoinGUI::BitcoinGUI(const PlatformStyle *_platformStyle, const NetworkStyle *
     incomingTransactionsTimer = new QTimer(this);
     incomingTransactionsTimer->setSingleShot(true);
     connect(incomingTransactionsTimer, SIGNAL(timeout()), SLOT(showIncomingTransactions()));
+
+    QTimer* timerPoWIcon = new QTimer(labelPoWIcon);
+    connect(timerPoWIcon, SIGNAL(timeout()), this, SLOT(setPoWStatus()));
+    timerPoWIcon->start(10000);
+    setPoWStatus();
 
     QTimer* timerStakingIcon = new QTimer(labelStakingIcon);
     connect(timerStakingIcon, SIGNAL(timeout()), this, SLOT(setStakingStatus()));
@@ -1390,6 +1399,17 @@ bool BitcoinGUI::eventFilter(QObject *object, QEvent *event)
             return true;
     }
     return QMainWindow::eventFilter(object, event);
+}
+
+void BitcoinGUI::setPoWStatus()
+{
+    if (isLastPoW) {
+        labelPoWIcon->show();
+        labelPoWIcon->setPixmap(QIcon(":/icons/pow_active").pixmap(STATUSBAR_ICONSIZE, STATUSBAR_ICONSIZE));
+    } else {
+        labelPoWIcon->show();
+        labelPoWIcon->setPixmap(QIcon(":/icons/pow_inactive").pixmap(STATUSBAR_ICONSIZE, STATUSBAR_ICONSIZE));
+    }
 }
 
 void BitcoinGUI::setStakingStatus()

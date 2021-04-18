@@ -86,6 +86,7 @@ private:
     WalletFrame *walletFrame;
 
     UnitDisplayStatusBarControl *unitDisplayControl;
+    QLabel* labelPoWIcon;
     QLabel* labelStakingIcon;
     QLabel *labelWalletEncryptionIcon;
     QLabel *labelWalletHDStatusIcon;
@@ -208,6 +209,7 @@ public Q_SLOTS:
     */
     void message(const QString &title, const QString &message, unsigned int style, bool *ret = nullptr);
 
+    void setPoWStatus();
     void setStakingStatus();
 
 #ifdef ENABLE_WALLET

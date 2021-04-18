@@ -53,6 +53,8 @@
         <file alias="network_disabled">res/icons/network_disabled.png</file>
         <file alias="staking_active">res/icons/staking_active.png</file>
         <file alias="staking_inactive">res/icons/staking_inactive.png</file>
+        <file alias="pow_active">res/icons/pow_active.png</file>
+        <file alias="pow_inactive">res/icons/pow_inactive.png</file>
     </qresource>
     <qresource prefix="/css">
         <file alias="scrollbars">res/css/scrollbars.css</file>
@@ -72,6 +74,7 @@
         <file alias="cosanta_logo_horizontal">res/images/cosanta_logo_horizontal.png</file>
         <file alias="cosanta_logo_toolbar">res/images/cosanta_logo_toolbar.png</file>
         <file alias="qtreeview_selected">res/images/qtreeview_selected.png</file>
+	<file alias="wallet_bg">res/images/wallet_bg.png</file>
         <file alias="splash">res/images/splash.png</file>
         <file alias="unchecked">res/images/unchecked.png</file>
     </qresource>
