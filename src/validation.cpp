@@ -970,8 +970,11 @@ bool ReadBlockFromDisk(CBlock& block, const CDiskBlockPos& pos, const Consensus:
         return error("%s: Deserialize or I/O error - %s at %s", __func__, e.what(), pos.ToString());
     }
 
-    if (!CheckProof(block, consensusParams)) {
-        return error("ReadBlockFromDisk: Errors in block proof at %s", pos.ToString());
+    CValidationState state;
+
+    if (!CheckProof(state, block, consensusParams)) {
+        return error("ReadBlockFromDisk: Errors in block proof at %s (%s)",
+                     pos.ToString(), state.GetRejectReason().c_str());
     }
 
     return true;
@@ -3329,7 +3332,7 @@ bool CheckBlock(const CBlock& block, CValidationState& state, const Consensus::P
     if (block.IsProofOfStake()) {
         // CoinStake is a subset of CoinBase in Cosanta
         if (fCheckProof && !block.HasStake())
-            return state.DoS(100, false, REJECT_INVALID, "bad-PoS-cb", false, "second tx is not coinstake");
+            return state.DoS(100, false, REJECT_INVALID, "bad-PoS-stake", false, "stake contraints failed");
     }
 
     // Check transactions
@@ -3407,8 +3410,8 @@ static bool ContextualCheckBlockHeader(const CBlockHeader& block, CValidationSta
             return state.Invalid(false, REJECT_OBSOLETE, strprintf("bad-version(0x%08x)", block.nVersion),
                                  strprintf("rejected nVersion=0x%08x block", block.nVersion));
 
-    if (fCheckProof && !CheckProof(block, consensusParams)) {
-        return state.DoS(100, false, REJECT_INVALID, "bad-blk-proof", false, "block proof mismatch");
+    if (fCheckProof && !CheckProof(state, block, consensusParams)) {
+        return false;
     }
 
     return true;
@@ -4849,21 +4852,29 @@ bool IsPoSEnforcedHeight(int nBlockHeight) {
 }
 
 /** Check PoW or PoS based in block index **/
-bool CheckProof(const CBlockIndex &index, const Consensus::Params& params) {
+bool CheckProof(CValidationState &state, const CBlockIndex &index, const Consensus::Params& params) {
     if (index.IsProofOfWork()) {
-        return CheckProofOfWork(index.GetBlockHash(), index.nBits, params);
+        if (!CheckProofOfWork(index.GetBlockHash(), index.nBits, params)) {
+            return state.DoS(100, false, REJECT_INVALID, "bad-pow-proof", false, "block proof mismatch");
+        }
+
+        return true;
     }
 
-    return CheckProofOfStake(index.GetBlockHeader());
+    return CheckProofOfStake(state, index.GetBlockHeader());
 }
 
 /** Check PoW or PoS based on actual block **/
-bool CheckProof(const CBlockHeader &block, const Consensus::Params& params) {
+bool CheckProof(CValidationState &state, const CBlockHeader &block, const Consensus::Params& params) {
     if (block.IsProofOfWork()) {
-        return CheckProofOfWork(block.GetHash(), block.nBits, params);
+        if (!CheckProofOfWork(block.GetHash(), block.nBits, params)) {
+            return state.DoS(100, false, REJECT_INVALID, "bad-pow-proof", false, "block proof mismatch");
+        }
+
+        return true;
     }
 
-    return CheckProofOfStake(block);
+    return CheckProofOfStake(state, block);
 }
 
 //! Guess how far we are in the verification process at the given block index

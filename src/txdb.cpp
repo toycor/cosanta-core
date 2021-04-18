@@ -12,6 +12,7 @@
 #include "util.h"
 #include "ui_interface.h"
 #include "init.h"
+#include "consensus/validation.h"
 #include "validation.h"
 
 #include <stdint.h>
@@ -426,7 +427,8 @@ bool CBlockTreeDB::LoadBlockIndexGuts(const Consensus::Params& consensusParams, 
                 pindexNew->nStatus        = diskindex.nStatus;
                 pindexNew->nTx            = diskindex.nTx;
 
-                if (!CheckProof(*pindexNew, consensusParams))
+                CValidationState state;
+                if (!CheckProof(state, *pindexNew, consensusParams))
                     return error("%s: CheckProof failed: %s", __func__, pindexNew->ToString());
 
                 pcursor->Next();

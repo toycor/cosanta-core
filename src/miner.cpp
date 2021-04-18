@@ -748,7 +748,9 @@ void PoSMiner(CWallet* pwallet, CThreadInterrupt &interrupt)
 
         auto pblock = pblocktemplate->block;
 
-        if (!CheckProof(*pblock, Params().GetConsensus())) {
+        CValidationState state;
+
+        if (!CheckProof(state, *pblock, Params().GetConsensus())) {
             continue;
         }
 

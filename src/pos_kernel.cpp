@@ -13,6 +13,7 @@
 #include "policy/policy.h"
 #include "timedata.h"
 #include "util.h"
+#include "consensus/validation.h"
 
 using namespace std;
 
@@ -37,8 +38,6 @@ static bool GetLastStakeModifier(const CBlockIndex* pindex, uint64_t& nStakeModi
         return error("GetLastStakeModifier: null pindex");
     while (pindex && pindex->pprev && !pindex->IsGeneratedStakeModifier())
         pindex = pindex->pprev;
-    if (!pindex->IsGeneratedStakeModifier())
-        return error("GetLastStakeModifier: no generation at genesis block");
     nStakeModifier = pindex->nStakeModifier();
     nModifierTime = pindex->GetBlockTime();
     return true;
@@ -145,11 +144,19 @@ bool ComputeNextStakeModifier(const CBlockIndex* pindexPrev, uint64_t& nStakeMod
     if (!GetLastStakeModifier(pindexPrev, nStakeModifier, nModifierTime))
         return error("ComputeNextStakeModifier: unable to get last modifier");
 
+    LogPrintf("stake", "%s: prev modifier=%llx time=%d\n", __func__, nStakeModifier, nModifierTime);
+
     if (gArgs.GetBoolArg("-printstakemodifier", false))
         LogPrintf("ComputeNextStakeModifier: prev modifier= %s time=%s\n", boost::lexical_cast<std::string>(nStakeModifier).c_str(), DateTimeStrFormat("%Y-%m-%d %H:%M:%S", nModifierTime).c_str());
 
-    if (nModifierTime / getIntervalVersion(fTestNet) >= pindexPrev->GetBlockTime() / getIntervalVersion(fTestNet))
+    LogPrintf("stake", "%s: block %d modifier time last vs prev %llx~%llx >= %llx~%llx\n",
+             __func__, pindexPrev->nHeight,
+             nModifierTime, (nModifierTime / MODIFIER_INTERVAL),
+             pindexPrev->GetBlockTime(), (pindexPrev->GetBlockTime() / MODIFIER_INTERVAL));
+
+    if (nModifierTime / MODIFIER_INTERVAL >= pindexPrev->GetBlockTime() / MODIFIER_INTERVAL) {
         return true;
+    }
 
     // Sort candidate blocks by timestamp
     vector<pair<int64_t, uint256> > vSortedByTimestamp;
@@ -212,6 +219,9 @@ bool ComputeNextStakeModifier(const CBlockIndex* pindexPrev, uint64_t& nStakeMod
         LogPrintf("ComputeNextStakeModifier: new modifier=%s time=%s\n", boost::lexical_cast<std::string>(nStakeModifierNew).c_str(), DateTimeStrFormat("%Y-%m-%d %H:%M:%S", pindexPrev->GetBlockTime()).c_str());
     }
 
+    LogPrintf("stake", "%s: new modifier=%llx prevblktime=%d\n",
+             __func__, nStakeModifierNew, pindexPrev->GetBlockTime());
+
     nStakeModifier = nStakeModifierNew;
     return true;
 }
@@ -258,7 +268,7 @@ bool CheckStakeKernelHash(unsigned int nBits, const CBlockIndex &blockFrom, cons
     if (fCheck) {
         if (nStakeModifier != nRequiredStakeModifier) {
             return error(
-                "%s : nStakeModifier mismatch at %d %llu != %llu",
+                "%s : nStakeModifier mismatch at %d %llx != %llx",
                 __func__, blockFrom.nHeight,
                 nStakeModifier, nRequiredStakeModifier );
         }
@@ -277,7 +287,7 @@ bool CheckStakeKernelHash(unsigned int nBits, const CBlockIndex &blockFrom, cons
         
         if (requiredHashProofOfStake != hashProofOfStake) {
             return error(
-                "%s : nStakeModifier mismatch at %d:%llu:%d:%s:%d %s != %s",
+                "%s : hashProofOfStake mismatch at %d:%llx:%d:%s:%d %s != %s",
                 __func__,
                 nTimeTx, nStakeModifier, prevout.n, prevout.hash.ToString().c_str(), nTimeBlockFrom,
                 hashProofOfStake.ToString().c_str(),
@@ -308,7 +318,7 @@ bool CheckStakeKernelHash(unsigned int nBits, const CBlockIndex &blockFrom, cons
 
         if (fPrintProofOfStake) {
             LogPrintf("CheckStakeKernelHash() : using modifier %s at height=%d timestamp=%s for block from height=%d timestamp=%s\n",
-                boost::lexical_cast<std::string>(nStakeModifier).c_str(),
+                nStakeModifier,
                 blockFrom.nHeight,
                 DateTimeStrFormat("%Y-%m-%d %H:%M:%S", blockFrom.nTime).c_str(),
                 blockFrom.nHeight,
@@ -326,34 +336,48 @@ bool CheckStakeKernelHash(unsigned int nBits, const CBlockIndex &blockFrom, cons
 }
 
 // Check kernel hash target and coinstake signature
-bool CheckProofOfStake(const CBlockHeader &block)
+bool CheckProofOfStake(CValidationState &state, const CBlockHeader &header)
 {
-    auto block_hash = block.GetHash();
-
-    if (block.posBlockSig.empty()) {
-        error("%s : the block is not signed: %s", __func__, block_hash.ToString().c_str());
-        return false;
+    if (header.posBlockSig.empty()) {
+        return state.DoS(100, false, REJECT_MALFORMED, "bad-pos-sig", false, "missing PoS signature");
     }
 
     auto &consensus = Params().GetConsensus();
 
-    COutPoint prevout = block.StakeInput();
+    COutPoint prevout = header.StakeInput();
 
     // First try finding the previous transaction in database
     uint256 txinHashBlock;
     CTransactionRef txinPrevRef;
     CBlockIndex* pindex_tx = nullptr;
 
-    if (!GetTransaction(prevout.hash, txinPrevRef, consensus, txinHashBlock, true))
-        return error("CheckProofOfStake() : INFO: read txPrev failed");
+    if (!GetTransaction(prevout.hash, txinPrevRef, consensus, txinHashBlock, true)) {
+        BlockMap::iterator it = mapBlockIndex.find(header.hashPrevBlock);
+        if (it == mapBlockIndex.end()) {
+            return state.DoS(100, false, REJECT_INVALID, "bad-unkown-stake");
+        } else {
+            // We do not have the previous block, so the block may be valid
+            return state.Error("bad-unkown-stake-tmp");
+        }
+    }
 
     // Check tx input block is known
     {
         BlockMap::iterator it = mapBlockIndex.find(txinHashBlock);
-        if (it != mapBlockIndex.end())
+
+        if (it != mapBlockIndex.end()) {
             pindex_tx = it->second;
-        else
-            return error("CheckProofOfStake() : unknowns take block");
+            } else {
+            it = mapBlockIndex.find(header.hashPrevBlock);
+
+            if (it == mapBlockIndex.end()) {
+                return state.DoS(100, false, REJECT_INVALID, "bad-stake-mempool",
+                                 false, "stake from mempool");
+            } else {
+                // We do not have the previous block, so the block may be valid
+                return state.Error("bad-stake-mempool-tmp");
+            }
+        }
     }
 
     // Extract stake public key ID and verify block signature
@@ -364,8 +388,8 @@ bool CheckProofOfStake(const CBlockHeader &block)
         const auto &spk = txinPrevRef->vout[prevout.n].scriptPubKey;
 
         if (!Solver(spk, whichType, vSolutions)) {
-            return error("%s : invalid stake input script for block %s", __func__,
-                         block_hash.ToString().c_str());
+            return state.DoS(100, false, REJECT_MALFORMED, "bad-pos-input",
+                             false, "invalid Stake Input script");
         }
 
         if (whichType == TX_PUBKEYHASH) // pay to address type
@@ -378,31 +402,30 @@ bool CheckProofOfStake(const CBlockHeader &block)
         }
         else
         {
-            return error("%s : not supported stake type %d for block %s", __func__,
-                         block_hash.ToString().c_str());
+            return state.DoS(100, false, REJECT_MALFORMED, "bad-pos-input",
+                             false, "unsupported Stake Input script");
         }
 
-        if (!block.CheckBlockSignature(key_id)) {
-            return error("%s : failed block signature: %s", __func__, block_hash.ToString().c_str());
+        if (!header.CheckBlockSignature(key_id)) {
+            return state.DoS(100, false, REJECT_INVALID, "bad-blk-sig",
+                             false, "invalid block signature");
         }
     }
 
     unsigned int nInterval = 0;
-    unsigned int nTime = block.nTime;
-    uint256 hashProofOfStake = block.hashProofOfStake();
-    uint32_t nStakeModifier = block.nStakeModifier();
+    unsigned int nTime = header.nTime;
+    uint256 hashProofOfStake = header.hashProofOfStake();
+    uint32_t nStakeModifier = header.nStakeModifier();
     
     bool is_valid = CheckStakeKernelHash(
-            block.nBits,
+            header.nBits,
             *pindex_tx, *txinPrevRef, prevout,
             nTime, nInterval, true,
             hashProofOfStake, nStakeModifier,
             false);
 
     if (!is_valid) {
-        return error(
-            "CheckProofOfStake() : INFO: check kernel failed on coinstake %s, hashProof=%s \n",
-            prevout.hash.ToString().c_str(), hashProofOfStake.ToString().c_str());
+        return state.DoS(100, false, REJECT_INVALID, "bad-pos-proof");
     }
 
     return true;

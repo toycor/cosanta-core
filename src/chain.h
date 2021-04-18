@@ -372,7 +372,9 @@ public:
 
     bool IsGeneratedStakeModifier() const
     {
-        return (!pprev || pprev->nStakeModifier() != nStakeModifier());
+        return (pprev && (
+                    !pprev->IsProofOfStake() ||
+                    (pprev->nStakeModifier() != nStakeModifier())));
     }
 
     std::string ToString() const

@@ -29,6 +29,6 @@ bool CheckStakeKernelHash(unsigned int nBits, const CBlockIndex &blockFrom, cons
 
 // Check kernel hash target and coinstake signature
 // Sets hashProofOfStake on success return
-bool CheckProofOfStake(const CBlockHeader &block);
+bool CheckProofOfStake(CValidationState &state, const CBlockHeader &block);
 
 #endif // BITCOIN_KERNEL_H

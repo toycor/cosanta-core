@@ -516,7 +516,7 @@ bool LoadMempool();
 /** Check if Proof-of-Stake is required for particular height **/
 bool IsPoSEnforcedHeight(int nBlockHeight);
 
-bool CheckProof(const CBlockIndex &pindex, const Consensus::Params& params);
-bool CheckProof(const CBlockHeader &block, const Consensus::Params& params);
+bool CheckProof(CValidationState& state, const CBlockIndex &pindex, const Consensus::Params& params);
+bool CheckProof(CValidationState& state, const CBlockHeader &block, const Consensus::Params& params);
 
 #endif // BITCOIN_VALIDATION_H
