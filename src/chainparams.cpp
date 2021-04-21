@@ -471,7 +471,7 @@ public:
         consensus.DIP0001Height = 5500;
         consensus.DIP0003Height = 7000;
         consensus.DIP0003EnforcementHeight = 7300;
-        consensus.DIP0003EnforcementHash = uint256S("00000055ebc0e974ba3a3fb785c5ad4365a39637d4df168169ee80d313612f8f");
+        consensus.DIP0003EnforcementHash = uint256();
         consensus.powLimit = uint256S("00000fffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"); // ~uint256(0) >> 20
         consensus.posLimit = uint256S("0fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"); // ~uint256(0) >> 4
         consensus.nPowTargetTimespan = 24 * 60 * 60; // Cosanta: 1 day
