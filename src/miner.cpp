@@ -61,6 +61,8 @@ uint64_t nLastBlockTx = 0;
 uint64_t nLastBlockSize = 0;
 bool isLastPoW = false;
 bool isPoW = false;
+int64_t pow_hps = 0;
+int64_t lastPOW_hps = 0;
 int64_t nLastCoinStakeSearchInterval = 0;
 int64_t nLastCoinStakeSearchTime = 0;
 
@@ -590,8 +592,10 @@ void static CosantaMiner(CWallet *pwallet)
 {
     //SetThreadPriority(THREAD_PRIORITY_LOWEST);
     LogPrintf("PoW Miner started\n");
-    RenameThread("cosanta-miner");
+    RenameThread("cosanta-pow");
     bool keepScript = true;
+    pow_hps = 0;
+    lastPOW_hps = 0;
 
     std::shared_ptr<CReserveScript> coinbaseScript = std::make_shared<CReserveScript>();
     pwallet->GetScriptForMining(coinbaseScript);
@@ -630,6 +634,7 @@ void static CosantaMiner(CWallet *pwallet)
                 }
                 while (isPoW && pblock->nNonce < nInnerLoopCount && !CheckProof(state, *pblock, Params().GetConsensus())) {
                     ++pblock->nNonce;
+                    pow_hps++;
                     state = CValidationState();
                 }
                 if (!isPoW) {
@@ -661,6 +666,8 @@ void static CosantaMiner(CWallet *pwallet)
         LogPrintf("CosantaMiner terminated\n");
         throw;
     }
+    pow_hps = 0;
+    lastPOW_hps = 0;
 }
 
 void GenerateCosanta(bool fGenerate, CWallet* pwallet)

@@ -200,6 +200,8 @@ extern bool fLargeWorkInvalidChainFound;
 
 extern bool isLastPoW;
 extern bool isUsePoW;
+extern int64_t pow_hps;
+extern int64_t lastPOW_hps;
 
 extern int64_t nLastCoinStakeSearchInterval;
 extern int64_t nLastCoinStakeSearchTime;

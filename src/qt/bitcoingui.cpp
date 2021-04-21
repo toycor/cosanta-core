@@ -70,6 +70,9 @@
 #include <QUrlQuery>
 #endif
 
+#include "miner.h"
+#include "wallet/wallet.h"
+
 const std::string BitcoinGUI::DEFAULT_UIPLATFORM =
 #if defined(Q_OS_MAC)
         "macosx"
@@ -464,6 +467,13 @@ void BitcoinGUI::createActions()
     openConfEditorAction->setStatusTip(tr("Open configuration file"));
     showBackupsAction = new QAction(QIcon(":/icons/browse"), tr("Show Automatic &Backups"), this);
     showBackupsAction->setStatusTip(tr("Show automatically created wallet backups"));
+    // POW Actions
+    powStartAction = new QAction(QIcon(":/icons//icons/pow_active"), tr("Start PoW mining"), this);
+    powStartAction->setStatusTip(tr("Start mining Cosanta"));
+    powStartAction->setVisible(true);
+    powStopAction = new QAction(QIcon(":/icons//icons/pow_deactive"), tr("Stop PoW mining"), this);
+    powStopAction->setStatusTip(tr("Stop mining Cosanta"));
+    powStopAction->setVisible(false);
     // initially disable the debug window menu items
     openInfoAction->setEnabled(false);
     openRPCConsoleAction->setEnabled(false);
@@ -501,6 +511,10 @@ void BitcoinGUI::createActions()
     connect(openGraphAction, SIGNAL(triggered()), this, SLOT(showGraph()));
     connect(openPeersAction, SIGNAL(triggered()), this, SLOT(showPeers()));
     connect(openRepairAction, SIGNAL(triggered()), this, SLOT(showRepair()));
+
+    //POW
+    connect(powStartAction, SIGNAL(triggered()), this, SLOT(powStartClicked()));
+    connect(powStopAction, SIGNAL(triggered()), this, SLOT(powStopClicked()));
 
     // Open configs and backup folder from menu
     connect(openConfEditorAction, SIGNAL(triggered()), this, SLOT(showConfEditor()));
@@ -579,6 +593,9 @@ void BitcoinGUI::createMenuBar()
         tools->addAction(openGraphAction);
         tools->addAction(openPeersAction);
         tools->addAction(openRepairAction);
+        tools->addSeparator();
+        tools->addAction(powStartAction);
+        tools->addAction(powStopAction);
         tools->addSeparator();
         tools->addAction(openConfEditorAction);
         tools->addAction(showBackupsAction);
@@ -1402,14 +1419,47 @@ bool BitcoinGUI::eventFilter(QObject *object, QEvent *event)
     return QMainWindow::eventFilter(object, event);
 }
 
+void BitcoinGUI::powStartClicked()
+{
+    GenerateCosanta(true, vpwallets[0]);
+    powStartAction->setVisible(false);
+    powStopAction->setVisible(true);
+}
+
+void BitcoinGUI::powStopClicked()
+{
+    GenerateCosanta(false, NULL);
+    powStartAction->setVisible(true);
+    powStopAction->setVisible(false);
+}
+
+
 void BitcoinGUI::setPoWStatus()
 {
+    lastPOW_hps = pow_hps;
+    pow_hps = 0;
+
     if (isLastPoW) {
+        QString text;
+
+        if (lastPOW_hps < 1000){
+            text = tr("%n hps", "", lastPOW_hps);
+        }
+        else if (lastPOW_hps < 1000 * 1000)
+        {
+            text = tr("%n Khps", "", lastPOW_hps / 1000);
+        }
+        else
+        {
+            text = tr("%n Mhps", "", lastPOW_hps / 1000 / 1000);
+        }
         labelPoWIcon->show();
         labelPoWIcon->setPixmap(QIcon(":/icons/pow_active").pixmap(STATUSBAR_ICONSIZE, STATUSBAR_ICONSIZE));
+        labelPoWIcon->setToolTip(tr("PoW is <b>enabled</b> Your hashrate is %1.").arg(text));
     } else {
         labelPoWIcon->show();
         labelPoWIcon->setPixmap(QIcon(":/icons/pow_inactive").pixmap(STATUSBAR_ICONSIZE, STATUSBAR_ICONSIZE));
+        labelPoWIcon->setToolTip(tr("PoW is <b>disabled</b>"));
     }
 }
 

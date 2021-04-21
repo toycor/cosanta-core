@@ -128,6 +128,8 @@ private:
     QAction *openAction;
     QAction *showHelpMessageAction;
     QAction *showPrivateSendHelpAction;
+    QAction *powStartAction;
+    QAction *powStopAction;
 
     QSystemTrayIcon *trayIcon;
     QMenu *trayIconMenu;
@@ -211,6 +213,8 @@ public Q_SLOTS:
 
     void setPoWStatus();
     void setStakingStatus();
+    void powStartClicked();
+    void powStopClicked();
 
 #ifdef ENABLE_WALLET
     /** Set the hd-enabled status as shown in the UI.

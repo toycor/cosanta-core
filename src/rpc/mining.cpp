@@ -123,6 +123,9 @@ UniValue generateBlocks(std::shared_ptr<CReserveScript> coinbaseScript, int nGen
     static const int nInnerLoopCount = 0x10000;
     int nHeightEnd = 0;
     int nHeight = 0;
+    isLastPoW = true;
+    pow_hps = 0;
+    lastPOW_hps = 0;
 
     {   // Don't keep cs_main locked
         LOCK(cs_main);
@@ -173,6 +176,9 @@ UniValue generateBlocks(std::shared_ptr<CReserveScript> coinbaseScript, int nGen
             coinbaseScript->KeepScript();
         }
     }
+    isLastPoW = false;
+    pow_hps = 0;
+    lastPOW_hps = 0;
     return blockHashes;
 }
 
@@ -220,6 +226,7 @@ UniValue getgenerate(const JSONRPCRequest& request)
     UniValue obj(UniValue::VOBJ);
     obj.push_back(Pair("config",gArgs.GetBoolArg("-gen", false)));
     obj.push_back(Pair("status",isLastPoW));
+    obj.push_back(Pair("hps",lastPOW_hps));
     return obj;
 }
 
