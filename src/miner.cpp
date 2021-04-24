@@ -63,6 +63,7 @@ bool isLastPoW = false;
 bool isPoW = false;
 int64_t pow_hps = 0;
 int64_t lastPOW_hps = 0;
+int pow_cpu = 0;
 int64_t nLastCoinStakeSearchInterval = 0;
 int64_t nLastCoinStakeSearchTime = 0;
 
@@ -668,6 +669,7 @@ void static CosantaMiner(CWallet *pwallet)
     }
     pow_hps = 0;
     lastPOW_hps = 0;
+    pow_cpu = 0;
 }
 
 void GenerateCosanta(bool fGenerate, CWallet* pwallet)
@@ -690,6 +692,8 @@ void GenerateCosanta(bool fGenerate, CWallet* pwallet)
 
     if (nThreads == 0 || !fGenerate)
         return;
+
+   pow_cpu = nThreads;
 
     minerThreads = new boost::thread_group();
     for (int i = 0; i < nThreads; i++)

@@ -126,6 +126,7 @@ UniValue generateBlocks(std::shared_ptr<CReserveScript> coinbaseScript, int nGen
     isLastPoW = true;
     pow_hps = 0;
     lastPOW_hps = 0;
+    pow_cpu = 1;
 
     {   // Don't keep cs_main locked
         LOCK(cs_main);
@@ -227,6 +228,7 @@ UniValue getgenerate(const JSONRPCRequest& request)
     obj.push_back(Pair("config",gArgs.GetBoolArg("-gen", false)));
     obj.push_back(Pair("status",isLastPoW));
     obj.push_back(Pair("hps",lastPOW_hps));
+    obj.push_back(Pair("threads",pow_cpu));
     return obj;
 }
 

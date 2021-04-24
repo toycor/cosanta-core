@@ -1436,30 +1436,35 @@ void BitcoinGUI::powStopClicked()
 
 void BitcoinGUI::setPoWStatus()
 {
-    lastPOW_hps = pow_hps;
+    int pow = pow_hps / 10;
+    lastPOW_hps = pow;
     pow_hps = 0;
 
-    if (isLastPoW) {
+    if (pow) {
         QString text;
 
-        if (lastPOW_hps < 1000){
-            text = tr("%n hps", "", lastPOW_hps);
+        if (pow < 1000){
+            text = tr("Your hashrate is %1 hps<br>with %2 threads").arg(pow).arg(pow_cpu);
         }
-        else if (lastPOW_hps < 1000 * 1000)
+        else if (pow < 1000 * 1000)
         {
-            text = tr("%n Khps", "", lastPOW_hps / 1000);
+            text = tr("Your hashrate is %1 Khps<br>with %2 threads").arg(pow / 1000).arg(pow_cpu);
         }
         else
         {
-            text = tr("%n Mhps", "", lastPOW_hps / 1000 / 1000);
+            text = tr("Your hashrate is %1 Mhps<br>with %2 threads").arg(pow / 1000 / 1000).arg(pow_cpu);
         }
         labelPoWIcon->show();
         labelPoWIcon->setPixmap(QIcon(":/icons/pow_active").pixmap(STATUSBAR_ICONSIZE, STATUSBAR_ICONSIZE));
-        labelPoWIcon->setToolTip(tr("PoW is <b>enabled</b> Your hashrate is %1.").arg(text));
+        labelPoWIcon->setToolTip(tr("PoW is <b>enabled</b><br>%1.").arg(text));
+        powStartAction->setVisible(false);
+        powStopAction->setVisible(true);
     } else {
         labelPoWIcon->show();
         labelPoWIcon->setPixmap(QIcon(":/icons/pow_inactive").pixmap(STATUSBAR_ICONSIZE, STATUSBAR_ICONSIZE));
         labelPoWIcon->setToolTip(tr("PoW is <b>disabled</b>"));
+        powStartAction->setVisible(true);
+        powStopAction->setVisible(false);
     }
 }
 
