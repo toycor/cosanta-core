@@ -501,7 +501,7 @@ public:
         // Deployment of BIP147
         consensus.vDeployments[Consensus::DEPLOYMENT_BIP147].bit = 2;
         consensus.vDeployments[Consensus::DEPLOYMENT_BIP147].nStartTime = 1619222400; // April 24, 2021
-        consensus.vDeployments[Consensus::DEPLOYMENT_DIP0001].nTimeout = 1672444800; // December 31, 2022
+        consensus.vDeployments[Consensus::DEPLOYMENT_BIP147].nTimeout = 1672444800; // December 31, 2022
         consensus.vDeployments[Consensus::DEPLOYMENT_BIP147].nWindowSize = 100;
         consensus.vDeployments[Consensus::DEPLOYMENT_BIP147].nThreshold = 50; // 50% of 100
 
