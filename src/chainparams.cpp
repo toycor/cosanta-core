@@ -18,7 +18,7 @@
 
 #include "chainparamsseeds.h"
 
-#define COSANTA_MINE_NEW_GENESIS_BLOCK
+//#define COSANTA_MINE_NEW_GENESIS_BLOCK
 #ifdef COSANTA_MINE_NEW_GENESIS_BLOCK
 
 #include "validation.h"
@@ -36,7 +36,7 @@ struct GenesisMiner
 
         auto start = std::chrono::system_clock::now();
 
-        genesisBlock.nTime = 1618221600; // chrono::seconds(time(NULL)).count();
+        genesisBlock.nTime = chrono::seconds(time(NULL)).count();
         int i = 0;
         while (true)
         {
@@ -370,11 +370,11 @@ public:
         nDefaultPort = 60606;
         nPruneAfterHeight = 100000;
 
-        genesis = CreateGenesisBlock(1618221600, 4889804, 0x1e0ffff0, 1, 1);
+        genesis = CreateGenesisBlock(1626442320, 7465800, 0x1e0ffff0, 1, 0 * COIN); //  2021-07-16 13:32:00
         consensus.hashGenesisBlock = genesis.GetHash();
 
-        uint256 expectedGenesisHash = uint256S("0x00000159acc5941b0b044733dc3998322b717e185a3b6088a40653028e319bec");
-        uint256 expectedGenesisMerkleRoot = uint256S("14113b62538c25e0dcb71c525bb832465c1ba88350441960169cbcfa79d009f5");
+        uint256 expectedGenesisHash = uint256S("0x00000ce07df018e65e003f4d097cf026db99bcd493d6c4d07f0b47edf6534a26");
+        uint256 expectedGenesisMerkleRoot = uint256S("0xe16337d6f2cd561e3b9b2c470ec2adc11cf94ba2cda40bddfd2f23deff2499fb");
 
         #ifdef COSANTA_MINE_NEW_GENESIS_BLOCK
         if (consensus.hashGenesisBlock != expectedGenesisHash)
