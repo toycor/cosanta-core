@@ -390,7 +390,7 @@ public:
         vSeeds.emplace_back("m2.cosanta.net", true);
 
         // Cosanta addresses start with 'C'
-        base58Prefixes[PUBKEY_ADDRESS] = std::vector<unsigned char>(1,27);
+        base58Prefixes[PUBKEY_ADDRESS] = std::vector<unsigned char>(1,28);
         // Cosanta script addresses start with '7'
         base58Prefixes[SCRIPT_ADDRESS] = std::vector<unsigned char>(1,13);
         // Cosanta private keys start with '7' or 'X'
@@ -423,7 +423,7 @@ public:
         nPoolMaxParticipants = 5;
         nFulfilledRequestExpireTime = 60*60; // fulfilled requests expire in 1 hour
 
-        vSporkAddresses = {"CERTuyc2FfQHoCY6KCwAGBQ5fTFJFHJeWz"};
+        vSporkAddresses = {"CPU5ip4oDKkmcSfbZkmeXnMq5aTQUSRtwz"};
         nMinSporkKeys = 1;
         fBIP9CheckMasternodesUpgraded = true;
 
