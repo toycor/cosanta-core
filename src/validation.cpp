@@ -3399,8 +3399,6 @@ static bool ContextualCheckBlockHeader(const CBlockHeader& block, CValidationSta
 
     // Check timestamp
     // 3 minute future drift for PoS
-    int bb = block.IsProofOfStake() ? 180 : MAX_FUTURE_BLOCK_TIME;
-    bool a = block.GetBlockTime() > nAdjustedTime;
     if (block.GetBlockTime() > nAdjustedTime + (block.IsProofOfStake() ? 180 : MAX_FUTURE_BLOCK_TIME))
         return state.Invalid(false, REJECT_INVALID, "time-too-new", strprintf("block timestamp too far in the future %d %d", block.GetBlockTime(), nAdjustedTime + 2 * 60 * 60));
 
