@@ -40,9 +40,9 @@ SendCoinsEntry::SendCoinsEntry(const PlatformStyle *_platformStyle, QWidget *par
     ui->deleteButton_is->setIcon(QIcon(":/icons/remove"));
     ui->deleteButton_s->setIcon(QIcon(":/icons/remove"));
       
-    // normal dash addressg field
-    GUIUtil::setupAddressWidget(ui->payTo, this);
-    // just a label for displaying dash addressg(es)
+    // normal dash address field
+    GUIUtil::setupAddressWidget(ui->payTo, this, true);
+    // just a label for displaying dash address(es)
     ui->payTo_is->setFont(GUIUtil::fixedPitchFont());
 
     // Connect signals
