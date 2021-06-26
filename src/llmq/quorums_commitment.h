@@ -6,13 +6,13 @@
 #ifndef COSANTA_QUORUMS_COMMITMENT_H
 #define COSANTA_QUORUMS_COMMITMENT_H
 
-#include "consensus/params.h"
+#include <consensus/params.h>
 
-#include "evo/deterministicmns.h"
+#include <evo/deterministicmns.h>
 
-#include "bls/bls.h"
+#include <bls/bls.h>
 
-#include "univalue.h"
+#include <univalue.h>
 
 namespace llmq
 {

@@ -8,32 +8,33 @@
 #ifndef BITCOIN_HASH_H
 #define BITCOIN_HASH_H
 
-#include "crypto/ripemd160.h"
-#include "crypto/sha256.h"
-#include "prevector.h"
-#include "serialize.h"
-#include "uint256.h"
-#include "version.h"
+#include <crypto/ripemd160.h>
+#include <crypto/sha256.h>
+#include <prevector.h>
+#include <serialize.h>
+#include <uint256.h>
+#include <version.h>
 
-#include "crypto/sph_blake.h"
-#include "crypto/sph_bmw.h"
-#include "crypto/sph_groestl.h"
-#include "crypto/sph_jh.h"
-#include "crypto/sph_keccak.h"
-#include "crypto/sph_skein.h"
-#include "crypto/sph_luffa.h"
-#include "crypto/sph_cubehash.h"
-#include "crypto/sph_shavite.h"
-#include "crypto/sph_simd.h"
-#include "crypto/sph_echo.h"
-#include "crypto/sph_hamsi.h"
-#include "crypto/sph_fugue.h"
-#include "crypto/sph_shabal.h"
-#include "crypto/sph_whirlpool.h"
-#include "crypto/sph_sha2.h"
-#include "crypto/sph_haval.h"
-#include "crypto/sph_streebog.h"
-#include "crypto/scrypt.h"
+#include <crypto/sph_blake.h>
+#include <crypto/sph_bmw.h>
+#include <crypto/sph_groestl.h>
+#include <crypto/sph_jh.h>
+#include <crypto/sph_keccak.h>
+#include <crypto/sph_skein.h>
+#include <crypto/sph_luffa.h>
+#include <crypto/sph_cubehash.h>
+#include <crypto/sph_shavite.h>
+#include <crypto/sph_simd.h>
+#include <crypto/sph_echo.h>
+#include <crypto/sph_hamsi.h>
+#include <crypto/sph_fugue.h>
+#include <crypto/sph_shabal.h>
+#include <crypto/sph_whirlpool.h>
+#include <crypto/sph_sha2.h>
+#include <crypto/sph_haval.h>
+#include <crypto/sph_streebog.h>
+#include <crypto/scrypt.h>
+
 
 #include <vector>
 

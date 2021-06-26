@@ -6,9 +6,9 @@
 #ifndef BITCOIN_MINER_H
 #define BITCOIN_MINER_H
 
-#include "primitives/block.h"
-#include "threadinterrupt.h"
-#include "wallet/wallet.h"
+#include <primitives/block.h>
+#include <threadinterrupt.h>
+#include <wallet/wallet.h>
 #include "txmempool.h"
 
 #include <stdint.h>

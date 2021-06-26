@@ -6,17 +6,17 @@
 #ifndef COSANTA_QUORUMS_SIGNING_SHARES_H
 #define COSANTA_QUORUMS_SIGNING_SHARES_H
 
-#include "bls/bls.h"
-#include "chainparams.h"
-#include "net.h"
-#include "random.h"
-#include "saltedhasher.h"
-#include "serialize.h"
-#include "sync.h"
-#include "tinyformat.h"
-#include "uint256.h"
+#include <bls/bls.h>
+#include <chainparams.h>
+#include <net.h>
+#include <random.h>
+#include <saltedhasher.h>
+#include <serialize.h>
+#include <sync.h>
+#include <tinyformat.h>
+#include <uint256.h>
 
-#include "llmq/quorums.h"
+#include <llmq/quorums.h>
 
 #include <thread>
 #include <mutex>

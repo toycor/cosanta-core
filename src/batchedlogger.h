@@ -6,7 +6,7 @@
 #ifndef COSANTA_BATCHEDLOGGER_H
 #define COSANTA_BATCHEDLOGGER_H
 
-#include "tinyformat.h"
+#include <tinyformat.h>
 
 class CBatchedLogger
 {

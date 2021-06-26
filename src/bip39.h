@@ -24,7 +24,7 @@
 #ifndef COSANTA_BIP39_H
 #define COSANTA_BIP39_H
 
-#include "support/allocators/secure.h"
+#include <support/allocators/secure.h>
 
 class CMnemonic
 {

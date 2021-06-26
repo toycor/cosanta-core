@@ -6,7 +6,7 @@
 #ifndef COSANTA_CRYPTO_BLS_BATCHVERIFIER_H
 #define COSANTA_CRYPTO_BLS_BATCHVERIFIER_H
 
-#include "bls.h"
+#include <bls/bls.h>
 
 #include <map>
 #include <vector>

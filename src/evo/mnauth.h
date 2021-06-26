@@ -6,8 +6,8 @@
 #ifndef COSANTA_MNAUTH_H
 #define COSANTA_MNAUTH_H
 
-#include "bls/bls.h"
-#include "serialize.h"
+#include <bls/bls.h>
+#include <serialize.h>
 
 class CConnman;
 class CDataStream;
