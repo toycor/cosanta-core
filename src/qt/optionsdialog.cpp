@@ -3,26 +3,27 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #if defined(HAVE_CONFIG_H)
-#include "config/dash-config.h"
+#include "config/cosanta-config.h"
 #endif
 
-#include "optionsdialog.h"
-#include "ui_optionsdialog.h"
+#include <qt/optionsdialog.h>
+#include <qt/forms/ui_optionsdialog.h>
 
-#include "bitcoinunits.h"
-#include "guiutil.h"
-#include "optionsmodel.h"
+#include <qt/bitcoinunits.h>
+#include <qt/guiutil.h>
+#include <qt/optionsmodel.h>
 
-#include "validation.h" // for DEFAULT_SCRIPTCHECK_THREADS and MAX_SCRIPTCHECK_THREADS
-#include "netbase.h"
-#include "txdb.h" // for -dbcache defaults
+#include <validation.h> // for DEFAULT_SCRIPTCHECK_THREADS and MAX_SCRIPTCHECK_THREADS
+#include <netbase.h>
+#include <txdb.h> // for -dbcache defaults
 
 #ifdef ENABLE_WALLET
-#include "wallet/wallet.h" // for CWallet::GetRequiredFee()
+#include <wallet/wallet.h> // for CWallet::GetRequiredFee()
 
-#include "privatesend/privatesend-client.h"
+#include <privatesend/privatesend-client.h>
 #endif // ENABLE_WALLET
 
+#include <QButtonGroup>
 #include <QDataWidgetMapper>
 #include <QDir>
 #include <QIntValidator>

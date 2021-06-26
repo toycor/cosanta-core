@@ -4,25 +4,21 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#include "coincontroldialog.h"
-#include "ui_coincontroldialog.h"
+#include <qt/coincontroldialog.h>
+#include <qt/forms/ui_coincontroldialog.h>
 
-#include "addresstablemodel.h"
-#include "bitcoinunits.h"
-#include "guiutil.h"
-#include "optionsmodel.h"
-#include "platformstyle.h"
-#include "txmempool.h"
-#include "walletmodel.h"
+#include <qt/addresstablemodel.h>
+#include <qt/bitcoinunits.h>
+#include <qt/guiutil.h>
+#include <qt/optionsmodel.h>
+#include <txmempool.h>
+#include <qt/walletmodel.h>
 
-#include "wallet/coincontrol.h"
-#include "init.h"
-#include "policy/fees.h"
-#include "policy/policy.h"
-#include "validation.h" // For mempool
-#include "wallet/wallet.h"
-
-#include "privatesend/privatesend-client.h"
+#include <wallet/coincontrol.h>
+#include <policy/fees.h>
+#include <policy/policy.h>
+#include <validation.h> // For mempool
+#include <wallet/wallet.h>
 
 #include <QApplication>
 #include <QCheckBox>
@@ -34,6 +30,8 @@
 #include <QString>
 #include <QTreeWidget>
 #include <QTreeWidgetItem>
+
+#include <privatesend/privatesend-client.h>
 
 QList<CAmount> CoinControlDialog::payAmounts;
 CCoinControl* CoinControlDialog::coinControl = new CCoinControl();
