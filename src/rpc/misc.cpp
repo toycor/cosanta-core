@@ -444,7 +444,7 @@ CScript _createmultisig_redeemScript(CWallet * const pwallet, const UniValue& pa
     {
         const std::string& ks = keys[i].get_str();
 #ifdef ENABLE_WALLET
-        // Case 1: Cosanta address and we have full public key:
+        // Case 1: Dash address and we have full public key:
         CBitcoinAddress address(ks);
         if (pwallet && address.IsValid()) {
             CKeyID keyID;

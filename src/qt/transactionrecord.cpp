@@ -57,7 +57,7 @@ QList<TransactionRecord> TransactionRecord::decomposeTransaction(const CWallet *
                 sub.involvesWatchAddress = mine & ISMINE_WATCH_ONLY;
                 if (ExtractDestination(txout.scriptPubKey, address) && IsMine(*wallet, address))
                 {
-                    // Received by Cosanta Address
+                    // Received by Dash Address
                     sub.type = TransactionRecord::RecvWithAddress;
                     sub.strAddress = CBitcoinAddress(address).ToString();
                 }
