@@ -130,7 +130,7 @@ QList<TransactionRecord> TransactionRecord::decomposeTransaction(const CWallet *
                 CTxDestination address;
                 if (ExtractDestination(wtx.tx->vout[0].scriptPubKey, address))
                 {
-                    // Sent to Cosanta Address
+                    // Sent to Dash Address
                     sub.strAddress = CBitcoinAddress(address).ToString();
                 }
                 else
