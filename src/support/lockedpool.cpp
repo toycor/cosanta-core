@@ -6,7 +6,7 @@
 #include "support/cleanse.h"
 
 #if defined(HAVE_CONFIG_H)
-#include "config/cosanta-config.h"
+#include "config/dash-config.h"
 #endif
 
 #ifdef WIN32
