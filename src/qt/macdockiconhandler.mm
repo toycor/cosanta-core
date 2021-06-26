@@ -29,19 +29,18 @@ bool dockClickHandler(id self,SEL _cmd,...) {
 }
 
 void setupDockClickHandler() {
-    // PIRATE CASH
-    //Class cls = objc_getClass("NSApplication");
-    //id appInst = objc_msgSend((id)cls, sel_registerName("sharedApplication"));
+    Class cls = objc_getClass("NSApplication");
+    id appInst = objc_msgSend((id)cls, sel_registerName("sharedApplication"));
     
-    //if (appInst != NULL) {
-    //    id delegate = objc_msgSend(appInst, sel_registerName("delegate"));
-    //    Class delClass = (Class)objc_msgSend(delegate,  sel_registerName("class"));
-    //    SEL shouldHandle = sel_registerName("applicationShouldHandleReopen:hasVisibleWindows:");
-    //    if (class_getInstanceMethod(delClass, shouldHandle))
-    //        class_replaceMethod(delClass, shouldHandle, (IMP)dockClickHandler, "B@:");
-    //    else
-    //        class_addMethod(delClass, shouldHandle, (IMP)dockClickHandler,"B@:");
-    //}
+    if (appInst != NULL) {
+        id delegate = objc_msgSend(appInst, sel_registerName("delegate"));
+        Class delClass = (Class)objc_msgSend(delegate,  sel_registerName("class"));
+        SEL shouldHandle = sel_registerName("applicationShouldHandleReopen:hasVisibleWindows:");
+        if (class_getInstanceMethod(delClass, shouldHandle))
+            class_replaceMethod(delClass, shouldHandle, (IMP)dockClickHandler, "B@:");
+        else
+            class_addMethod(delClass, shouldHandle, (IMP)dockClickHandler,"B@:");
+    }
 }
 
 
