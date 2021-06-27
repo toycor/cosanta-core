@@ -4,9 +4,9 @@
 #ifndef BITCOIN_KERNEL_H
 #define BITCOIN_KERNEL_H
 
-#include "chain.h"
-#include "streams.h"
-#include "util.h"
+#include <chain.h>
+#include <streams.h>
+#include <util.h>
 
 
 	// MODIFIER_INTERVAL: time to elapse before new modifier is computed

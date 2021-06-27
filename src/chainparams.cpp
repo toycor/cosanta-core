@@ -21,7 +21,7 @@
 //#define COSANTA_MINE_NEW_GENESIS_BLOCK
 #ifdef COSANTA_MINE_NEW_GENESIS_BLOCK
 
-#include "validation.h"
+#include <validation.h>
 
 #include <chrono>
 #include <iomanip>

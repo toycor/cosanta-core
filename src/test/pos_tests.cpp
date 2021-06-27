@@ -4,13 +4,13 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#include "base58.h"
-#include "spork.h"
-#include "utilstrencodings.h"
-#include "validation.h"
-#include "wallet/wallet.h"
+#include <base58.h>
+#include <spork.h>
+#include <utilstrencodings.h>
+#include <validation.h>
+#include <wallet/wallet.h>
 
-#include "test/test_energi.h"
+#include <test/test_energi.h>
 
 #include <boost/test/unit_test.hpp>
 

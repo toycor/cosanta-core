@@ -6,11 +6,11 @@
 #include <boost/assign/list_of.hpp>
 #include <boost/lexical_cast.hpp>
 
-#include "kernel.h"
-#include "db.h"
-#include "script/interpreter.h"
-#include "timedata.h"
-#include "util.h"
+#include <kernel.h>
+#include <db.h>
+#include <script/interpreter.h>
+#include <timedata.h>
+#include <util.h>
 
 using namespace std;
 

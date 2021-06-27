@@ -4,8 +4,8 @@
 #ifndef BITCOIN_KERNEL_H
 #define BITCOIN_KERNEL_H
 
-#include "streams.h"
-#include "validation.h"
+#include <streams.h>
+#include <validation.h>
 
 
 // MODIFIER_INTERVAL: time to elapse before new modifier is computed
