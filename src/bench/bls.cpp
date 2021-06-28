@@ -52,7 +52,7 @@ static void BuildTestVectors(size_t count, size_t invalidCount,
     }
 }
 
-static void BLSPubKeyAggregate_Normal(benchmark::State& state)
+static void BLS_PubKeyAggregate_Normal(benchmark::State& state)
 {
     CBLSSecretKey secKey1, secKey2;
     secKey1.MakeNewKey();
@@ -67,7 +67,7 @@ static void BLSPubKeyAggregate_Normal(benchmark::State& state)
     }
 }
 
-static void BLSSecKeyAggregate_Normal(benchmark::State& state)
+static void BLS_SecKeyAggregate_Normal(benchmark::State& state)
 {
     CBLSSecretKey secKey1, secKey2;
     secKey1.MakeNewKey();
@@ -82,7 +82,7 @@ static void BLSSecKeyAggregate_Normal(benchmark::State& state)
     }
 }
 
-static void BLSSign_Normal(benchmark::State& state)
+static void BLS_Sign_Normal(benchmark::State& state)
 {
     CBLSSecretKey secKey;
     secKey.MakeNewKey();
@@ -95,7 +95,7 @@ static void BLSSign_Normal(benchmark::State& state)
     }
 }
 
-static void BLSVerify_Normal(benchmark::State& state)
+static void BLS_Verify_Normal(benchmark::State& state)
 {
     BLSPublicKeyVector pubKeys;
     BLSSecretKeyVector secKeys;
@@ -120,7 +120,7 @@ static void BLSVerify_Normal(benchmark::State& state)
 }
 
 
-static void BLSVerify_LargeBlock(size_t txCount, benchmark::State& state)
+static void BLS_Verify_LargeBlock(size_t txCount, benchmark::State& state)
 {
     BLSPublicKeyVector pubKeys;
     BLSSecretKeyVector secKeys;
@@ -137,17 +137,17 @@ static void BLSVerify_LargeBlock(size_t txCount, benchmark::State& state)
     }
 }
 
-static void BLSVerify_LargeBlock1000(benchmark::State& state)
+static void BLS_Verify_LargeBlock1000(benchmark::State& state)
 {
-    BLSVerify_LargeBlock(1000, state);
+    BLS_Verify_LargeBlock(1000, state);
 }
 
-static void BLSVerify_LargeBlock10000(benchmark::State& state)
+static void BLS_Verify_LargeBlock10000(benchmark::State& state)
 {
-    BLSVerify_LargeBlock(10000, state);
+    BLS_Verify_LargeBlock(10000, state);
 }
 
-static void BLSVerify_LargeBlockSelfAggregated(size_t txCount, benchmark::State& state)
+static void BLS_Verify_LargeBlockSelfAggregated(size_t txCount, benchmark::State& state)
 {
     BLSPublicKeyVector pubKeys;
     BLSSecretKeyVector secKeys;
@@ -163,17 +163,17 @@ static void BLSVerify_LargeBlockSelfAggregated(size_t txCount, benchmark::State&
     }
 }
 
-static void BLSVerify_LargeBlockSelfAggregated1000(benchmark::State& state)
+static void BLS_Verify_LargeBlockSelfAggregated1000(benchmark::State& state)
 {
-    BLSVerify_LargeBlockSelfAggregated(1000, state);
+    BLS_Verify_LargeBlockSelfAggregated(1000, state);
 }
 
-static void BLSVerify_LargeBlockSelfAggregated10000(benchmark::State& state)
+static void BLS_Verify_LargeBlockSelfAggregated10000(benchmark::State& state)
 {
-    BLSVerify_LargeBlockSelfAggregated(10000, state);
+    BLS_Verify_LargeBlockSelfAggregated(10000, state);
 }
 
-static void BLSVerify_LargeAggregatedBlock(size_t txCount, benchmark::State& state)
+static void BLS_Verify_LargeAggregatedBlock(size_t txCount, benchmark::State& state)
 {
     BLSPublicKeyVector pubKeys;
     BLSSecretKeyVector secKeys;
@@ -190,17 +190,17 @@ static void BLSVerify_LargeAggregatedBlock(size_t txCount, benchmark::State& sta
     }
 }
 
-static void BLSVerify_LargeAggregatedBlock1000(benchmark::State& state)
+static void BLS_Verify_LargeAggregatedBlock1000(benchmark::State& state)
 {
-    BLSVerify_LargeAggregatedBlock(1000, state);
+    BLS_Verify_LargeAggregatedBlock(1000, state);
 }
 
-static void BLSVerify_LargeAggregatedBlock10000(benchmark::State& state)
+static void BLS_Verify_LargeAggregatedBlock10000(benchmark::State& state)
 {
-    BLSVerify_LargeAggregatedBlock(10000, state);
+    BLS_Verify_LargeAggregatedBlock(10000, state);
 }
 
-static void BLSVerify_LargeAggregatedBlock1000PreVerified(benchmark::State& state)
+static void BLS_Verify_LargeAggregatedBlock1000PreVerified(benchmark::State& state)
 {
     BLSPublicKeyVector pubKeys;
     BLSSecretKeyVector secKeys;
@@ -246,7 +246,7 @@ static void BLSVerify_LargeAggregatedBlock1000PreVerified(benchmark::State& stat
     }
 }
 
-static void BLSVerify_Batched(benchmark::State& state)
+static void BLS_Verify_Batched(benchmark::State& state)
 {
     BLSPublicKeyVector pubKeys;
     BLSSecretKeyVector secKeys;
@@ -302,7 +302,7 @@ static void BLSVerify_Batched(benchmark::State& state)
     }
 }
 
-static void BLSVerify_BatchedParallel(benchmark::State& state)
+static void BLS_Verify_BatchedParallel(benchmark::State& state)
 {
     BLSPublicKeyVector pubKeys;
     BLSSecretKeyVector secKeys;
@@ -349,15 +349,15 @@ static void BLSVerify_BatchedParallel(benchmark::State& state)
     }
 }
 
-BENCHMARK(BLSPubKeyAggregate_Normal)
-BENCHMARK(BLSSecKeyAggregate_Normal)
-BENCHMARK(BLSSign_Normal)
-BENCHMARK(BLSVerify_Normal)
-BENCHMARK(BLSVerify_LargeBlock1000)
-BENCHMARK(BLSVerify_LargeBlockSelfAggregated1000)
-BENCHMARK(BLSVerify_LargeBlockSelfAggregated10000)
-BENCHMARK(BLSVerify_LargeAggregatedBlock1000)
-BENCHMARK(BLSVerify_LargeAggregatedBlock10000)
-BENCHMARK(BLSVerify_LargeAggregatedBlock1000PreVerified)
-BENCHMARK(BLSVerify_Batched)
-BENCHMARK(BLSVerify_BatchedParallel)
+BENCHMARK(BLS_PubKeyAggregate_Normal)
+BENCHMARK(BLS_SecKeyAggregate_Normal)
+BENCHMARK(BLS_Sign_Normal)
+BENCHMARK(BLS_Verify_Normal)
+BENCHMARK(BLS_Verify_LargeBlock1000)
+BENCHMARK(BLS_Verify_LargeBlockSelfAggregated1000)
+BENCHMARK(BLS_Verify_LargeBlockSelfAggregated10000)
+BENCHMARK(BLS_Verify_LargeAggregatedBlock1000)
+BENCHMARK(BLS_Verify_LargeAggregatedBlock10000)
+BENCHMARK(BLS_Verify_LargeAggregatedBlock1000PreVerified)
+BENCHMARK(BLS_Verify_Batched)
+BENCHMARK(BLS_Verify_BatchedParallel)
