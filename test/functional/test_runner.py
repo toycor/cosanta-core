@@ -287,7 +287,7 @@ def main():
     run_tests(test_list, config["environment"]["SRCDIR"], config["environment"]["BUILDDIR"], config["environment"]["EXEEXT"], tmpdir, args.jobs, args.coverage, passon_args)
 
 def run_tests(test_list, src_dir, build_dir, exeext, tmpdir, jobs=1, enable_coverage=False, args=[]):
-    # Warn if cosantad is already running (unix only)
+    # Warn if dashd is already running (unix only)
     try:
         pidof_output = subprocess.check_output(["pidof", "cosantad"])
         if not (pidof_output is None or pidof_output == b''):
