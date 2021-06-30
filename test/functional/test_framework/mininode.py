@@ -170,8 +170,6 @@ class NodeConnCB():
     def wait_for_disconnect(self, timeout=60):
         test_function = lambda: not self.connected
         wait_until(test_function, timeout=timeout, lock=mininode_lock)
-        # This is a hack. The related issues should be fixed by bitcoin 14119 and 14457.
-        time.sleep(1)
 
     # Message receiving helper methods
 
