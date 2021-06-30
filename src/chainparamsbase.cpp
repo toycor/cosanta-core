@@ -114,9 +114,6 @@ std::string ChainNameFromCommandLine()
     if (nameParamsCount > 1)
         throw std::runtime_error("Only one of -regtest, -testnet or -devnet can be used.");
 
-    //Main NET we will start after announce and genesis block for main net will bew changed!!!
-    return CBaseChainParams::TESTNET;
-
     if (fDevNet)
         return CBaseChainParams::DEVNET;
     if (fRegTest)
