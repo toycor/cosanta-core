@@ -1117,9 +1117,9 @@ static const CRPCCommand commands[] =
     { "mining",             "prioritisetransaction",  &prioritisetransaction,  {"txid","fee_delta"} },
     { "mining",             "getblocktemplate",       &getblocktemplate,       {"template_request"} },
     { "mining",             "submitblock",            &submitblock,            {"hexdata","dummy"} },
-    { "mining",             "getgenerate",            &getgenerate,            true,  {} },
-    { "mining",             "setgenerate",            &setgenerate,            true,  {"generate","genproclimit"} },
-    { "mining",             "reservebalance",         &reservebalance,         true,  {"reserve", "amount"} },
+    { "mining",             "getgenerate",            &getgenerate,            {} },
+    { "mining",             "setgenerate",            &setgenerate,            {"generate","genproclimit"} },
+    { "mining",             "reservebalance",         &reservebalance,         {"reserve", "amount"} },
 
 #if ENABLE_MINER
     { "generating",         "generatetoaddress",      &generatetoaddress,      {"nblocks","address","maxtries"} },
