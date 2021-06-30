@@ -49,7 +49,7 @@ class TestNode(P2PInterface):
 
 class LLMQ_IS_CL_Conflicts(CosantaTestFramework):
     def set_test_params(self):
-        self.set_cosanta_test_params(6, 5, fast_dip3_enforcement=True)
+        self.set_dash_test_params(6, 5, fast_dip3_enforcement=True)
         #disable_mocktime()
 
     def run_test(self):
