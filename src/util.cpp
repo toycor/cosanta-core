@@ -108,8 +108,8 @@ bool fLiteMode = false;
 */
 int nWalletBackups = 10;
 
-const char * const BITCOIN_CONF_FILENAME = "cosanta.conf";
-const char * const BITCOIN_PID_FILENAME = "cosanta.pid";
+const char * const BITCOIN_CONF_FILENAME = "dash.conf";
+const char * const BITCOIN_PID_FILENAME = "dash.pid";
 const char * const DEFAULT_DEBUGLOGFILE = "debug.log";
 
 ArgsManager gArgs;
@@ -302,7 +302,7 @@ bool GetLogCategory(uint64_t *f, const std::string *str)
             *f = BCLog::ALL;
             return true;
         }
-        if (*str == "cosanta") {
+        if (*str == "dash") {
             *f = BCLog::CHAINLOCKS
                 | BCLog::GOBJECT
                 | BCLog::INSTANTSEND
