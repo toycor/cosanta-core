@@ -15,11 +15,11 @@
 #include <sync.h>
 #include <util.h>
 #include <utiltime.h>
-#include <wallet.h>
+#include <wallet/wallet.h>
 #include <merkleblock.h>
 #include <core_io.h>
 
-#include <rpcwallet.h>
+#include <wallet/rpcwallet.h>
 
 #include <fstream>
 #include <stdint.h>
