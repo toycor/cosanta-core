@@ -98,10 +98,7 @@
 bool fFeeEstimatesInitialized = false;
 static const bool DEFAULT_PROXYRANDOMIZE = true;
 static const bool DEFAULT_REST_ENABLE = false;
-<<<<<<< HEAD
 static const bool DEFAULT_DISABLE_SAFEMODE = false;
-=======
->>>>>>> 09ed6a45e (Merge #11179: rpc: Push down safe mode checks)
 static const bool DEFAULT_STOPAFTERBLOCKIMPORT = false;
 
 
