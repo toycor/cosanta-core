@@ -353,7 +353,7 @@ public:
         consensus.vDeployments[Consensus::DEPLOYMENT_DIP0008].nThreshold = 50; // 50% of 100
 
         // The best chain should have at least this much work.
-        consensus.nMinimumChainWork = uint256S("0x000000000000000000000000000000000000000000000000000000000000000");
+        consensus.nMinimumChainWork = uint256S("0x000000000000000000000000000000000000000000000000000000003d803d80");
 
         // By default assume that the signatures in ancestors of this block are valid.
         consensus.defaultAssumeValid = uint256S("0x000000000000000000000000000000000000000000000000000000000000000");
@@ -432,6 +432,7 @@ public:
         checkpointData = (CCheckpointData) {
             {
                 {0, uint256S("0x000006cf010a54f22305095939df01cc5d7a2ecd208e1e353259a75cd99f58b4")},
+                {666, uint256S("0x000002c0bcdf5707a37fb486776009f5286e0323e231221506e9fe7c2ce73d08")},
             }
         };
 
