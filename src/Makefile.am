@@ -461,7 +461,10 @@ crypto_libcosanta_crypto_base_a_SOURCES += \
   crypto/sph_simd.h \
   crypto/sph_skein.h \
   crypto/sph_types.h \
-  crypto/sph_streebog.h
+  crypto/sph_streebog.h \
+  crypto/algos/Lyra2Z/Lyra2.c \
+  crypto/algos/Lyra2Z/Lyra2Z.c \
+  crypto/algos/Lyra2Z/Sponge.c
 
 crypto_libcosanta_crypto_shani_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
 crypto_libcosanta_crypto_shani_a_CPPFLAGS = $(AM_CPPFLAGS)

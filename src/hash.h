@@ -34,6 +34,7 @@
 #include "crypto/sph_haval.h"
 #include "crypto/sph_streebog.h"
 #include "crypto/scrypt.h"
+#include "crypto/algos/Lyra2Z/Lyra2.h"
 
 #include <vector>
 
@@ -344,10 +345,6 @@ inline uint256 HashX11(const T1 pbegin, const T1 pend)
     sph_haval256_5_context   ctx_haval;
     sph_gost512_context      ctx_gost;
 
-    sph_bmw512_context       ctx_bmw_n;
-    sph_sha512_context       ctx_sha2_n;
-    sph_keccak512_context    ctx_keccak_n;
-    sph_haval256_5_context   ctx_haval_n;
     static unsigned char pblank[1];
 
     uint512 hash[22];
@@ -424,23 +421,9 @@ inline uint256 HashX11(const T1 pbegin, const T1 pend)
     sph_gost512 (&ctx_gost, static_cast<const void*>(&hash[16]), 64);
     sph_gost512_close(&ctx_gost, static_cast<void*>(&hash[17]));
 
-    sph_bmw512_init(&ctx_bmw_n);
-    sph_bmw512 (&ctx_bmw_n, static_cast<const void*>(&hash[17]), 64);
-    sph_bmw512_close(&ctx_bmw_n, static_cast<void*>(&hash[18]));
+    LYRA2(&hash[18], 32, &hash[17], 80, &hash[17], 80, 2, 66, 66);
 
-    sph_keccak512_init(&ctx_keccak_n);
-    sph_keccak512 (&ctx_keccak_n, static_cast<const void*>(&hash[18]), 64);
-    sph_keccak512_close(&ctx_keccak_n, static_cast<void*>(&hash[19]));
-
-    sph_haval256_5_init(&ctx_haval_n);
-    sph_haval256_5 (&ctx_haval_n, static_cast<const void*>(&hash[19]), 64);
-    sph_haval256_5_close(&ctx_haval_n, static_cast<void*>(&hash[20]));
-
-    sph_sha512_init(&ctx_sha2_n);
-    sph_sha512 (&ctx_sha2_n, static_cast<const void*>(&hash[20]), 64);
-    sph_sha512_close(&ctx_sha2_n, static_cast<void*>(&hash[21]));
-
-    return hash[21].trim256();
+    return hash[18].trim256();
 }
 
 #endif // BITCOIN_HASH_H

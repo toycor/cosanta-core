@@ -311,8 +311,8 @@ public:
         consensus.nPowTargetSpacing = 2.5 * 60; // Cosanta: 2.5 minutes
         consensus.fPowAllowMinDifficultyBlocks = false;
         consensus.fPowNoRetargeting = false;
-        consensus.nPowKGWHeight = 4002;
-        consensus.nPowDGWHeight = 13000;
+        consensus.nPowKGWHeight = 30;
+        consensus.nPowDGWHeight = 40;
         consensus.nRuleChangeActivationThreshold = 1916; // 95% of 2016
         consensus.nMinerConfirmationWindow = 2016; // nPowTargetTimespan / nPowTargetSpacing
         consensus.vDeployments[Consensus::DEPLOYMENT_TESTDUMMY].bit = 27;
@@ -353,7 +353,7 @@ public:
         consensus.vDeployments[Consensus::DEPLOYMENT_DIP0008].nThreshold = 50; // 50% of 100
 
         // The best chain should have at least this much work.
-        consensus.nMinimumChainWork = uint256S("0x000000000000000000000000000000000000000000000000000000003d803d80");
+        consensus.nMinimumChainWork = uint256S("0x000000000000000000000000000000000000000000000000000000000000000");
 
         // By default assume that the signatures in ancestors of this block are valid.
         consensus.defaultAssumeValid = uint256S("0x000000000000000000000000000000000000000000000000000000000000000");
@@ -370,10 +370,10 @@ public:
         nDefaultPort = 60606;
         nPruneAfterHeight = 100000;
 
-        genesis = CreateGenesisBlock(1626442320, 7465800, 0x1e0ffff0, 1, 0 * COIN); //  2021-07-16 13:32:00
+        genesis = CreateGenesisBlock(1626442320, 9542573, 0x1e0ffff0, 1, 0 * COIN); //  2021-07-16 13:32:00
         consensus.hashGenesisBlock = genesis.GetHash();
 
-        uint256 expectedGenesisHash = uint256S("0x00000ce07df018e65e003f4d097cf026db99bcd493d6c4d07f0b47edf6534a26");
+        uint256 expectedGenesisHash = uint256S("0x00000216af2a362c1833a0a608408bcdc69d23b276e47d7510a776e3b0bb1fce");
         uint256 expectedGenesisMerkleRoot = uint256S("0xe16337d6f2cd561e3b9b2c470ec2adc11cf94ba2cda40bddfd2f23deff2499fb");
 
         #ifdef COSANTA_MINE_NEW_GENESIS_BLOCK
@@ -431,8 +431,7 @@ public:
 
         checkpointData = (CCheckpointData) {
             {
-                {0, uint256S("0x000006cf010a54f22305095939df01cc5d7a2ecd208e1e353259a75cd99f58b4")},
-                {666, uint256S("0x000002c0bcdf5707a37fb486776009f5286e0323e231221506e9fe7c2ce73d08")},
+                {0, uint256S("0x00000216af2a362c1833a0a608408bcdc69d23b276e47d7510a776e3b0bb1fce")},
             }
         };
 
@@ -479,8 +478,8 @@ public:
         consensus.nPowTargetSpacing = 2.5 * 60; // Cosanta: 2.5 minutes
         consensus.fPowAllowMinDifficultyBlocks = true;
         consensus.fPowNoRetargeting = false;
-        consensus.nPowKGWHeight = 4002; // nPowKGWHeight >= nPowDGWHeight means "no KGW"
-        consensus.nPowDGWHeight = 4002;
+        consensus.nPowKGWHeight = 30; // nPowKGWHeight >= nPowDGWHeight means "no KGW"
+        consensus.nPowDGWHeight = 40;
         consensus.nRuleChangeActivationThreshold = 1512; // 75% for testchains
         consensus.nMinerConfirmationWindow = 2016; // nPowTargetTimespan / nPowTargetSpacing
         consensus.vDeployments[Consensus::DEPLOYMENT_TESTDUMMY].bit = 27;
@@ -533,10 +532,10 @@ public:
         nDefaultPort = 60696;
         nPruneAfterHeight = 1000;
 
-        genesis = CreateGenesisBlock(1618221600, 2054584, 0x1e0ffff0, 1, 0 * COIN);
+        genesis = CreateGenesisBlock(1618221600, 3068881, 0x1e0ffff0, 1, 0 * COIN);
         consensus.hashGenesisBlock = genesis.GetHash();
 
-        uint256 expectedGenesisHash = uint256S("0x0000030f02c1f2473c1b3d7988b7d83a5e2cde4b2b69fe1612befdcbcb8eb70f");
+        uint256 expectedGenesisHash = uint256S("0x000004ba6ec1309022987a66c17fe66b550396bd9710463335ad59de8bfe2c02");
         uint256 expectedGenesisMerkleRoot = uint256S("e16337d6f2cd561e3b9b2c470ec2adc11cf94ba2cda40bddfd2f23deff2499fb");
 
         #ifdef COSANTA_MINE_NEW_GENESIS_BLOCK
@@ -597,7 +596,7 @@ public:
 
         checkpointData = (CCheckpointData) {
             {
-                {0, uint256S("0x00000d08a9828c9e2c4c95996e1a3895e24de49d0b62ef595486a428d727cede")},
+                {0, uint256S("0x000004ba6ec1309022987a66c17fe66b550396bd9710463335ad59de8bfe2c02")},
             }
         };
 
@@ -644,8 +643,8 @@ public:
         consensus.nPowTargetSpacing = 1 * 60; // Cosanta: 1 minute
         consensus.fPowAllowMinDifficultyBlocks = true;
         consensus.fPowNoRetargeting = false;
-        consensus.nPowKGWHeight = 4001; // nPowKGWHeight >= nPowDGWHeight means "no KGW"
-        consensus.nPowDGWHeight = 13001;
+        consensus.nPowKGWHeight = 30; // nPowKGWHeight >= nPowDGWHeight means "no KGW"
+        consensus.nPowDGWHeight = 40;
         consensus.nRuleChangeActivationThreshold = 1512; // 75% for testchains
         consensus.nMinerConfirmationWindow = 2016; // nPowTargetTimespan / nPowTargetSpacing
         consensus.vDeployments[Consensus::DEPLOYMENT_TESTDUMMY].bit = 27;
@@ -698,11 +697,11 @@ public:
         nDefaultPort = 63636;
         nPruneAfterHeight = 1000;
 
-        genesis = CreateGenesisBlock(1618221600, 98744, 0x207fffff, 1, 0 * COIN);
+        genesis = CreateGenesisBlock(1618221600, 98745, 0x207fffff, 1, 0 * COIN);
         consensus.hashGenesisBlock = genesis.GetHash();
 
-        uint256 expectedGenesisHash = uint256S("0x02fc1e7262651eb1027ef489dae355c0ca063bc4832ca4b6d41d18216268835c");
-        uint256 expectedGenesisMerkleRoot = uint256S("0xe16337d6f2cd561e3b9b2c470ec2adc11cf94ba2cda40bddfd2f23deff2499fb");
+        uint256 expectedGenesisHash = uint256S("75e9f60a2520f36e719350996d73fb5e80cafef9fa8ac45c31b8f48fbda588fb");
+        uint256 expectedGenesisMerkleRoot = uint256S("e16337d6f2cd561e3b9b2c470ec2adc11cf94ba2cda40bddfd2f23deff2499fb");
 
         #ifdef COSANTA_MINE_NEW_GENESIS_BLOCK
         if (consensus.hashGenesisBlock != expectedGenesisHash)
@@ -807,8 +806,8 @@ public:
         consensus.nPowTargetSpacing = 1 * 60; // Cosanta: 1 minute
         consensus.fPowAllowMinDifficultyBlocks = true;
         consensus.fPowNoRetargeting = true;
-        consensus.nPowKGWHeight = 15200; // same as mainnet
-        consensus.nPowDGWHeight = 34140; // same as mainnet
+        consensus.nPowKGWHeight = 30; // same as mainnet
+        consensus.nPowDGWHeight = 40; // same as mainnet
         consensus.nRuleChangeActivationThreshold = 108; // 75% for testchains
         consensus.nMinerConfirmationWindow = 144; // Faster than normal for regtest (144 instead of 2016)
         consensus.vDeployments[Consensus::DEPLOYMENT_TESTDUMMY].bit = 27;
@@ -843,11 +842,11 @@ public:
         nDefaultPort = 63646;
         nPruneAfterHeight = 1000;
 
-        genesis = CreateGenesisBlock(1618221600, 98744, 0x207fffff, 1, 0 * COIN);
+        genesis = CreateGenesisBlock(1618221600, 98745, 0x207fffff, 1, 0 * COIN);
         consensus.hashGenesisBlock = genesis.GetHash();
 
-        uint256 expectedGenesisHash = uint256S("0x02fc1e7262651eb1027ef489dae355c0ca063bc4832ca4b6d41d18216268835c");
-        uint256 expectedGenesisMerkleRoot = uint256S("0xe16337d6f2cd561e3b9b2c470ec2adc11cf94ba2cda40bddfd2f23deff2499fb");
+        uint256 expectedGenesisHash = uint256S("0x5cc74fcae11b83a1f00ca81106deaae119486ded33918571a639e7b6eac83150");
+        uint256 expectedGenesisMerkleRoot = uint256S("e16337d6f2cd561e3b9b2c470ec2adc11cf94ba2cda40bddfd2f23deff2499fb");
 
         #ifdef COSANTA_MINE_NEW_GENESIS_BLOCK
         if (consensus.hashGenesisBlock != expectedGenesisHash)
@@ -882,7 +881,7 @@ public:
 
         checkpointData = (CCheckpointData) {
             {
-                {0, uint256S("0x00000d204dc7f3c855835549afbf59d8002502ae2b56bc46826ca41b7bfc5651")},
+                {0, uint256S("0x5cc74fcae11b83a1f00ca81106deaae119486ded33918571a639e7b6eac83150")},
             }
         };
 
