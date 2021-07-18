@@ -353,7 +353,7 @@ public:
         consensus.vDeployments[Consensus::DEPLOYMENT_DIP0008].nThreshold = 50; // 50% of 100
 
         // The best chain should have at least this much work.
-        consensus.nMinimumChainWork = uint256S("0x000000000000000000000000000000000000000000000000000000000000000");
+        consensus.nMinimumChainWork = uint256S("0x0000000000000000000000000000000000000000000000000000001439b110fd");
 
         // By default assume that the signatures in ancestors of this block are valid.
         consensus.defaultAssumeValid = uint256S("0x000000000000000000000000000000000000000000000000000000000000000");
@@ -432,12 +432,13 @@ public:
         checkpointData = (CCheckpointData) {
             {
                 {0, uint256S("0x00000216af2a362c1833a0a608408bcdc69d23b276e47d7510a776e3b0bb1fce")},
+                {666, uint256S("0x00000018ea7460307260c065ac63435466b8eb9f433a4ce26b6e1ca56f6c556d")},
             }
         };
 
         chainTxData = ChainTxData{
-            1574164758, // * UNIX timestamp of last known number of transactions (Block 1173619)
-            19444536,   // * total number of transactions between genesis and that timestamp
+            1626636432, // * UNIX timestamp of last known number of transactions (Block 689)
+            704,   // * total number of transactions between genesis and that timestamp
                         //   (the tx=... number in the SetBestChain debug.log lines)
             0.2         // * estimated number of transactions per second after that timestamp
         };
@@ -520,7 +521,7 @@ public:
         consensus.vDeployments[Consensus::DEPLOYMENT_DIP0008].nThreshold = 50; // 50% of 100
 
         // The best chain should have at least this much work.
-        consensus.nMinimumChainWork = uint256S("0x0000000000000000000000000000000000000000000000000000010d24725cd6");
+        consensus.nMinimumChainWork = uint256S("0x000000000000000000000000000000000000000000000000000000001771b6aa");
 
         // By default assume that the signatures in ancestors of this block are valid.
         consensus.defaultAssumeValid = uint256S("0x000000000000000000000000000000000000000000000000000000000000000");
@@ -597,12 +598,13 @@ public:
         checkpointData = (CCheckpointData) {
             {
                 {0, uint256S("0x000004ba6ec1309022987a66c17fe66b550396bd9710463335ad59de8bfe2c02")},
+                {256, uint256S("0x00000bf90483dee21e5ec43f44b5065656034c773377c582764de5cd935ee563")},
             }
         };
 
         chainTxData = ChainTxData{
-            1574164251, // * UNIX timestamp of last known number of transactions (Block 213054)
-            1733259,    // * total number of transactions between genesis and that timestamp
+            1626622319, // * UNIX timestamp of last known number of transactions (Block 263)
+            264,    	// * total number of transactions between genesis and that timestamp
                         //   (the tx=... number in the SetBestChain debug.log lines)
             0.01        // * estimated number of transactions per second after that timestamp
         };
