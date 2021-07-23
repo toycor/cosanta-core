@@ -702,7 +702,7 @@ public:
         genesis = CreateGenesisBlock(1618221600, 98745, 0x207fffff, 1, 0 * COIN);
         consensus.hashGenesisBlock = genesis.GetHash();
 
-        uint256 expectedGenesisHash = uint256S("75e9f60a2520f36e719350996d73fb5e80cafef9fa8ac45c31b8f48fbda588fb");
+        uint256 expectedGenesisHash = uint256S("5cc74fcae11b83a1f00ca81106deaae119486ded33918571a639e7b6eac83150");
         uint256 expectedGenesisMerkleRoot = uint256S("e16337d6f2cd561e3b9b2c470ec2adc11cf94ba2cda40bddfd2f23deff2499fb");
 
         #ifdef COSANTA_MINE_NEW_GENESIS_BLOCK
