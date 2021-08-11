@@ -20,6 +20,7 @@ import subprocess, sys, re, os, shutil, stat, os.path, time
 from string import Template
 from argparse import ArgumentParser
 from typing import List, Optional
+import time
 
 # This is ported from the original macdeployqt with modifications
 
@@ -828,6 +829,8 @@ if config.dmg is not None:
         if fancy.get("applications_symlink", False):
             os.symlink("/Applications", os.path.join(disk_root, "Applications"))
         
+        time.sleep(5)
+
         # The Python appscript package broke with OSX 10.8 and isn't being fixed.
         # So we now build up an AppleScript string and use the osascript command
         # to make the .dmg file pretty:
