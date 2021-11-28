@@ -826,7 +826,9 @@ public:
     unsigned int nHashInterval;
     uint64_t nStakeSplitThreshold;
     int nStakeSetUpdateTime;
-    std::set<std::pair<const CWalletTx*, unsigned int> > setStakeCoins;
+    using StakeCandidate = std::tuple<CAmount, const CWalletTx*, unsigned int>;
+    using StakeCandidates = std::set<StakeCandidate>;
+    StakeCandidates setStakeCoins;
     int nLastStakeSetUpdate;
 
     // Create wallet with dummy database handle
@@ -853,9 +855,9 @@ public:
         nWalletMaxVersion = FEATURE_BASE;
         nMasterKeyMaxID = 0;
         // Stake Settings
-        nHashDrift = 30;
+        nHashDrift = gArgs.GetArg("-poshashdrift", 30);
         nStakeSplitThreshold = MAX_MONEY / COIN;
-        nHashInterval = 10;
+        nHashInterval = gArgs.GetArg("-poshashinterval", 10);
         nStakeSetUpdateTime = 300; // 5 minutes
         setStakeCoins.clear();
         nLastStakeSetUpdate = 0;
@@ -934,7 +936,7 @@ public:
     bool SelectCoinsGroupedByAddresses(std::vector<CompactTallyItem>& vecTallyRet, bool fSkipDenominated = true, bool fAnonymizable = true, bool fSkipUnconfirmed = true, int nMaxOupointsPerAddress = -1) const;
 
     bool MintableCoins();
-    bool SelectStakeCoins(std::set<std::pair<const CWalletTx*, unsigned int> >& setCoins, CAmount nTargetAmount) const;
+    bool SelectStakeCoins(StakeCandidates& setCoins, CAmount nTargetAmount) const;
 
     /// Get 1000COSANTA output and keys which can be used for the Masternode
     bool GetMasternodeOutpointAndKeys(COutPoint& outpointRet, CPubKey& pubKeyRet, CKey& keyRet, const std::string& strTxHash = "", const std::string& strOutputIndex = "");
@@ -1085,7 +1087,7 @@ public:
 
     bool CreateCollateralTransaction(CMutableTransaction& txCollateral, std::string& strReason);
     bool ConvertList(std::vector<CTxIn> vecTxIn, std::vector<CAmount>& vecAmounts);
-    bool CreateCoinStake(const CKeyStore& keystore, CBlock& curr_block, int64_t nSearchInterval, CMutableTransaction& coinbaseTx);
+    bool CreateCoinStake(const CBlockIndex *pindex_prev, CBlock& curr_block, CMutableTransaction& coinbaseTx);
 
     void ListAccountCreditDebit(const std::string& strAccount, std::list<CAccountingEntry>& entries);
     bool AddAccountingEntry(const CAccountingEntry&);

@@ -20,6 +20,7 @@
 #include "net.h"
 #include "policy/feerate.h"
 #include "policy/policy.h"
+#include "pos_kernel.h"
 #include "pow.h"
 #include "primitives/transaction.h"
 #include "script/standard.h"
@@ -64,13 +65,19 @@ bool isPoW = false;
 int64_t pow_hps = 0;
 int64_t lastPOW_hps = 0;
 int pow_cpu = 0;
-int64_t nLastCoinStakeSearchInterval = 0;
 int64_t nLastCoinStakeSearchTime = 0;
 
 int64_t UpdateTime(CBlockHeader* pblock, const Consensus::Params& consensusParams, const CBlockIndex* pindexPrev)
 {
     int64_t nOldTime = pblock->nTime;
-    int64_t nNewTime = std::max(pindexPrev->GetMedianTimePast()+1, GetAdjustedTime());
+    auto nNewTime = pindexPrev->GetMedianTimePast()+1;
+    auto now = GetAdjustedTime();
+
+    // NOTE: This requires consensus change for proper average block time enforcement.
+    // Compensate, if block times go in the future
+    //if (pindexPrev->GetBlockTime() < now) {
+        nNewTime = std::max(nNewTime, now);
+    //}
 
     if (nOldTime < nNewTime)
         pblock->nTime = nNewTime;
@@ -128,7 +135,7 @@ void BlockAssembler::resetBlock()
 }
 
 std::unique_ptr<CBlockTemplate> BlockAssembler::CreateNewBlock(
-        const CScript& scriptPubKeyIn, CWallet* pwallet)
+        const CScript& scriptPubKeyIn, CWallet* pwallet, int64_t block_time)
 {
     int64_t nTimeStart = GetTimeMicros();
 
@@ -168,7 +175,7 @@ std::unique_ptr<CBlockTemplate> BlockAssembler::CreateNewBlock(
     //pblock->nHeight        = nHeight;
     pblock->hashMix        = uint256();
     pblock->nNonce         = 0;
-    pblock->nTime          = GetAdjustedTime();
+    pblock->nTime          = block_time;
 
     // Add dummy coinbase tx as first transaction
     pblock->vtx.emplace_back();
@@ -268,20 +275,8 @@ std::unique_ptr<CBlockTemplate> BlockAssembler::CreateNewBlock(
         assert(pwallet != nullptr);
         assert(!pwallet->IsLocked());
 
-        if (!nLastCoinStakeSearchTime) {
-            nLastCoinStakeSearchTime = pblock->nTime;
-        }
-
         boost::this_thread::interruption_point();
-        int64_t nSearchTime = pblock->nTime; // search to current time
-        bool fStakeFound = false;
-
-        if (nSearchTime > std::max<int64_t>(nLastCoinStakeSearchTime, pindexPrev->nTime)) {
-            nLastCoinStakeSearchInterval = nSearchTime - nLastCoinStakeSearchTime;
-            nLastCoinStakeSearchTime = nSearchTime;
-
-            fStakeFound = pwallet->CreateCoinStake(*pwallet, *pblock, nLastCoinStakeSearchInterval, coinbaseTx);
-        }
+        bool fStakeFound = pwallet->CreateCoinStake(pindexPrev, *pblock, coinbaseTx);
 
         if (fStakeFound) {
             sign_block = true;
@@ -712,8 +707,11 @@ void PoSMiner(CWallet* pwallet, CThreadInterrupt &interrupt)
     bool fMintableCoins = false;
     int nMintableLastCheck = 0;
     int last_height = -1;
+    int64_t start_block_time = 0;
 
     while (!interrupt) {
+        auto hash_interval = std::max(pwallet->nHashInterval, (unsigned int)1);
+
         if ((GetTime() - nMintableLastCheck > 60))
         {
             nMintableLastCheck = GetTime();
@@ -722,47 +720,71 @@ void PoSMiner(CWallet* pwallet, CThreadInterrupt &interrupt)
 
         {
             CBlockIndex* pindexPrev = chainActive.Tip();
-
+            
             if (!pindexPrev) {
                 interrupt.sleep_for(std::chrono::seconds(1));
+                LogPrint(BCLog::STAKING, "%s : no active blocks \n", __func__);
                 continue;
             }
 
             if (!IsPoSEnforcedHeight(pindexPrev->nHeight + 1) && !pindexPrev->IsProofOfStake()) {
-                interrupt.sleep_for(std::chrono::seconds(10));
+                interrupt.sleep_for(std::chrono::seconds(hash_interval));
+                LogPrint(BCLog::STAKING, "%s : PoS is not enabled at height %d \n",
+                         __func__, (pindexPrev->nHeight + 1) );
                 continue;
             }
         }
 
-
-        if (pwallet->IsLocked(true) || !fMintableCoins || nReserveBalance >= pwallet->GetBalance() || !masternodeSync.IsSynced()) {
-            nLastCoinStakeSearchInterval = 0;
-            interrupt.sleep_for(std::chrono::seconds(10));
+        if (pwallet->IsLocked(true) ||
+            !fMintableCoins ||
+            (nReserveBalance >= pwallet->GetBalance()) ||
+            !masternodeSync.IsSynced() ||
+            (g_connman->GetNodeCount(CConnman::CONNECTIONS_ALL) == 0)
+        ) {
+            nLastCoinStakeSearchTime = 0;
+            interrupt.sleep_for(std::chrono::seconds(hash_interval));
+            LogPrint(BCLog::STAKING, "%s : not ready to mine locked=%d coins=%d reserve=%d mnsync=%d peers=%d\n",
+                                  __func__,
+                                  int(pwallet->IsLocked(true)),
+                                  int(!fMintableCoins),
+                                  int(nReserveBalance >= pwallet->GetBalance()),
+                                  int(!masternodeSync.IsSynced()),
+                                  int(g_connman->GetNodeCount(CConnman::CONNECTIONS_ALL)));
             continue;
         }
 
-        if (last_height == chainActive.Tip()->nHeight)
+        if (last_height == chainActive.Height())
         {
-            if (GetTime() - std::max(pwallet->nHashInterval, (unsigned int)1) < nLastCoinStakeSearchTime)
+            if ((GetTime() - hash_interval) < nLastCoinStakeSearchTime)
             {
-                interrupt.sleep_for(std::chrono::seconds(5));
+                interrupt.sleep_for(std::chrono::seconds(hash_interval));
                 continue;
             }
+        } else {
+            last_height = chainActive.Height();
+            start_block_time = 0;
         }
 
         //
         // Create new block
         //
-        auto pblocktemplate = ba.CreateNewBlock(coinbaseScript, pwallet);
+        auto pblocktemplate = ba.CreateNewBlock(coinbaseScript, pwallet, start_block_time);
+        nLastCoinStakeSearchTime = GetAdjustedTime();
 
         if (!pblocktemplate.get())
             continue;
 
         auto pblock = pblocktemplate->block;
-
+        
         CValidationState state;
 
         if (!CheckProof(state, *pblock, Params().GetConsensus())) {
+            // Mimics limit in pos_kernel.cpp
+            start_block_time = std::min<int64_t>(
+                pblock->nTime + pwallet->nHashDrift,
+                nLastCoinStakeSearchTime + MAX_POS_BLOCK_AHEAD_TIME - MAX_POS_BLOCK_AHEAD_SAFETY_MARGIN
+            );
+
             continue;
         }
 
@@ -783,4 +805,8 @@ void PoSMiner(CWallet* pwallet, CThreadInterrupt &interrupt)
             LogPrintf("PoSMiner : block is rejected %s\n", hash.ToString().c_str());
         }
     }
+}
+
+bool IsStakingActive() {
+    return (GetAdjustedTime() - nLastCoinStakeSearchTime) < 60;
 }

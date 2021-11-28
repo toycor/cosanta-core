@@ -204,8 +204,6 @@ extern int64_t pow_hps;
 extern int64_t lastPOW_hps;
 extern int pow_cpu;
 
-extern int64_t nLastCoinStakeSearchInterval;
-extern int64_t nLastCoinStakeSearchTime;
 extern int64_t nReserveBalance;
 
 extern std::atomic<bool> fDIP0001ActiveAtTip;
@@ -244,6 +242,10 @@ static const unsigned int DEFAULT_CHECKLEVEL = 3;
 // one 128MB block file + added 15% undo data = 147MB greater for a total of 941MB
 // Setting the target to > than 945MB will make it likely we can respect the target.
 static const uint64_t MIN_DISK_SPACE_FOR_BLOCK_FILES = 945 * 1024 * 1024;
+
+extern uint32_t nFirstPoSBlock;
+extern uint32_t nFirstPoSv2Block;
+extern uint32_t nlastPoWBlock;
 
 /** 
  * Process an incoming block. This only returns after the best known valid
@@ -519,6 +521,9 @@ bool LoadMempool();
 
 /** Check if Proof-of-Stake is required for particular height **/
 bool IsPoSEnforcedHeight(int nBlockHeight);
+bool IsPoSV2EnforcedHeight(int nFirstPoSv2Block);
+bool IsPowActiveHeight(int nBlockHeight);
+void CorrectPoSHeight();
 
 bool CheckProof(CValidationState& state, const CBlockIndex &pindex, const Consensus::Params& params);
 bool CheckProof(CValidationState& state, const CBlockHeader &block, const Consensus::Params& params);

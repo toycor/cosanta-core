@@ -18,13 +18,7 @@
 uint256 CBlockHeader::GetHash() const
 {
     if (IsProofOfStake()) {
-        CDataStream sh(SER_GETHASH, 0);
-
-        sh << *this;
-        /*
-        egihash::h256_t blockHash(sh.data(), sh.size());
-        return uint256(blockHash);
-        */
+        return SerializeHash(*this);
     }
 
     std::vector<unsigned char> vch(80);

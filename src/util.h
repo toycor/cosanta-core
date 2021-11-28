@@ -126,6 +126,10 @@ namespace BCLog {
         LEVELDB     = (1 << 20),
 
         //Start Cosanta
+        STAKING  = ((uint64_t)1 << 31),
+        //End Cosanta
+
+        //Start Dash
         CHAINLOCKS  = ((uint64_t)1 << 32),
         GOBJECT     = ((uint64_t)1 << 33),
         INSTANTSEND = ((uint64_t)1 << 34),
@@ -137,7 +141,7 @@ namespace BCLog {
         MNSYNC      = ((uint64_t)1 << 40),
         PRIVATESEND = ((uint64_t)1 << 41),
         SPORK       = ((uint64_t)1 << 42),
-        //End Cosanta
+        //End Dash
 
         ALL         = ~(uint64_t)0,
     };

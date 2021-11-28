@@ -637,8 +637,14 @@ bool CDeterministicMNManager::BuildNewListFromBlock(const CBlock& block, const C
 
     DecreasePoSePenalties(newList);
 
+    bool isProofOfStake = block.IsProofOfStake();
+
     // we skip the coinbase
     for (int i = 1; i < (int)block.vtx.size(); i++) {
+        if (isProofOfStake and i == 1){
+            //we'll skip PoS marker
+            continue;
+        }
         const CTransaction& tx = *block.vtx[i];
 
         if (tx.nVersion != 3) {
@@ -814,6 +820,10 @@ bool CDeterministicMNManager::BuildNewListFromBlock(const CBlock& block, const C
 
     // we skip the coinbase
     for (int i = 1; i < (int)block.vtx.size(); i++) {
+        if (isProofOfStake and i == 1){
+            //we'll skip PoS marker
+            continue;
+        }
         const CTransaction& tx = *block.vtx[i];
 
         // check if any existing MN collateral is spent by this transaction

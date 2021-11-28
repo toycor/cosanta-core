@@ -2746,8 +2746,8 @@ void CWallet::AvailableCoins(std::vector<COutput> &vCoins, bool fOnlySafe, const
                 } else if(nCoinType == CoinType::ONLY_NONDENOMINATED) {
                     if (CPrivateSend::IsCollateralAmount(pcoin->tx->vout[i].nValue)) continue; // do not use collateral amounts
                     found = !CPrivateSend::IsDenominatedAmount(pcoin->tx->vout[i].nValue);
-                } else if(nCoinType == CoinType::ONLY_1000) {
-                    found = pcoin->tx->vout[i].nValue == 1000*COIN;
+                } else if(nCoinType == CoinType::ONLY_10000) {
+                    found = pcoin->tx->vout[i].nValue == 10000*COIN;
                 } else if(nCoinType == CoinType::ONLY_PRIVATESEND_COLLATERAL) {
                     found = CPrivateSend::IsCollateralAmount(pcoin->tx->vout[i].nValue);
                 } else {
@@ -2761,7 +2761,7 @@ void CWallet::AvailableCoins(std::vector<COutput> &vCoins, bool fOnlySafe, const
                 if (coinControl && coinControl->HasSelected() && !coinControl->fAllowOtherInputs && !coinControl->IsSelected(COutPoint(wtxid, i)))
                     continue;
 
-                if (IsLockedCoin(wtxid, i) && nCoinType != CoinType::ONLY_1000)
+                if (IsLockedCoin(wtxid, i) && nCoinType != CoinType::ONLY_10000)
                     continue;
 
                 if (IsSpent(wtxid, i))
@@ -3386,7 +3386,7 @@ bool CWallet::SelectCoinsGroupedByAddresses(std::vector<CompactTallyItem>& vecTa
     return vecTallyRet.size() > 0;
 }
 
-bool CWallet::SelectStakeCoins(std::set<std::pair<const CWalletTx*, unsigned int> >& setCoins, CAmount nTargetAmount) const
+bool CWallet::SelectStakeCoins(StakeCandidates& setCoins, CAmount nTargetAmount) const
 {
     std::vector<COutput> vCoins;
     AvailableCoins(vCoins, true);
@@ -3427,12 +3427,12 @@ bool CWallet::SelectStakeCoins(std::set<std::pair<const CWalletTx*, unsigned int
         }
 
         // Check another way if spent
-        if (!pcoinsTip->HaveCoinInCache(COutPoint(tx_hash, out.i))) {
+        if (!pcoinsTip->HaveCoin(COutPoint(tx_hash, out.i))) {
             //continue;
         }
 
         //add to our stake set
-        setCoins.insert(std::make_pair(out.tx, out.i));
+        setCoins.emplace(out.tx->tx->vout[out.i].nValue, out.tx, out.i);
     }
 
     return !setCoins.empty();
@@ -3534,7 +3534,7 @@ bool CWallet::GetMasternodeOutpointAndKeys(COutPoint& outpointRet, CPubKey& pubK
     // Find possible candidates
     std::vector<COutput> vPossibleCoins;
     CCoinControl coin_control;
-    coin_control.nCoinType = CoinType::ONLY_1000;
+    coin_control.nCoinType = CoinType::ONLY_10000;
     AvailableCoins(vPossibleCoins, true, &coin_control);
     if(vPossibleCoins.empty()) {
         LogPrintf("CWallet::GetMasternodeOutpointAndKeys -- Could not locate any valid masternode vin\n");
@@ -4123,7 +4123,7 @@ bool CWallet::CreateTransaction(const std::vector<CRecipient>& vecSend, CWalletT
 }
 
 // ppcoin: create coin stake transaction
-bool CWallet::CreateCoinStake(const CKeyStore& keystore, CBlock &curr_block, int64_t nSearchInterval, CMutableTransaction& coinbaseTx)
+bool CWallet::CreateCoinStake(const CBlockIndex *pindex_prev, CBlock &curr_block, CMutableTransaction& coinbaseTx)
 {
     // Choose coins to use
     CAmount nBalance = GetBalance();
@@ -4137,80 +4137,77 @@ bool CWallet::CreateCoinStake(const CKeyStore& keystore, CBlock &curr_block, int
     // presstab HyperStake - Initialize as static and don't update the set on every run of CreateCoinStake() in order to lighten resource use
     CAmount nTargetAmount = nBalance - nReserveBalance;
 
-    if (GetTime() - nLastStakeSetUpdate > nStakeSetUpdateTime) {
+    if (setStakeCoins.empty() ||GetTime() - nLastStakeSetUpdate > nStakeSetUpdateTime) {
         setStakeCoins.clear();
 
         if (!SelectStakeCoins(setStakeCoins, nTargetAmount)) {
-            return error("CreateCoinStake : no inputs eligable for staking");
+            LogPrint(BCLog::STAKING, "%s : no inputs eligable for staking\n", __func__);
+            return false;
         }
 
         nLastStakeSetUpdate = GetTime();
     }
 
-    if (setStakeCoins.empty())
-        return false;
+    LogPrint(BCLog::STAKING, "%s : found %u possible stake inputs\n", __func__, setStakeCoins.size());
 
-    for (const auto &pcoin : setStakeCoins) {
+    for (auto iter = setStakeCoins.rbegin(); iter != setStakeCoins.rend(); ++iter) {
         CBlockIndex* pcoin_index = NULL;
-        auto pWalletTxIn = pcoin.first;
+        auto pWalletTxIn = std::get<1>(*iter);
 
+        COutPoint prevoutStake = COutPoint(pWalletTxIn->GetHash(), std::get<2>(*iter));
+        LogPrint(BCLog::STAKING, "%s : trying tx=%s n=%u\n", __func__,
+                 __func__, pWalletTxIn->hashBlock.ToString().c_str());
+
+        // Read block header
         BlockMap::iterator it = mapBlockIndex.find(pWalletTxIn->hashBlock);
         if (it != mapBlockIndex.end())
             pcoin_index = it->second;
         else {
-            LogPrintf("CreateCoinStake() failed to find block index for %s \n",
+            LogPrintf("%s : failed to find block index for %s \n",
                         pWalletTxIn->hashBlock.ToString().c_str());
             continue;
         }
 
-        // Read block header
-        COutPoint prevoutStake = COutPoint(pWalletTxIn->GetHash(), pcoin.second);
-
         //iterates each utxo inside of CheckStakeKernelHash()
         bool fKernelFound = CheckStakeKernelHash(
-                curr_block.nBits, *pcoin_index, *pWalletTxIn,
+                curr_block,
+                *pindex_prev,
+                *pcoin_index,
+                *pWalletTxIn,
                 prevoutStake,
-                curr_block.nTime,
                 nHashDrift,
                 false,
-                curr_block.hashProofOfStake(),
-                curr_block.nStakeModifier(),
                 true);
 
         if (fKernelFound) {
             //Double check that this will pass time requirements
             if (curr_block.nTime <= chainActive.Tip()->GetMedianTimePast()) {
-                LogPrintf("CreateCoinStake() : kernel found, but it is too far in the past \n");
+                LogPrint(BCLog::STAKING, "%s kernel found, but it is too far in the past \n", __func__);
                 continue;
             }
 
             // Found a kernel
-            if (gArgs.GetBoolArg("-printcoinstake", false)) {
-                LogPrintf("CreateCoinStake : kernel found\n");
-            }
+            LogPrint(BCLog::STAKING, "%s  : kernel found\n", __func__ );
 
             std::vector<std::vector<unsigned char>> vSolutions;
             txnouttype whichType;
             CScript scriptPubKeyOut;
-            const auto &tx_in = pWalletTxIn->tx->vout[pcoin.second];
+            const auto &tx_in = pWalletTxIn->tx->vout[prevoutStake.n];
             const auto &scriptPubKeyKernel = tx_in.scriptPubKey;
 
             if (!Solver(scriptPubKeyKernel, whichType, vSolutions)) {
-                LogPrintf("CreateCoinStake : failed to parse kernel\n");
-                break;
+                LogPrint(BCLog::STAKING, "%s : failed to parse kernel\n", __func__);
+                continue;
             }
 
-            if (gArgs.GetBoolArg("-printcoinstake", false)) {
-                LogPrintf("CreateCoinStake : parsed kernel type=%d\n", whichType);
-            }
+            LogPrint(BCLog::STAKING, "%s  : parsed kernel type=%d\n", __func__, whichType);
 
             if (whichType == TX_PUBKEYHASH) // pay to address type
             {
                 // convert to pay to address type
-                if (!keystore.GetPubKey(CKeyID(uint160(vSolutions[0])), curr_block.posPubKey)) {
-                    if (gArgs.GetBoolArg("-printcoinstake", false))
-                        LogPrintf("CreateCoinStake : failed to get key for kernel type=%d\n", whichType);
-                    break; // unable to find corresponding public key
+                if (!GetPubKey(CKeyID(uint160(vSolutions[0])), curr_block.posPubKey)) {
+                    LogPrint(BCLog::STAKING, "%s : failed to get key for kernel type=%d\n", __func__, whichType);
+                    continue;
                 }
             }
             else if (whichType == TX_PUBKEY) // pay to public key
@@ -4219,9 +4216,8 @@ bool CWallet::CreateCoinStake(const CKeyStore& keystore, CBlock &curr_block, int
             }
             else
             {
-                if (gArgs.GetBoolArg("-printcoinstake", false))
-                    LogPrintf("CreateCoinStake : no support for kernel type=%d\n", whichType);
-                break; // only support pay to public key and pay to address
+                LogPrint(BCLog::STAKING, "%s : no support for kernel type=%d\n", __func__, whichType);
+                continue;
             }
 
             assert(curr_block.posPubKey.IsValid());
@@ -4246,19 +4242,15 @@ bool CWallet::CreateCoinStake(const CKeyStore& keystore, CBlock &curr_block, int
                 stakeTx.vout.emplace_back((reward - half_reward), scriptPubKeyOut);
             }
 
-            //if (!SignSignature(*this, scriptPubKeyKernel, stakeTx, 0)) {
-            //    return error("CreateCoinStake : failed to sign coinstake");
-            //}
+            if (!SignSignature(*this, scriptPubKeyKernel, stakeTx, 0, reward, SIGHASH_ALL)) {
+                return error("CreateCoinStake : failed to sign coinstake");
+            }
 
             curr_block.posStakeHash = prevoutStake.hash;
             curr_block.posStakeN = prevoutStake.n;
             curr_block.Stake() = MakeTransactionRef(std::move(stakeTx));
 
-            LogPrintf("stake", "%s : added kernel type=%d stakemod=%llx\n",
-                     __func__, whichType, curr_block.nStakeModifier());
-
-            if (gArgs.GetBoolArg("-printcoinstake", false))
-                LogPrintf("CreateCoinStake : added kernel type=%d\n", whichType);
+            LogPrint(BCLog::STAKING, "%s : added kernel type=%d\n", __func__, whichType);
 
             // Force update
             nLastStakeSetUpdate = 0;
@@ -4266,8 +4258,7 @@ bool CWallet::CreateCoinStake(const CKeyStore& keystore, CBlock &curr_block, int
         }
     }
 
-    if (gArgs.GetBoolArg("-printcoinstake", false))
-        LogPrintf("CreateCoinStake : no stakes found\n");
+    LogPrint(BCLog::STAKING, "%s : no stakes found\n", __func__);
 
     return false;
 }

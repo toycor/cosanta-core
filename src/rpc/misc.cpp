@@ -20,6 +20,7 @@
 #include "util.h"
 #include "utilstrencodings.h"
 #include "validation.h"
+#include "miner.h"
 #ifdef ENABLE_WALLET
 #include "wallet/rpcwallet.h"
 #include "wallet/wallet.h"
@@ -126,8 +127,7 @@ UniValue getinfo(const JSONRPCRequest& request)
     obj.push_back(Pair("paytxfee",      ValueFromAmount(payTxFee.GetFeePerK())));
 #endif
     obj.push_back(Pair("relayfee",      ValueFromAmount(::minRelayTxFee.GetFeePerK())));
-    bool nStaking = nLastCoinStakeSearchInterval != 0; // TODO: revise
-    obj.push_back(Pair("staking status", (nStaking ? "Staking Active" : "Staking Not Active")));
+    obj.push_back(Pair("staking",       IsStakingActive()));
     obj.push_back(Pair("errors",        GetWarnings("statusbar")));
     return obj;
 }

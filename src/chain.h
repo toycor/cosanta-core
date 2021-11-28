@@ -360,6 +360,11 @@ public:
         return (nVersion & CBlockHeader::POS_BIT) != 0;
     }
 
+    bool IsProofOfStakeV2() const
+    {
+        return (nVersion & CBlockHeader::POSV2_BITS) == CBlockHeader::POSV2_BITS;
+    }
+
     COutPoint StakeInput() const {
         return COutPoint(posStakeHash, posStakeN);
     }

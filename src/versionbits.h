@@ -16,8 +16,10 @@ static const int32_t VERSIONBITS_TOP_BITS = 0x20000000UL;
 static const int32_t VERSIONBITS_TOP_MASK = 0xE0000000UL;
 /** What bits to set for Proof-of-Stake blocks */
 static const int32_t VERSIONBITS_POS_BIT  = CBlockHeader::POS_BIT;
+/** What bits to set for Proof-of-Stake v2 blocks */
+static const int32_t VERSIONBITS_POSV2_BITS = CBlockHeader::POSV2_BITS;
 /** Total bits available for versionbits */
-static const int32_t VERSIONBITS_NUM_BITS = 28;
+static const int32_t VERSIONBITS_NUM_BITS = 27;
 
 enum ThresholdState {
     THRESHOLD_DEFINED,

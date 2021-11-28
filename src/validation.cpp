@@ -96,6 +96,10 @@ size_t nCoinCacheUsage = 5000 * 300;
 uint64_t nPruneTarget = 0;
 int64_t nMaxTipAge = DEFAULT_MAX_TIP_AGE;
 
+uint32_t nFirstPoSBlock = 4070908800ULL;
+uint32_t nFirstPoSv2Block = 4070908800ULL;
+uint32_t nlastPoWBlock = 4070908800ULL;
+
 int64_t nReserveBalance = 0;
 
 std::atomic<bool> fDIP0001ActiveAtTip{false};
@@ -126,6 +130,14 @@ namespace {
             // First sort by most total work, ...
             if (pa->nChainWork > pb->nChainWork) return false;
             if (pa->nChainWork < pb->nChainWork) return true;
+
+#if 0
+            // NOTE: this requires difficulty calculation update in consensus to avoid abuse.
+
+            // ... then by smaller block time => more difficult chain
+            if (pa->nTime < pb->nTime) return false;
+            if (pa->nTime > pb->nTime) return true;
+#endif
 
             // ... then by earliest time received, ...
             if (pa->nSequenceId < pb->nSequenceId) return false;
@@ -1769,6 +1781,12 @@ int32_t ComputeBlockVersion(const CBlockIndex* pindexPrev, const Consensus::Para
 
     if (pindexPrev == nullptr) {
         // pass
+    } else if (pindexPrev->IsProofOfStakeV2()) {
+        // Once we switch to PoSv2, we continue that way
+        nVersion |= VERSIONBITS_POSV2_BITS;
+    } else if (IsPoSV2EnforcedHeight(pindexPrev->nHeight + 1)) {
+        // Check if enforced by Spork
+        nVersion |= VERSIONBITS_POSV2_BITS;
     } else if (pindexPrev->IsProofOfStake()) {
         // Once we switch to PoS, we continue that way
         nVersion |= VERSIONBITS_POS_BIT;
@@ -1916,13 +1934,18 @@ static bool ConnectBlock(const CBlock& block, CValidationState& state, CBlockInd
         return state.DoS(100, error("ConnectBlock() : PoS period not active"),
                          REJECT_INVALID, "PoS-early");
 
-    if (block.IsProofOfWork() && IsPoSEnforcedHeight(pindex->nHeight))
+    if (block.IsProofOfWork() && !IsPowActiveHeight(pindex->nHeight))
         return state.DoS(100, error("ConnectBlock() : PoW period ended"),
                          REJECT_INVALID, "PoW-ended");
 
-    if (is_pos_active && block.IsProofOfWork())
+    if (is_pos_active && block.IsProofOfWork() && !IsPowActiveHeight(pindex->nHeight))
         return state.DoS(100, error("ConnectBlock() : PoS period already active"),
                          REJECT_INVALID, "PoS-active");
+
+    bool is_posv2_active = pindex->pprev && pindex->pprev->IsProofOfStakeV2();
+    if (block.IsProofOfStakeV2() && !is_posv2_active && !IsPoSV2EnforcedHeight(pindex->nHeight))
+        return state.DoS(100, error("ConnectBlock() : PoSv2 period not active"),
+                         REJECT_INVALID, "PoSv2-early");
 
     bool fScriptChecks = true;
     if (!hashAssumeValid.IsNull()) {
@@ -1965,9 +1988,7 @@ static bool ConnectBlock(const CBlock& block, CValidationState& state, CBlockInd
     // Now that the whole chain is irreversibly beyond that time it is applied to all blocks except the
     // two in the chain that violate it. This prevents exploiting the issue against nodes during their
     // initial block download.
-    bool fEnforceBIP30 = (!pindex->phashBlock) || // Enforce on CreateNewBlock invocations which don't have a hash.
-                          !((pindex->nHeight==91842 && pindex->GetBlockHash() == uint256S("0x00000000000a4d0a398161ffc163c503763b1f4360639393e0e4c8e300e0caec")) ||
-                           (pindex->nHeight==91880 && pindex->GetBlockHash() == uint256S("0x00000000000743f190a18c5577a3c2d2a1f610ae9601ac046a38084ccb7cd721")));
+    bool fEnforceBIP30 = !pindex->phashBlock; // Enforce on CreateNewBlock invocations which don't have a hash.
 
     // Once BIP34 activated it was not possible to create new duplicate coinbases and thus other than starting
     // with the 2 existing duplicate coinbase pairs, not possible to create overwriting txs.  But by the
@@ -3399,7 +3420,7 @@ static bool ContextualCheckBlockHeader(const CBlockHeader& block, CValidationSta
 
     // Check timestamp
     // 3 minute future drift for PoS
-    if (block.GetBlockTime() > nAdjustedTime + (block.IsProofOfStake() ? 180 : MAX_FUTURE_BLOCK_TIME))
+    if (block.GetBlockTime() > nAdjustedTime + (block.IsProofOfStake() ? MAX_POS_BLOCK_AHEAD_TIME : MAX_FUTURE_BLOCK_TIME))
         return state.Invalid(false, REJECT_INVALID, "time-too-new", strprintf("block timestamp too far in the future %d %d", block.GetBlockTime(), nAdjustedTime + 2 * 60 * 60));
 
     // check for version 2, 3 and 4 upgrades
@@ -3515,8 +3536,12 @@ static bool AcceptBlockHeader(const CBlockHeader& block, CValidationState& state
             // it's ok-ish, the other node is probably missing the latest chainlock
             return state.DoS(10, error("%s: prev block %s conflicts with chainlock", __func__, block.hashPrevBlock.ToString()), REJECT_INVALID, "bad-prevblk-chainlock");
 
-        if (!ContextualCheckBlockHeader(block, state, chainparams, pindexPrev, GetAdjustedTime(), true))
-            return error("%s: Consensus::ContextualCheckBlockHeader: %s, %s", __func__, hash.ToString(), FormatStateMessage(state));
+        if (!ContextualCheckBlockHeader(block, state, chainparams, pindexPrev, GetAdjustedTime(), true)) {
+            if (!state.IsTransientError()) {
+                error("%s: Consensus::ContextualCheckBlockHeader: %s, %s", __func__, hash.ToString(), FormatStateMessage(state));
+            }
+            return false;
+        }
 
         if (!pindexPrev->IsValid(BLOCK_VALID_SCRIPTS)) {
             for (const CBlockIndex* failedit : g_failed_blocks) {
@@ -3699,7 +3724,7 @@ bool ProcessNewBlock(const CChainParams& chainparams, const std::shared_ptr<cons
 bool TestBlockValidity(CValidationState& state, const CChainParams& chainparams, const CBlock& block, CBlockIndex* pindexPrev, bool fCheckProof, bool fCheckMerkleRoot)
 {
     AssertLockHeld(cs_main);
-    assert(pindexPrev && pindexPrev == chainActive.Tip());
+    assert(pindexPrev && chainActive.Contains(pindexPrev));
 
     uint256 hash = block.GetHash();
     if (llmq::chainLocksHandler->HasConflictingChainLock(pindexPrev->nHeight + 1, hash)) {
@@ -3721,7 +3746,8 @@ bool TestBlockValidity(CValidationState& state, const CChainParams& chainparams,
         return error("%s: Consensus::CheckBlock: %s", __func__, FormatStateMessage(state));
     if (!ContextualCheckBlock(block, state, chainparams.GetConsensus(), pindexPrev, fCheckProof))
         return error("%s: Consensus::ContextualCheckBlock: %s", __func__, FormatStateMessage(state));
-    if (!ConnectBlock(block, state, &indexDummy, viewNew, chainparams, true))
+    if ((pindexPrev == chainActive.Tip()) &&
+            !ConnectBlock(block, state, &indexDummy, viewNew, chainparams, true))
         return error("%s: Consensus::ConnectBlock: %s", __func__, FormatStateMessage(state));
     assert(state.IsValid());
 
@@ -4458,6 +4484,11 @@ bool LoadExternalBlockFile(const CChainParams& chainparams, FILE* fileIn, CDiskB
                     continue;
                 }
 
+                if (block.IsProofOfStakeV2() && !IsPoSV2EnforcedHeight(mapBlockIndex[hash]->nHeight)) {
+                    nFirstPoSv2Block = mapBlockIndex[hash]->nHeight;
+                    LogPrintf("%s: Detected nFirstPoSv2Block = %d\n", __func__, nFirstPoSv2Block);
+                }
+
                 // process in case the block isn't known yet
                 if (mapBlockIndex.count(hash) == 0 || (mapBlockIndex[hash]->nStatus & BLOCK_HAVE_DATA) == 0) {
                     LOCK(cs_main);
@@ -4847,7 +4878,36 @@ void DumpMempool(void)
 
 /** Check if Proof-of-Stake is required for particular height **/
 bool IsPoSEnforcedHeight(int nBlockHeight) {
-    return nBlockHeight >= sporkManager.GetSporkValue(SPORK_15_FIRST_POS_BLOCK);
+    uint32_t posV1Height = sporkManager.GetSporkValue(SPORK_21_FIRST_POS_BLOCK);
+    if (posV1Height != nFirstPoSBlock){
+        nFirstPoSBlock = posV1Height; // Temporary workaround and it will be in chainparams
+    }
+    return uint32_t(nBlockHeight) >= nFirstPoSBlock;
+}
+
+bool IsPoSV2EnforcedHeight(int nBlockHeight) {
+    uint32_t posV2Height = sporkManager.GetSporkValue(SPORK_22_FIRST_POS_V2_BLOCK);
+    if (posV2Height != nFirstPoSv2Block){
+        nFirstPoSv2Block = posV2Height; // Temporary workaround and it will be in chainparams
+    }
+    return uint32_t(nBlockHeight) >= nFirstPoSv2Block;
+}
+
+bool IsPowActiveHeight(int nBlockHeight) {
+    uint32_t powHeight = sporkManager.GetSporkValue(SPORK_23_LAST_POW_BLOCK);
+    if (powHeight != nlastPoWBlock){
+        nlastPoWBlock = powHeight; // Temporary workaround and it will be in chainparams
+    }
+    return uint32_t(nBlockHeight) <= nlastPoWBlock;
+}
+
+void CorrectPoSHeight() {
+    LOCK(cs_main);
+
+    for (auto pindex = chainActive.Tip(); pindex && pindex->IsProofOfStake(); pindex = pindex->pprev) {
+        nFirstPoSBlock = std::min<int32_t>(pindex->nHeight, nFirstPoSBlock);
+    }
+    LogPrint(BCLog::STAKING, "Detected nFirstPoSBlock = %d", nFirstPoSBlock);
 }
 
 /** Check PoW or PoS based in block index **/
@@ -4860,7 +4920,7 @@ bool CheckProof(CValidationState &state, const CBlockIndex &index, const Consens
         return true;
     }
 
-    return CheckProofOfStake(state, index.GetBlockHeader());
+    return CheckProofOfStake(state, index.GetBlockHeader(), params);
 }
 
 /** Check PoW or PoS based on actual block **/
@@ -4873,7 +4933,7 @@ bool CheckProof(CValidationState &state, const CBlockHeader &block, const Consen
         return true;
     }
 
-    return CheckProofOfStake(state, block);
+    return CheckProofOfStake(state, block, params);
 }
 
 //! Guess how far we are in the verification process at the given block index
