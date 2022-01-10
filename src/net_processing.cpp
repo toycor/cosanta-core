@@ -1564,6 +1564,17 @@ bool static ProcessHeadersMessage(CNode *pfrom, CConnman *connman, const std::ve
             }
             return error("invalid header received");
         }
+        if (state.IsError()) {
+            LogPrintf("Peer %d sent us header which we are unable to process yet \n", pfrom->GetId());
+            return true;
+        }
+        if (pindexLast == nullptr) {
+            // This situation should not happen in normal operation, just some safety measurements.
+            // It may happen during invalidation of active chain on our side.
+            LOCK(cs_main);
+            Misbehaving(pfrom->GetId(), 50);
+            return error("unconnected header case");
+        }
     }
 
     {
@@ -2640,6 +2651,10 @@ bool static ProcessMessage(CNode* pfrom, const std::string& strCommand, CDataStr
                     Misbehaving(pfrom->GetId(), nDoS);
                 }
                 LogPrintf("Peer %d sent us invalid header via cmpctblock\n", pfrom->GetId());
+                return true;
+            }
+            if (state.IsError()) {
+                LogPrintf("Peer %d sent us header via cmpctblock which we are unable to process yet \n", pfrom->GetId());
                 return true;
             }
         }

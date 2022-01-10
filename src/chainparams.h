@@ -96,6 +96,7 @@ public:
     int MinSporkKeys() const { return nMinSporkKeys; }
     bool BIP9CheckMasternodesUpgraded() const { return fBIP9CheckMasternodesUpgraded; }
     int64_t MinStakeAge() const { return nStakeMinAge; }
+    uint32_t FirstPoSv2Block() const { return nFirstPoSv2Block; }
 protected:
     CChainParams() {}
 
@@ -125,6 +126,8 @@ protected:
     int nMinSporkKeys;
     bool fBIP9CheckMasternodesUpgraded;
     int64_t nStakeMinAge;
+    // POS V2
+    uint32_t nFirstPoSv2Block;
 };
 
 /**

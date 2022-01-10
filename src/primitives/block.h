@@ -36,7 +36,6 @@ public:
     // Mix of PoW & PoS
     // NOTE: Proof & Modifier are not strictly required in PoS block,
     //       but it should aid debugging issues in field.
-    uint256 hashMix; // aka hashProofOfStake
     uint32_t nNonce;
     // PoS only
     uint256 posStakeHash; // stake primary input tx
@@ -102,12 +101,8 @@ public:
         return (int64_t)nTime;
     }
 
-    uint256& hashProofOfStake() {
-        return hashMix;
-    }
-    const uint256& hashProofOfStake() const {
-        return hashMix;
-    }
+    uint256 hashProofOfStake() const;
+
     uint32_t& nStakeModifier() {
         return nNonce;
     }

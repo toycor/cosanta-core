@@ -175,6 +175,11 @@ public:
         return (nValue == -1);
     }
 
+    bool IsEmpty() const
+    {
+        return (nValue == 0 && scriptPubKey.empty());
+    }
+
     friend bool operator==(const CTxOut& a, const CTxOut& b)
     {
         return (a.nValue       == b.nValue &&
@@ -273,6 +278,8 @@ public:
     {
         return (vin.size() == 1) && vin[0].prevout.IsNull();
     }
+
+    bool IsCoinStake() const;
 
     friend bool operator==(const CTransaction& a, const CTransaction& b)
     {

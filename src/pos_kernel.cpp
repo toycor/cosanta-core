@@ -379,7 +379,7 @@ bool CheckStakeKernelHash(
     // Legacy way of parameter passing
     unsigned int nBits = current.nBits;
     unsigned int& nTimeTx = current.nTime;
-    uint256& hashProofOfStake = current.hashProofOfStake();
+    uint256 hashProofOfStake = current.hashProofOfStake();
     uint32_t &nStakeModifier = current.nStakeModifier();
     //
 
@@ -456,7 +456,8 @@ bool CheckStakeKernelHash(
     //-------------------
     if (fCheck) {
         uint256 requiredHashProofOfStake = stakeHash(nTimeTx, ss, prevout.n, prevout.hash, nTimeBlockFrom);
-        
+
+        /*
         if (requiredHashProofOfStake != hashProofOfStake) {
             return error(
                 "%s : hashProofOfStake mismatch at %d:%llx:%d:%s:%d %s != %s",
@@ -465,8 +466,10 @@ bool CheckStakeKernelHash(
                 hashProofOfStake.ToString().c_str(),
                 requiredHashProofOfStake.ToString().c_str() );
         }
+        */
 
         return UintToArith256(hashProofOfStake) < bnTarget;
+
     }
 
     // search
@@ -606,12 +609,12 @@ bool CheckProofOfStake(CValidationState &state, const CBlockHeader &header, cons
     // NOTE: stake age check is part of CheckStakeKernelHash()
 
     // Check stake maturity (double checking with other functionality for DoS mitigation)
-    //if (txinPrevRef->IsCoinBase() &&
-    //    ((header.nHeight - pindex_tx->nHeight) <= COINBASE_MATURITY)
-    //) {
-    //    return state.DoS(100, false, REJECT_INVALID, "bad-stake-coinbase-maturity",
-    //                        false, "coinbase maturity mismatch for stake");
-    //}
+    if (txinPrevRef->IsCoinBase() &&
+        ((chainActive.Tip()->nHeight - pindex_tx->nHeight) <= COINBASE_MATURITY)
+    ) {
+        return state.DoS(100, false, REJECT_INVALID, "bad-stake-coinbase-maturity",
+                            false, "coinbase maturity mismatch for stake");
+    }
 
     // Extract stake public key ID and verify block signature
     {

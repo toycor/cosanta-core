@@ -206,13 +206,6 @@ public:
     //! Verification status of this block. See enum BlockStatus
     unsigned int nStatus;
 
-    // proof-of-stake virtual fields
-    uint256& hashProofOfStake() {
-        return hashMix;
-    }
-    const uint256& hashProofOfStake() const {
-        return hashMix;
-    }
     unsigned & nStakeModifier() {
         return nNonce;
     }
@@ -225,7 +218,6 @@ public:
     uint256 hashMerkleRoot;
     unsigned int nTime;
     unsigned int nBits;
-    uint256 hashMix;
     unsigned int nNonce;
     uint256 posStakeHash;
     uint32_t posStakeN;
@@ -318,9 +310,8 @@ public:
 
     uint256 GetBlockHash() const
     {
-        if (IsProofOfStake()) {
-            return hashProofOfStake();
-        }
+        //if (IsProofOfStake() || IsProofOfStakeV2()) {
+        //}
         return *phashBlock;
     }
 

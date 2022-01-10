@@ -18,13 +18,17 @@
 uint256 CBlockHeader::GetHash() const
 {
     if (IsProofOfStake()) {
-        return SerializeHash(*this);
+        return hashProofOfStake();
     }
 
     std::vector<unsigned char> vch(80);
     CVectorWriter ss(SER_NETWORK, PROTOCOL_VERSION, vch, 0);
     ss << *this;
     return HashX11((const char *)vch.data(), (const char *)vch.data() + vch.size());
+}
+
+uint256 CBlockHeader::hashProofOfStake() const{
+    return SerializeHash(*this);
 }
 
 std::string CBlock::ToString() const
@@ -154,6 +158,9 @@ bool CBlock::HasStake() const {
     CAmount total_amt = 0;
 
     for (const auto &so : stake->vout) {
+        if (so.IsEmpty()){
+            continue;
+        }
         if (so.scriptPubKey != spk) {
             return false;
         }

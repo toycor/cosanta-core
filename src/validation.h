@@ -244,7 +244,6 @@ static const unsigned int DEFAULT_CHECKLEVEL = 3;
 static const uint64_t MIN_DISK_SPACE_FOR_BLOCK_FILES = 945 * 1024 * 1024;
 
 extern uint32_t nFirstPoSBlock;
-extern uint32_t nFirstPoSv2Block;
 extern uint32_t nlastPoWBlock;
 
 /** 
@@ -494,7 +493,7 @@ extern VersionBitsCache versionbitscache;
 /**
  * Determine what nVersion a new block should use.
  */
-int32_t ComputeBlockVersion(const CBlockIndex* pindexPrev, const Consensus::Params& params, bool fCheckMasternodesUpgraded = false);
+int32_t ComputeBlockVersion(const CBlockIndex* pindexPrev, const Consensus::Params& params, bool fCheckMasternodesUpgraded = false, bool isPos = false);
 
 /**
  * Return true if hash can be found in chainActive at nBlockHeight height.
@@ -523,7 +522,6 @@ bool LoadMempool();
 bool IsPoSEnforcedHeight(int nBlockHeight);
 bool IsPoSV2EnforcedHeight(int nFirstPoSv2Block);
 bool IsPowActiveHeight(int nBlockHeight);
-void CorrectPoSHeight();
 
 bool CheckProof(CValidationState& state, const CBlockIndex &pindex, const Consensus::Params& params);
 bool CheckProof(CValidationState& state, const CBlockHeader &block, const Consensus::Params& params);

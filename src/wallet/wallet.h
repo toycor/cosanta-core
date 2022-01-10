@@ -278,6 +278,7 @@ public:
 
     const uint256& GetHash() const { return tx->GetHash(); }
     bool IsCoinBase() const { return tx->IsCoinBase(); }
+    bool IsCoinStake() const { return tx->IsCoinStake(); }
 };
 
 /** 
@@ -856,7 +857,7 @@ public:
         nMasterKeyMaxID = 0;
         // Stake Settings
         nHashDrift = gArgs.GetArg("-poshashdrift", 30);
-        nStakeSplitThreshold = MAX_MONEY / COIN;
+        nStakeSplitThreshold = 1000 * COIN;
         nHashInterval = gArgs.GetArg("-poshashinterval", 10);
         nStakeSetUpdateTime = 300; // 5 minutes
         setStakeCoins.clear();

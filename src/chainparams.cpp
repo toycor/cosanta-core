@@ -387,7 +387,7 @@ public:
         assert(consensus.hashGenesisBlock == expectedGenesisHash);
         assert(genesis.hashMerkleRoot == expectedGenesisMerkleRoot);
 
-        vSeeds.emplace_back("cosanta.net", true);
+        vSeeds.emplace_back("m1.cosanta.net", true);
         vSeeds.emplace_back("m2.cosanta.net", true);
 
         // Cosanta addresses start with 'C'
@@ -429,12 +429,14 @@ public:
         fBIP9CheckMasternodesUpgraded = true;
 
         nStakeMinAge = 24 * 60 * 60; // 24 hours
+        nFirstPoSv2Block = 100000ULL;
 
         checkpointData = (CCheckpointData) {
             {
                 {0, uint256S("0x00000216af2a362c1833a0a608408bcdc69d23b276e47d7510a776e3b0bb1fce")},
                 {666, uint256S("0x00000018ea7460307260c065ac63435466b8eb9f433a4ce26b6e1ca56f6c556d")},
                 {73400, uint256S("0x00000000826cf1c50b9316838a1449156a008820d48197f2ef0f95fc48906534")},
+                {97079, uint256S("0x000000006a99d070477085796509db527a7572a94f06d40e128021acd9e3c4e1")},
             }
         };
 
@@ -596,12 +598,14 @@ public:
         fBIP9CheckMasternodesUpgraded = true;
 
         nStakeMinAge = 24 * 60 * 60; // 24 hours
+        nFirstPoSv2Block = 78200ULL;
 
         checkpointData = (CCheckpointData) {
             {
                 {0, uint256S("0x000004ba6ec1309022987a66c17fe66b550396bd9710463335ad59de8bfe2c02")},
                 {256, uint256S("0x00000bf90483dee21e5ec43f44b5065656034c773377c582764de5cd935ee563")},
                 {60000, uint256S("0x00000ea72da4e1acd8d957d34c199ebf0d189015efeb9bdd2ff9f22ecbdb64d4")},
+                {78200, uint256S("0x000008c7d80b614ac6d3770a80c1482dc8047b56afb899a380f5635a45bf93ea")},
             }
         };
 
@@ -762,6 +766,7 @@ public:
         fBIP9CheckMasternodesUpgraded = false;
 
         nStakeMinAge = 24 * 60 * 60; // 24 hours
+        nFirstPoSv2Block = 78000ULL;
 
         checkpointData = (CCheckpointData) {
             {
@@ -883,6 +888,7 @@ public:
         fBIP9CheckMasternodesUpgraded = false;
 
         nStakeMinAge = 24 * 60 * 60; // 24 hours
+        nFirstPoSv2Block = 10000ULL;
 
         checkpointData = (CCheckpointData) {
             {

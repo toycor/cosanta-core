@@ -169,7 +169,7 @@ public:
     BlockAssembler(const CChainParams& params, const Options& options);
 
     /** Construct a new block template with coinbase to scriptPubKeyIn */
-    std::unique_ptr<CBlockTemplate> CreateNewBlock(const CScript& scriptPubKeyIn, CWallet* pwallet, int64_t block_time=0);
+    std::unique_ptr<CBlockTemplate> CreateNewBlock(const CScript& scriptPubKeyIn, CWallet* pwallet, int64_t block_time=0, bool isPos = false);
 
 private:
     // utility functions
