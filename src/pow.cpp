@@ -95,10 +95,6 @@ unsigned int static DarkGravityWave(const CBlockIndex* pindexLast, const CBlockH
         return bnPowLimit.GetCompact();
     }
 
-    // Reset on transition
-    if (pblock->IsProofOfStake() && !pindexLast->IsProofOfStake() && pindexLast->nHeight < 100000) {
-        return bnPowLimit.GetCompact();
-    }
 
     const CBlockIndex *pindex = pindexLast;
     arith_uint256 bnPastTargetAvg;
