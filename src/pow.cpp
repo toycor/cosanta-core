@@ -96,7 +96,7 @@ unsigned int static DarkGravityWave(const CBlockIndex* pindexLast, const CBlockH
     }
 
     // Reset on transition
-    if (pblock->IsProofOfStake() && !pindexLast->IsProofOfStake()) {
+    if (pblock->IsProofOfStake() && !pindexLast->IsProofOfStake() && pindexLast->nHeight < 100000) {
         return bnPowLimit.GetCompact();
     }
 

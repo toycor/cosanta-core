@@ -558,7 +558,7 @@ public:
 
         vSeeds.clear();
         // nodes with support for servicebits filtering should be at the top
-        vSeeds.emplace_back("cosanta.net", true);
+        vSeeds.emplace_back("m1.cosanta.net", true);
         vSeeds.emplace_back("m2.cosanta.net", true);
 
         // Testnet Cosanta addresses start with 'c'
