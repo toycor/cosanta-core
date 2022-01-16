@@ -1,5 +1,5 @@
 // Copyright (c) 2014-2019 The Dash Core developers
-// Copyright (c) 2020-2021 The Cosanta Core developers
+// Copyright (c) 2020-2022 The Cosanta Core developers
 // Distributed under the MIT software license, see the accompanying
 #ifndef COSANTA_HDCHAIN_H
 #define COSANTA_HDCHAIN_H

@@ -1,5 +1,5 @@
 // Copyright (c) 2014-2019 The Dash Core developers
-// Copyright (c) 2020-2021 The Cosanta Core developers
+// Copyright (c) 2020-2022 The Cosanta Core developers
 
 #include "cachemap.h"
 
