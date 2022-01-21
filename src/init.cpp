@@ -534,6 +534,10 @@ std::string HelpMessage(HelpMessageMode mode)
         strUsage += HelpMessageOpt("-windowtitle=<name>", _("Wallet window title"));
 #endif
 
+    strUsage += HelpMessageOpt("-stakesplitthreshold=<n>", strprintf(_("Splits stake reward by threshold (default: %d)"), DEFAULT_STAKE_SPLIT_THRESHOLD));
+    strUsage += HelpMessageOpt("-stakemaxsplit=<n>", strprintf(_("Sets the number of max inputs & outputs of a stake (default: %d)"), DEFAULT_STAKE_MAX_SPLIT));
+    strUsage += HelpMessageOpt("-stakeautocombine=<n>", strprintf(_("Autocombine feature: 0 - disable, 1 - same account, 2 - any account (default: %d)"), DEFAULT_STAKE_AUTOCOMBINE));
+
 #if ENABLE_ZMQ
     strUsage += HelpMessageGroup(_("ZeroMQ notification options:"));
     strUsage += HelpMessageOpt("-zmqpubhashblock=<address>", _("Enable publish hash block in <address>"));

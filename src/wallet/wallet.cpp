@@ -4150,7 +4150,8 @@ bool CWallet::CreateCoinStake(const CBlockIndex *pindex_prev, CBlock &curr_block
 
     LogPrint(BCLog::STAKING, "%s : found %u possible stake inputs\n", __func__, setStakeCoins.size());
 
-    for (auto iter = setStakeCoins.rbegin(); iter != setStakeCoins.rend(); ++iter) {
+    // NOTE: go from smaller amounts to bigger to increase chance, unlike it was before
+    for (auto iter = setStakeCoins.begin(); iter != setStakeCoins.end(); ++iter) {
         if (ShutdownRequested()) {
             break;
         }
@@ -4238,19 +4239,106 @@ bool CWallet::CreateCoinStake(const CBlockIndex *pindex_prev, CBlock &curr_block
             stakeTx.vout.push_back(CTxOut(0, scriptEmpty));
             stakeTx.vout.emplace_back(tx_in.nValue, scriptPubKeyOut);
 
-            // TODO: potentially support multi-input stake where extra inputs
-            //       combine Dust.
-
             CAmount reward = stakeTx.vout[1].nValue;
-            CAmount half_reward = (reward / 2);
+            const CAmount split_threshold = nStakeSplitThreshold * COIN;
+            const CAmount autocombine_target = split_threshold * 2 - 1;
 
-            if (half_reward > nStakeSplitThreshold) {
-                stakeTx.vout[1].nValue = half_reward;
-                stakeTx.vout.emplace_back((reward - half_reward), scriptPubKeyOut);
+            std::vector<CScript> vin_scripts;
+            vin_scripts.emplace_back(scriptPubKeyKernel);
+
+            if (fAutocombine != AUTOCOMBINE_DISABLE) {
+                CKeyID scriptPubKeyID = curr_block.posPubKey.GetID();
+                std::vector<COutPoint> ac_candidates;
+                // find candidates
+                {
+                    std::vector<CompactTallyItem> vecTallyRet;
+                    SelectCoinsGroupedByAddresses(vecTallyRet);
+                    if (fAutocombine == AUTOCOMBINE_SAME) {
+                        // Autocombine same
+                        CTxDestination reqdest{scriptPubKeyID};
+                        for (auto titer = vecTallyRet.begin(); titer != vecTallyRet.end(); ++titer) {
+                            if (titer->txdest == reqdest) {
+                                 ac_candidates.swap(titer->vecOutPoints);
+                                 break;
+                            }
+                        }
+                    } else if (fAutocombine == AUTOCOMBINE_ANY) {
+                        for (auto titer = vecTallyRet.begin(); titer != vecTallyRet.end(); ++titer) {
+                            ac_candidates.insert(
+                                        ac_candidates.end(),
+                                        titer->vecOutPoints.begin(), titer->vecOutPoints.end());
+                        }
+                    }
+                }
+
+                // Automatically combine
+                auto ac_iter = ac_candidates.begin();
+                auto min_age = Params().MinStakeAge();
+                auto ac_len = ac_candidates.size();
+                int inputs_included = 0;
+                for (auto i = 0;
+                     (i < ac_len) && (inputs_included < nStakeMaxSplit);
+                     //(i < 500) && (reward < autocombine_target);
+                     ++i
+                ){
+                     const CTxOut *ac_in = nullptr;
+                     CAmount ac_amt = 0;
+                     for (; ac_iter != ac_candidates.end(); ++ac_iter) {
+                        if (*ac_iter == prevoutStake) {
+                                continue;
+                            }
+                        const CWalletTx* wtx = GetWalletTx(ac_iter->hash);
+                        if (wtx == nullptr){
+                            continue;
+                        }
+
+                        ac_in = &(wtx->tx->vout[ac_iter->n]);
+                        ac_amt = ac_in->nValue;
+
+                        int64_t nTimeInput = (int64_t)wtx->GetTxTime() + (int64_t)min_age;
+                        int64_t nCurrentTime = (int64_t)GetTime();
+                        if (nTimeInput > nCurrentTime )
+                        {
+                            continue;
+                        }
+                        if (ac_amt < MIN_STAKE_AMOUNT){
+                            break;
+                        }
+                        if ((reward + ac_amt) < autocombine_target)
+                        {
+                            break;
+                        }
+                     }
+
+                    if (ac_iter == ac_candidates.end()) {
+                        break;
+                    }
+
+                     inputs_included++;
+                     stakeTx.vin.emplace_back(*ac_iter);
+                     vin_scripts.emplace_back(ac_in->scriptPubKey);
+                     reward += ac_amt;
+                     LogPrint(BCLog::STAKING, "%s : auto-combining tx=%s n=%u amount=%llu total=%llu\n", __func__,
+                              ac_iter->hash.ToString().c_str(), ac_iter->n, ac_amt, reward);
+                     ++ac_iter;
+                }
             }
 
-            if (!SignSignature(*this, scriptPubKeyKernel, stakeTx, 0, reward, SIGHASH_ALL)) {
-                return error("CreateCoinStake : failed to sign coinstake");
+            // Automatically split
+            for (int i = 0; (i < nStakeMaxSplit) && (reward > split_threshold * 2); ++i) {
+                stakeTx.vout.emplace_back(split_threshold, scriptPubKeyOut);
+                reward -= split_threshold;
+            }
+
+            stakeTx.vout[1].nValue = reward;
+
+            LogPrint(BCLog::STAKING, "%s : split stake vout into %llu pieces\n", __func__,
+                     stakeTx.vout.size());
+
+            for (size_t i = 0; i < vin_scripts.size(); ++i) {
+                if (!SignSignature(*this, vin_scripts[i], stakeTx, i, reward, SIGHASH_ALL)) {
+                    return error("CreateCoinStake : failed to sign coinstake");
+                }
             }
 
             curr_block.posStakeHash = prevoutStake.hash;

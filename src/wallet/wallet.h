@@ -78,6 +78,16 @@ static const int64_t TIMESTAMP_MIN = 0;
 //! if set, all keys will be derived by using BIP39/BIP44
 static const bool DEFAULT_USE_HD_WALLET = false;
 
+static const size_t DEFAULT_STAKE_SPLIT_THRESHOLD = 3;
+static const size_t DEFAULT_STAKE_MAX_SPLIT = 500;
+
+enum {
+    AUTOCOMBINE_DISABLE = 0,
+    AUTOCOMBINE_SAME = 1,
+    AUTOCOMBINE_ANY = 2,
+ };
+static const int DEFAULT_STAKE_AUTOCOMBINE = AUTOCOMBINE_SAME;
+
 bool AutoBackupWallet (CWallet* wallet, const std::string& strWalletFile_, std::string& strBackupWarningRet, std::string& strBackupErrorRet);
 
 class CBlockIndex;
@@ -826,6 +836,8 @@ public:
     unsigned int nHashDrift;
     unsigned int nHashInterval;
     uint64_t nStakeSplitThreshold;
+    int nStakeMaxSplit;
+    int fAutocombine;
     int nStakeSetUpdateTime;
     using StakeCandidate = std::tuple<CAmount, const CWalletTx*, unsigned int>;
     using StakeCandidates = std::set<StakeCandidate>;
@@ -857,7 +869,9 @@ public:
         nMasterKeyMaxID = 0;
         // Stake Settings
         nHashDrift = gArgs.GetArg("-poshashdrift", 30);
-        nStakeSplitThreshold = 1000 * COIN;
+        nStakeSplitThreshold = gArgs.GetArg("-stakesplitthreshold", DEFAULT_STAKE_SPLIT_THRESHOLD);
+        nStakeMaxSplit = gArgs.GetArg("-stakemaxsplit", DEFAULT_STAKE_MAX_SPLIT);
+        fAutocombine = gArgs.GetArg("-stakeautocombine", DEFAULT_STAKE_AUTOCOMBINE);
         nHashInterval = gArgs.GetArg("-poshashinterval", 10);
         nStakeSetUpdateTime = 300; // 5 minutes
         setStakeCoins.clear();
