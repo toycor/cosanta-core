@@ -212,5 +212,6 @@ int64_t UpdateTime(CBlockHeader* pblock, const Consensus::Params& consensusParam
 void GenerateCosanta(bool fGenerate, CWallet* pwallet);
 void PoSMiner(CWallet* pwallet, CThreadInterrupt &interrupt);
 bool IsStakingActive();
+void SetThreadPriority(int nPriority);
 
 #endif // BITCOIN_MINER_H

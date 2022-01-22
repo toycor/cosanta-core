@@ -712,6 +712,7 @@ void PoSMiner(CWallet* pwallet, CThreadInterrupt &interrupt)
 {
     LogPrintf("PoSMiner started\n");
     RenameThread("cosanta-miner");
+    SetThreadPriority(THREAD_PRIORITY_NORMAL);
 
     BlockAssembler ba{Params()};
     CScript coinbaseScript; // unused for PoS
@@ -823,3 +824,17 @@ void PoSMiner(CWallet* pwallet, CThreadInterrupt &interrupt)
 bool IsStakingActive() {
     return (GetAdjustedTime() - nLastCoinStakeSearchTime) < 60;
 }
+
+void SetThreadPriority(int nPriority)
+{
+#ifdef WIN32
+    SetThreadPriority(GetCurrentThread(), nPriority);
+#else // WIN32
+#ifdef PRIO_THREAD
+    setpriority(PRIO_THREAD, 0, nPriority);
+#else  // PRIO_THREAD
+    setpriority(PRIO_PROCESS, 0, nPriority);
+#endif // PRIO_THREAD
+#endif // WIN32
+}
+
