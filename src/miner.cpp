@@ -41,6 +41,8 @@
 #include "llmq/quorums_chainlocks.h"
 #include "wallet/wallet.h"
 
+#include <sys/resource.h>
+
 #include <algorithm>
 #include <queue>
 #include <utility>
@@ -627,6 +629,10 @@ void static CosantaMiner(CWallet *pwallet)
         unsigned int nExtraNonce = 0;
 
         while (isPoW) {
+            if (!IsPowActiveHeight(chainActive.Height())){
+                isPoW = false;
+                break;
+            }
             isLastPoW = true;
             auto pblocktemplate = BlockAssembler(Params()).CreateNewBlock(coinbaseScript->reserveScript, vpwallets[0]);
             if (!pblocktemplate.get())
