@@ -41,7 +41,9 @@
 #include "llmq/quorums_chainlocks.h"
 #include "wallet/wallet.h"
 
+#ifdef __linux__
 #include <sys/resource.h>
+#endif // __linux__
 
 #include <algorithm>
 #include <queue>
