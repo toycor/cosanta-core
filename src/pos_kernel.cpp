@@ -455,21 +455,7 @@ bool CheckStakeKernelHash(
     // if wallet is simply checking to make sure a hash is valid
     //-------------------
     if (fCheck) {
-        uint256 requiredHashProofOfStake = stakeHash(nTimeTx, ss, prevout.n, prevout.hash, nTimeBlockFrom);
-
-        /*
-        if (requiredHashProofOfStake != hashProofOfStake) {
-            return error(
-                "%s : hashProofOfStake mismatch at %d:%llx:%d:%s:%d %s != %s",
-                __func__,
-                nTimeTx, nStakeModifier, prevout.n, prevout.hash.ToString().c_str(), nTimeBlockFrom,
-                hashProofOfStake.ToString().c_str(),
-                requiredHashProofOfStake.ToString().c_str() );
-        }
-        */
-
         return UintToArith256(hashProofOfStake) < bnTarget;
-
     }
 
     // search
