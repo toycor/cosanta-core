@@ -78,7 +78,7 @@ static const int64_t TIMESTAMP_MIN = 0;
 //! if set, all keys will be derived by using BIP39/BIP44
 static const bool DEFAULT_USE_HD_WALLET = false;
 
-static const size_t DEFAULT_STAKE_SPLIT_THRESHOLD = 3;
+static const size_t DEFAULT_STAKE_SPLIT_THRESHOLD = 100;
 static const size_t DEFAULT_STAKE_MAX_SPLIT = 500;
 
 enum {
